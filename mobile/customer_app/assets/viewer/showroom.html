@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>MotoSaaS Showroom</title>
+  <style>
+    html, body { margin: 0; padding: 0; height: 100%; background: #0b1020; overflow: hidden; }
+    canvas { display: block; width: 100%; height: 100%; }
+    #fallback {
+      position: absolute; inset: 0; display: none; align-items: center; justify-content: center;
+      color: #c7d2fe; font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size: 14px;
+      text-align: center; padding: 24px; background: radial-gradient(circle at 50% 30%, #1e293b, #0b1020);
+    }
+  </style>
+</head>
+<body>
+  <div id="fallback">Interactive showroom unavailable on this device.</div>
+  <script src="three.min.js"></script>
+  <script src="OrbitControls.js"></script>
+  <script src="GLTFLoader.js"></script>
+  <script src="DRACOLoader.js"></script>
+  <script>
+    (function () {
+      'use strict';
+
+      function post(payload) {
+        try {
+          if (window.ShowroomBridge && window.ShowroomBridge.postMessage) {
+            window.ShowroomBridge.postMessage(payload);
+          }
+        } catch (e) { /* bridge unavailable */ }
+      }
+
+      var renderer, scene, camera, controls, paintMaterials = [], hotspotGroup, proceduralModel;
+      var manifest = null;
+      var animation = null;
+      var activeView = 'hero';
+      var hotspotSpheres = [];
+
+      var defaultPresets = {
+        hero: { position: { x: 2.4, y: 1.2, z: 2.4 }, target: { x: 0, y: 0.6, z: 0 }, fov: 45 },
+        profile: { position: { x: 3.2, y: 0.8, z: 0 }, target: { x: 0, y: 0.6, z: 0 }, fov: 40 },
+        cockpit: { position: { x: 0, y: 1.3, z: -0.4 }, target: { x: 0, y: 1.0, z: 0.2 }, fov: 50 },
+        rear: { position: { x: -2.2, y: 1.0, z: -2.0 }, target: { x: 0, y: 0.6, z: 0 }, fov: 45 },
+        top: { position: { x: 0, y: 3.5, z: 0.1 }, target: { x: 0, y: 0.6, z: 0 }, fov: 45 }
+      };
+
+      function init() {
+        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        document.body.appendChild(renderer.domElement);
+
+        scene = new THREE.Scene();
+        scene.background = new THREE.Color('#0b1020');
+        scene.fog = new THREE.Fog('#0b1020', 8, 16);
+
+        camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+        camera.position.set(2.4, 1.2, 2.4);
+
+        controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.08;
+        controls.target.set(0, 0.6, 0);
+        controls.minPolarAngle = THREE.MathUtils.degToRad(5);
+        controls.maxPolarAngle = THREE.MathUtils.degToRad(75);
+        controls.minDistance = 1.5;
+        controls.maxDistance = 6.0;
+        controls.enablePan = false;
+
+        scene.add(new THREE.HemisphereLight('#dbeafe', '#0b1020', 1.1));
+        var key = new THREE.DirectionalLight('#ffffff', 1.5);
+        key.position.set(4, 6, 4);
+        key.castShadow = true;
+        key.shadow.mapSize.set(1024, 1024);
+        scene.add(key);
+        var rim = new THREE.DirectionalLight('#7dd3fc', 0.8);
+        rim.position.set(-5, 3, -4);
+        scene.add(rim);
+
+        var floor = new THREE.Mesh(
+          new THREE.CircleGeometry(6, 64),
+          new THREE.MeshStandardMaterial({ color: '#111827', roughness: 0.65, metalness: 0.15 })
+        );
+        floor.rotation.x = -Math.PI / 2;
+        floor.receiveShadow = true;
+        scene.add(floor);
+
+        var ring = new THREE.Mesh(
+          new THREE.RingGeometry(1.8, 1.86, 64),
+          new THREE.MeshBasicMaterial({ color: '#38bdf8', transparent: true, opacity: 0.4, side: THREE.DoubleSide })
+        );
+        ring.rotation.x = -Math.PI / 2;
+        ring.position.y = 0.005;
+        scene.add(ring);
+
+        proceduralModel = buildProceduralMotorcycle();
+        scene.add(proceduralModel);
+
+        hotspotGroup = new THREE.Group();
+        scene.add(hotspotGroup);
+
+        renderer.domElement.addEventListener('pointerdown', onPointerDown);
+        window.addEventListener('resize', onResize);
+        animate();
+        post(JSON.stringify({ type: 'ready' }));
+      }
+
+      function buildProceduralMotorcycle() {
+        var group = new THREE.Group();
+        var paint = new THREE.MeshStandardMaterial({ color: '#002c6c', roughness: 0.28, metalness: 0.55 });
+        var black = new THREE.MeshStandardMaterial({ color: '#111827', roughness: 0.7, metalness: 0.25 });
+        var metal = new THREE.MeshStandardMaterial({ color: '#9ca3af', roughness: 0.25, metalness: 0.85 });
+        var glass = new THREE.MeshStandardMaterial({ color: '#93c5fd', roughness: 0.08, metalness: 0.2, transparent: true, opacity: 0.55 });
+        paintMaterials = [paint];
+
+        function add(mesh) { mesh.castShadow = true; mesh.receiveShadow = true; group.add(mesh); return mesh; }
+
+        var frontWheel = add(new THREE.Mesh(new THREE.TorusGeometry(0.36, 0.09, 18, 40), black));
+        frontWheel.position.set(0, 0.46, 0.86);
+        frontWheel.rotation.y = Math.PI / 2;
+
+        var rearWheel = add(new THREE.Mesh(new THREE.TorusGeometry(0.36, 0.10, 18, 40), black));
+        rearWheel.position.set(0, 0.46, -0.82);
+        rearWheel.rotation.y = Math.PI / 2;
+
+        var frontRim = add(new THREE.Mesh(new THREE.CylinderGeometry(0.27, 0.27, 0.06, 24), metal));
+        frontRim.position.copy(frontWheel.position);
+        frontRim.rotation.z = Math.PI / 2;
+        var rearRim = add(new THREE.Mesh(new THREE.CylinderGeometry(0.27, 0.27, 0.06, 24), metal));
+        rearRim.position.copy(rearWheel.position);
+        rearRim.rotation.z = Math.PI / 2;
+
+        var engine = add(new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.30, 0.48), metal));
+        engine.position.set(0, 0.50, 0.04);
+
+        var tank = add(new THREE.Mesh(new THREE.SphereGeometry(0.30, 32, 24), paint));
+        tank.scale.set(0.9, 0.72, 1.35);
+        tank.position.set(0, 0.82, 0.16);
+
+        var fairing = add(new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.34, 0.56), paint));
+        fairing.position.set(0, 0.70, 0.58);
+        fairing.rotation.x = -0.18;
+
+        var seat = add(new THREE.Mesh(new THREE.BoxGeometry(0.30, 0.12, 0.52), black));
+        seat.position.set(0, 0.82, -0.36);
+
+        var tail = add(new THREE.Mesh(new THREE.BoxGeometry(0.20, 0.16, 0.36), paint));
+        tail.position.set(0, 0.83, -0.72);
+        tail.rotation.x = 0.16;
+
+        var forkLeft = add(new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.62, 12), metal));
+        forkLeft.position.set(0.14, 0.58, 0.78);
+        forkLeft.rotation.x = 0.22;
+        var forkRight = forkLeft.clone();
+        forkRight.position.x = -0.14;
+        group.add(forkRight);
+
+        var bar = add(new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.62, 12), black));
+        bar.position.set(0, 0.98, 0.68);
+        bar.rotation.z = Math.PI / 2;
+
+        var headlight = add(new THREE.Mesh(new THREE.SphereGeometry(0.13, 20, 16), glass));
+        headlight.scale.set(1, 0.7, 0.5);
+        headlight.position.set(0, 0.85, 0.87);
+
+        var screen = add(new THREE.Mesh(new THREE.BoxGeometry(0.30, 0.22, 0.02), glass));
+        screen.position.set(0, 1.02, 0.82);
+        screen.rotation.x = -0.45;
+
+        var exhaust = add(new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.07, 0.62, 16), metal));
+        exhaust.position.set(0.20, 0.38, -0.55);
+        exhaust.rotation.x = Math.PI / 2.7;
+
+        var tailLight = add(new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.05, 0.04), new THREE.MeshStandardMaterial({ color: '#ef4444', emissive: '#7f1d1d', emissiveIntensity: 0.8 })));
+        tailLight.position.set(0, 0.86, -0.92);
+
+        group.position.y = 0.02;
+        return group;
+      }
+
+      function disposeModel(model) {
+        if (!model) return;
+        model.traverse(function (child) {
+          if (child.geometry) child.geometry.dispose();
+          if (child.material) {
+            if (Array.isArray(child.material)) child.material.forEach(function (m) { m.dispose(); });
+            else child.material.dispose();
+          }
+        });
+      }
+
+      function loadManifest(json) {
+        try {
+          manifest = JSON.parse(json);
+        } catch (e) {
+          manifest = null;
+        }
+
+        if (manifest) {
+          if (manifest.hexCode) setColor(manifest.hexCode);
+          buildHotspots(manifest.hotspots || []);
+          applyCameraConstraints(manifest.cameraPresets);
+        }
+
+        var url = manifest && manifest.glbFileUrl;
+        if (url && /^https?:\/\//i.test(url) && /\.(glb|gltf)$/i.test(url)) {
+          loadGlb(url);
+        } else {
+          post(JSON.stringify({ type: 'tier', tier: 'procedural' }));
+        }
+      }
+
+      function loadGlb(url) {
+        var loader = new THREE.GLTFLoader();
+        try {
+          if (THREE.DRACOLoader) {
+            var draco = new THREE.DRACOLoader();
+            draco.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.4.1/');
+            loader.setDRACOLoader(draco);
+          }
+        } catch (e) { /* Draco optional */ }
+
+        var settled = false;
+        var timer = setTimeout(function () {
+          if (!settled) {
+            settled = true;
+            post(JSON.stringify({ type: 'tier', tier: 'procedural', reason: 'timeout' }));
+          }
+        }, 4500);
+
+        loader.load(url, function (gltf) {
+          settled = true;
+          clearTimeout(timer);
+          disposeModel(proceduralModel);
+          scene.remove(proceduralModel);
+          proceduralModel = gltf.scene;
+          proceduralModel.traverse(function (child) {
+            if (child.isMesh) {
+              child.castShadow = true;
+              child.receiveShadow = true;
+              if (child.material && child.material.color) paintMaterials.push(child.material);
+            }
+          });
+          scene.add(proceduralModel);
+          if (manifest && manifest.hexCode) setColor(manifest.hexCode);
+          post(JSON.stringify({ type: 'tier', tier: 'glb' }));
+        }, undefined, function () {
+          settled = true;
+          clearTimeout(timer);
+          post(JSON.stringify({ type: 'tier', tier: 'procedural', reason: 'load-error' }));
+        });
+      }
+
+      function applyCameraConstraints(presets) {
+        if (!presets) return;
+        var hero = presets.heroView || presets.HeroView;
+        if (hero) {
+          if (hero.minPolarAngleDeg != null) controls.minPolarAngle = THREE.MathUtils.degToRad(hero.minPolarAngleDeg);
+          if (hero.maxPolarAngleDeg != null) controls.maxPolarAngle = THREE.MathUtils.degToRad(hero.maxPolarAngleDeg);
+          if (hero.minDistanceMeters != null) controls.minDistance = hero.minDistanceMeters;
+          if (hero.maxDistanceMeters != null) controls.maxDistance = hero.maxDistanceMeters;
+        }
+      }
+
+      function setColor(hex) {
+        if (!hex) return;
+        try {
+          paintMaterials.forEach(function (material) {
+            if (material && material.color) material.color.set(hex);
+          });
+          post(JSON.stringify({ type: 'color', hex: hex }));
+        } catch (e) { /* ignore invalid hex */ }
+      }
+
+      function resolvePreset(key) {
+        var presets = manifest && manifest.cameraPresets;
+        var name = key.charAt(0).toUpperCase() + key.slice(1) + 'View';
+        var preset = presets && (presets[name] || presets[key]);
+        if (!preset && presets) {
+          var lower = key.toLowerCase();
+          preset = presets[lower + 'View'] || presets[lower];
+        }
+        return preset || defaultPresets[key] || defaultPresets.hero;
+      }
+
+      function setView(key) {
+        activeView = key;
+        var preset = resolvePreset(key);
+        var position = preset.position || defaultPresets.hero.position;
+        var target = preset.target || defaultPresets.hero.target;
+        animateCamera(
+          { x: position.x, y: position.y, z: position.z },
+          { x: target.x, y: target.y, z: target.z },
+          preset.fov || camera.fov
+        );
+        post(JSON.stringify({ type: 'view', view: key }));
+      }
+
+      function animateCamera(toPosition, toTarget, toFov) {
+        var fromPosition = camera.position.clone();
+        var fromTarget = controls.target.clone();
+        var fromFov = camera.fov;
+        var start = performance.now();
+        var duration = 650;
+        if (animation) cancelAnimationFrame(animation);
+        function tick(now) {
+          var t = Math.min((now - start) / duration, 1);
+          var e = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+          camera.position.lerpVectors(fromPosition, new THREE.Vector3(toPosition.x, toPosition.y, toPosition.z), e);
+          controls.target.lerpVectors(fromTarget, new THREE.Vector3(toTarget.x, toTarget.y, toTarget.z), e);
+          camera.fov = fromFov + (toFov - fromFov) * e;
+          camera.updateProjectionMatrix();
+          controls.update();
+          if (t < 1) animation = requestAnimationFrame(tick);
+        }
+        animation = requestAnimationFrame(tick);
+      }
+
+      function reset() {
+        setView('hero');
+      }
+
+      function buildHotspots(hotspots) {
+        while (hotspotGroup.children.length) {
+          var child = hotspotGroup.children.pop();
+          if (child.geometry) child.geometry.dispose();
+          if (child.material) child.material.dispose();
+        }
+        hotspotSpheres = [];
+        hotspots.forEach(function (hotspot) {
+          var position = hotspot.position || { x: 0, y: 0.7, z: 0 };
+          var sphere = new THREE.Mesh(
+            new THREE.SphereGeometry(0.045, 16, 12),
+            new THREE.MeshStandardMaterial({ color: '#38bdf8', emissive: '#0284c7', emissiveIntensity: 1.2 })
+          );
+          sphere.position.set(position.x, position.y + 0.05, position.z);
+          sphere.userData.hotspotId = hotspot.id;
+          hotspotGroup.add(sphere);
+          hotspotSpheres.push(sphere);
+
+          var halo = new THREE.Mesh(
+            new THREE.SphereGeometry(0.085, 16, 12),
+            new THREE.MeshBasicMaterial({ color: '#38bdf8', transparent: true, opacity: 0.18 })
+          );
+          halo.position.copy(sphere.position);
+          halo.userData.hotspotId = hotspot.id;
+          hotspotGroup.add(halo);
+        });
+      }
+
+      function onPointerDown(event) {
+        if (!hotspotSpheres.length) return;
+        var rect = renderer.domElement.getBoundingClientRect();
+        var mouse = new THREE.Vector2(
+          ((event.clientX - rect.left) / rect.width) * 2 - 1,
+          -((event.clientY - rect.top) / rect.height) * 2 + 1
+        );
+        var raycaster = new THREE.Raycaster();
+        raycaster.setFromCamera(mouse, camera);
+        var hits = raycaster.intersectObjects(hotspotSpheres.concat(hotspotGroup.children), false);
+        if (hits.length && hits[0].object.userData.hotspotId) {
+          post(JSON.stringify({ type: 'hotspot', id: hits[0].object.userData.hotspotId }));
+        }
+      }
+
+      function onResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      }
+
+      function animate() {
+        requestAnimationFrame(animate);
+        if (controls) controls.update();
+        if (hotspotGroup) {
+          hotspotGroup.children.forEach(function (child, index) {
+            if (child.material && child.material.opacity != null && child.material.transparent) {
+              child.material.opacity = 0.14 + (Math.sin(performance.now() / 500 + index) + 1) * 0.08;
+            }
+          });
+        }
+        if (renderer && scene && camera) renderer.render(scene, camera);
+      }
+
+      window.showroom = {
+        load: loadManifest,
+        setColor: setColor,
+        setView: setView,
+        reset: reset,
+        tier: function () { return 'procedural'; }
+      };
+
+      try {
+        init();
+      } catch (e) {
+        document.getElementById('fallback').style.display = 'flex';
+        post(JSON.stringify({ type: 'error', message: String(e) }));
+      }
+    })();
+  </script>
+</body>
+</html>

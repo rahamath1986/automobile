@@ -1,6 +1,7 @@
 # Operating System Files
 .DS_Store
 Thumbs.db
+Library/
 
 # Environment and secrets
 .env
@@ -9,3 +10,12 @@ Thumbs.db
 # Logs and databases
 *.log
 *.sqlite
+
+# .NET build artifacts
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+.vs/
+.idea/

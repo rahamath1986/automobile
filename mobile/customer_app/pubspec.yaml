@@ -1,0 +1,33 @@
+name: motosaas_customer
+description: "MotoSaaS Customer — two-wheeler discovery, 3D showroom, ownership and service."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.9.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  cached_network_image: ^3.4.1
+  collection: ^1.19.1
+  dio: ^5.11.1
+  equatable: ^3.0.0
+  flutter_riverpod: ^3.3.2
+  flutter_secure_storage: ^10.3.4
+  go_router: ^17.2.3
+  intl: ^0.20.3
+  shared_preferences: ^2.5.5
+  webview_flutter: ^4.13.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  mocktail: ^1.0.5
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/viewer/
