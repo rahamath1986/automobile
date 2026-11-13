@@ -1,0 +1,11 @@
+# Operating System Files
+.DS_Store
+Thumbs.db
+
+# Environment and secrets
+.env
+*.local
+
+# Logs and databases
+*.log
+*.sqlite
