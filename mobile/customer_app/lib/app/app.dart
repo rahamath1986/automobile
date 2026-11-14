@@ -42,36 +42,44 @@ class _LaunchScreen extends StatelessWidget {
     return const Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Column(
-          children: [
-            Spacer(flex: 4),
+        child: SizedBox.expand(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Spacer(flex: 4),
 
-            // Prominent Brand Logo & Identity (No vehicle image)
-            _BrandLogoCenter(),
+              // Prominent Brand Logo & Identity (No vehicle image)
+              _BrandLogoCenter(),
 
-            Spacer(flex: 4),
+              Spacer(flex: 4),
 
-            // Subtle Loading Progress Indicator
-            SizedBox(
-              width: 24,
-              height: 24,
-              child: CircularProgressIndicator(
-                strokeWidth: 2.5,
-                color: Color(0xFFDC2626),
+              // Subtle Loading Progress Indicator
+              SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2.5,
+                  color: Color(0xFFDC2626),
+                ),
               ),
-            ),
-            SizedBox(height: 14),
-            Text(
-              'Alagendra Automobiles · Kotchadai, Madurai',
-              style: TextStyle(
-                color: Color(0xFF94A3B8),
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 0.2,
+              SizedBox(height: 14),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24),
+                child: Text(
+                  'Alagendra Automobiles · Kotchadai, Madurai',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Color(0xFF94A3B8),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.2,
+                  ),
+                ),
               ),
-            ),
-            SizedBox(height: 28),
-          ],
+              SizedBox(height: 28),
+            ],
+          ),
         ),
       ),
     );
@@ -85,6 +93,7 @@ class _BrandLogoCenter extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         // Prominent Logo Icon Emblem
         Container(
@@ -114,6 +123,7 @@ class _BrandLogoCenter extends StatelessWidget {
         // Brand Name Text
         const Text(
           'Alagendra',
+          textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 32,
             fontWeight: FontWeight.w900,
@@ -125,6 +135,7 @@ class _BrandLogoCenter extends StatelessWidget {
         const SizedBox(height: 4),
         const Text(
           'AUTOMOBILES',
+          textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w800,
@@ -137,6 +148,7 @@ class _BrandLogoCenter extends StatelessWidget {
         // Tagline
         const Text(
           'Your Trusted 2-Wheeler Partner',
+          textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 14.5,
             fontWeight: FontWeight.w500,
