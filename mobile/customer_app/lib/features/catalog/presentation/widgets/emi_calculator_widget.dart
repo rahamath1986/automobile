@@ -93,7 +93,7 @@ class _EmiCalculatorWidgetState extends State<EmiCalculatorWidget> {
   @override
   Widget build(BuildContext context) {
     final primary = Theme.of(context).colorScheme.primary;
-    const badgeColor = Color(0xFF1E3A8A); // Deep blue pill from user design
+    const badgeColor = Color(0xFF0F172A); // Dark Slate pill matching Alagendra palette
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(22, 16, 22, 24),

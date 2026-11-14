@@ -606,5 +606,5 @@ class _TierBadge extends StatelessWidget {
 Color _parseColor(String hex) {
   var value = hex.replaceFirst('#', '');
   if (value.length == 6) value = 'FF$value';
-  return Color(int.tryParse(value, radix: 16) ?? 0xFF002C6C);
+  return Color(int.tryParse(value, radix: 16) ?? 0xFFDC2626);
 }

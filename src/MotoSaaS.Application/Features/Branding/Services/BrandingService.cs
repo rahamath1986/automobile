@@ -40,8 +40,8 @@ public class BrandingService : IBrandingService
             LegalName = tenant.LegalName,
             TaxId = tenant.TaxId,
             LogoUrl = tenant.LogoUrl,
-            PrimaryColor = tenant.PrimaryColor,
-            SecondaryColor = tenant.SecondaryColor,
+            PrimaryColor = string.IsNullOrWhiteSpace(tenant.PrimaryColor) || tenant.PrimaryColor == "#002C6C" ? "#DC2626" : tenant.PrimaryColor,
+            SecondaryColor = string.IsNullOrWhiteSpace(tenant.SecondaryColor) || tenant.SecondaryColor == "#E60012" ? "#0F172A" : tenant.SecondaryColor,
             AssociatedManufacturerNames = brands
         };
     }

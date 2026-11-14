@@ -23,6 +23,18 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Run .NET Verification Build
+        run: dotnet build src/MotoSaaS.Api/MotoSaaS.Api.csproj -c Release
+
+      - name: Lowercase repository owner
+        id: repo_owner
+        run: echo "owner=$(echo '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -40,18 +52,31 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/motosaas-api:latest
-            ghcr.io/${{ github.repository_owner }}/motosaas-api:${{ github.sha }}
+            ghcr.io/${{ steps.repo_owner.outputs.owner }}/motosaas-api:latest
+            ghcr.io/${{ steps.repo_owner.outputs.owner }}/motosaas-api:${{ github.sha }}
 
       - name: Azure Login
+        if: ${{ secrets.AZURE_CREDENTIALS != '' && secrets.AZURE_RESOURCE_GROUP != '' }}
         uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Deploy to Azure Container App
+        if: ${{ secrets.AZURE_CREDENTIALS != '' && secrets.AZURE_RESOURCE_GROUP != '' }}
         run: |
+          az containerapp registry set \
+            --name motosaas-api \
+            --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
+            --server ghcr.io \
+            --username ${{ github.actor }} \
+            --password ${{ secrets.GITHUB_TOKEN }}
           az containerapp update \
             --name motosaas-api \
             --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
-            --image ghcr.io/${{ github.repository_owner }}/motosaas-api:latest
+            --image ghcr.io/${{ steps.repo_owner.outputs.owner }}/motosaas-api:latest
+
+      - name: Notify on skipped Azure deployment
+        if: ${{ secrets.AZURE_CREDENTIALS == '' || secrets.AZURE_RESOURCE_GROUP == '' }}
+        run: |
+          echo "::notice ::AZURE_CREDENTIALS or AZURE_RESOURCE_GROUP not configured in repository secrets. Docker image published to GHCR successfully."
 

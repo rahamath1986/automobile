@@ -9,8 +9,15 @@ class AppTheme {
   static const _fallbackSecondary = Color(0xFF0F172A); // Dark Slate
 
   static ThemeData build(Branding branding) {
-    final primary = colorFromHex(branding.primaryColor, _fallbackPrimary);
+    var primary = colorFromHex(branding.primaryColor, _fallbackPrimary);
     final secondary = colorFromHex(branding.secondaryColor, _fallbackSecondary);
+
+    // Enforce Alagendra Crimson Red over any residual legacy blue
+    if (primary.toARGB32() == 0xFF002C6C ||
+        branding.primaryColor.toUpperCase().contains('002C6C') ||
+        branding.primaryColor.toUpperCase().contains('1E3A8A')) {
+      primary = _fallbackPrimary;
+    }
 
     final scheme = ColorScheme.fromSeed(
       seedColor: primary,
@@ -95,6 +102,7 @@ class AppTheme {
         disabledColor: const Color(0xFFF1F5F9),
         side: const BorderSide(color: Color(0xFFDCE5F0)),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(999)),
+        iconTheme: IconThemeData(color: primary, size: 16),
         labelStyle: const TextStyle(
           fontSize: 13,
           fontWeight: FontWeight.w600,
@@ -139,7 +147,14 @@ class AppTheme {
       value = 'FF$value';
     }
     final parsed = int.tryParse(value, radix: 16);
-    return parsed == null ? fallback : Color(parsed);
+    final color = parsed == null ? fallback : Color(parsed);
+    if (color.toARGB32() == 0xFF002C6C ||
+        hex.trim().toUpperCase() == '#002C6C' ||
+        hex.trim().toUpperCase() == '#1E3A8A' ||
+        hex.trim().toUpperCase() == '#0A2540') {
+      return fallback;
+    }
+    return color;
   }
 
   static Color get fallbackPrimary => _fallbackPrimary;

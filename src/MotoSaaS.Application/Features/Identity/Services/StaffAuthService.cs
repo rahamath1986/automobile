@@ -61,6 +61,8 @@ public class StaffAuthService : IStaffAuthService
                 Code = "ALAGENDRA",
                 LegalName = "Alagendra Automobiles",
                 TradeName = "Alagendra Yamaha",
+                PrimaryColor = "#DC2626",
+                SecondaryColor = "#0F172A",
                 Status = TenantStatus.Active,
                 CreatedAt = DateTime.UtcNow
             };

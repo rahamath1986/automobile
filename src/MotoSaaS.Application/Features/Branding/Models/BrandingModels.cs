@@ -9,8 +9,8 @@ public class WhiteLabelBrandingDto
     public string? TaxId { get; set; } // GSTIN
     public string? LogoUrl { get; set; }
     public string? FaviconUrl { get; set; }
-    public string PrimaryColor { get; set; } = "#002C6C";
-    public string SecondaryColor { get; set; } = "#E60012";
+    public string PrimaryColor { get; set; } = "#DC2626";
+    public string SecondaryColor { get; set; } = "#0F172A";
     public string? SupportPhone { get; set; }
     public string? SupportEmail { get; set; }
     public string? WebsiteUrl { get; set; }

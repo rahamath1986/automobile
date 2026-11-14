@@ -736,14 +736,14 @@ class _StaffPageState extends State<StaffPage> {
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
-        title: const Text('Dealer workspace', style: TextStyle(fontWeight: FontWeight.w800)),
+        title: const Text('Dealer workspace', style: TextStyle(fontWeight: FontWeight.w800, color: Color(0xFF0F172A))),
         backgroundColor: Colors.white,
         elevation: 0,
         actions: [
           if (signedIn) ...[
             IconButton(
               tooltip: 'Refresh',
-              icon: const Icon(Icons.refresh_rounded),
+              icon: const Icon(Icons.refresh_rounded, color: Color(0xFF0F172A)),
               onPressed: () => _run(() => _load(_section)),
             ),
             TextButton(
@@ -757,7 +757,7 @@ class _StaffPageState extends State<StaffPage> {
                         _receipt = null;
                       });
                     }),
-              child: const Text('Sign out', style: TextStyle(fontWeight: FontWeight.w700)),
+              child: const Text('Sign out', style: TextStyle(fontWeight: FontWeight.w700, color: Color(0xFFDC2626))),
             ),
           ],
         ],
@@ -828,8 +828,9 @@ class _StaffPageState extends State<StaffPage> {
           runSpacing: 8,
           children: [
             ActionChip(
-              avatar: const Icon(Icons.verified_user_rounded, size: 16),
+              avatar: const Icon(Icons.verified_user_rounded, size: 16, color: Color(0xFFDC2626)),
               label: const Text('User 8015581405'),
+              side: const BorderSide(color: Color(0xFFE2E8F0)),
               onPressed: () => setState(() {
                 _dealer.text = 'ALAGENDRA';
                 _username.text = '8015581405';
@@ -837,8 +838,9 @@ class _StaffPageState extends State<StaffPage> {
               }),
             ),
             ActionChip(
-              avatar: const Icon(Icons.manage_accounts_rounded, size: 16),
+              avatar: const Icon(Icons.manage_accounts_rounded, size: 16, color: Color(0xFFDC2626)),
               label: const Text('Branch Manager'),
+              side: const BorderSide(color: Color(0xFFE2E8F0)),
               onPressed: () => setState(() {
                 _dealer.text = AppConfig.dealerCode.isNotEmpty ? AppConfig.dealerCode : 'ALAGENDRA';
                 _username.text = 'manager.priya';
@@ -846,8 +848,9 @@ class _StaffPageState extends State<StaffPage> {
               }),
             ),
             ActionChip(
-              avatar: const Icon(Icons.support_agent_rounded, size: 16),
+              avatar: const Icon(Icons.support_agent_rounded, size: 16, color: Color(0xFFDC2626)),
               label: const Text('Sales'),
+              side: const BorderSide(color: Color(0xFFE2E8F0)),
               onPressed: () => setState(() {
                 _dealer.text = AppConfig.dealerCode;
                 _username.text = 'sales.arjun';
@@ -855,8 +858,9 @@ class _StaffPageState extends State<StaffPage> {
               }),
             ),
             ActionChip(
-              avatar: const Icon(Icons.build_circle_outlined, size: 16),
+              avatar: const Icon(Icons.build_circle_outlined, size: 16, color: Color(0xFFDC2626)),
               label: const Text('Advisor'),
+              side: const BorderSide(color: Color(0xFFE2E8F0)),
               onPressed: () => setState(() {
                 _dealer.text = AppConfig.dealerCode;
                 _username.text = 'advisor.kiran';
@@ -864,8 +868,9 @@ class _StaffPageState extends State<StaffPage> {
               }),
             ),
             ActionChip(
-              avatar: const Icon(Icons.handyman_outlined, size: 16),
+              avatar: const Icon(Icons.handyman_outlined, size: 16, color: Color(0xFFDC2626)),
               label: const Text('Technician'),
+              side: const BorderSide(color: Color(0xFFE2E8F0)),
               onPressed: () => setState(() {
                 _dealer.text = AppConfig.dealerCode;
                 _username.text = 'tech.suresh';
@@ -873,8 +878,9 @@ class _StaffPageState extends State<StaffPage> {
               }),
             ),
             ActionChip(
-              avatar: const Icon(Icons.point_of_sale_rounded, size: 16),
+              avatar: const Icon(Icons.point_of_sale_rounded, size: 16, color: Color(0xFFDC2626)),
               label: const Text('Cashier'),
+              side: const BorderSide(color: Color(0xFFE2E8F0)),
               onPressed: () => setState(() {
                 _dealer.text = AppConfig.dealerCode;
                 _username.text = 'cashier.meena';
@@ -951,7 +957,7 @@ class _StaffPageState extends State<StaffPage> {
                 height: 52,
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
-                    colors: [Color(0xFF1E3A8A), Color(0xFF3B82F6)],
+                    colors: [Color(0xFFDC2626), Color(0xFF991B1B)],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
@@ -1004,7 +1010,7 @@ class _StaffPageState extends State<StaffPage> {
           scrollDirection: Axis.horizontal,
           child: Row(
             children: [
-              _metricTile('Open Leads', '14', '3 Hot', const Color(0xFF3B82F6), Icons.trending_up_rounded),
+              _metricTile('Open Leads', '14', '3 Hot', const Color(0xFFDC2626), Icons.trending_up_rounded),
               _metricTile('Test Rides', '4', '1 Out', const Color(0xFF8B5CF6), Icons.two_wheeler_rounded),
               _metricTile('In Workshop', '6', '2 QC', const Color(0xFF10B981), Icons.build_circle_rounded),
               _metricTile('Collections', '₹2.45L', 'Today', const Color(0xFFF59E0B), Icons.account_balance_wallet_rounded),
@@ -1395,7 +1401,7 @@ class _StaffPageState extends State<StaffPage> {
                 row['status'],
                 isDone
                     ? const Color(0xFF10B981)
-                    : (isInProgress ? const Color(0xFF8B5CF6) : const Color(0xFF3B82F6)),
+                    : (isInProgress ? const Color(0xFF8B5CF6) : const Color(0xFFDC2626)),
               ),
             ],
           ),
@@ -1496,7 +1502,7 @@ class _StaffPageState extends State<StaffPage> {
                   ],
                 ),
               ),
-              _badge(row['status'], const Color(0xFF0284C7)),
+              _badge(row['status'], const Color(0xFFDC2626)),
             ],
           ),
           const SizedBox(height: 8),

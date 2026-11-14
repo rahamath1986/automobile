@@ -111,6 +111,8 @@ public class CustomerAuthService : ICustomerAuthService
                     Code = "ALAGENDRA",
                     LegalName = "Alagendra Automobiles",
                     TradeName = "Alagendra Yamaha",
+                    PrimaryColor = "#DC2626",
+                    SecondaryColor = "#0F172A",
                     Status = MotoSaaS.Domain.Tenancy.TenantStatus.Active,
                     CreatedAt = DateTime.UtcNow
                 };

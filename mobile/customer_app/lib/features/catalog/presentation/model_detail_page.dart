@@ -717,7 +717,7 @@ class _DetailBodyState extends State<_DetailBody> with SingleTickerProviderState
   Color _hexColor(String hex) {
     var value = hex.replaceFirst('#', '');
     if (value.length == 6) value = 'FF$value';
-    return Color(int.tryParse(value, radix: 16) ?? 0xFF002C6C);
+    return Color(int.tryParse(value, radix: 16) ?? 0xFFDC2626);
   }
 
   Color _contrastColor(String hex) {

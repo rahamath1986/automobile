@@ -16,8 +16,8 @@ public class Tenant : BaseEntity
     public string TradeName { get; set; } = string.Empty;
     public string? TaxId { get; set; }
     public string? LogoUrl { get; set; }
-    public string PrimaryColor { get; set; } = "#002C6C";
-    public string SecondaryColor { get; set; } = "#E60012";
+    public string PrimaryColor { get; set; } = "#DC2626";
+    public string SecondaryColor { get; set; } = "#0F172A";
     public TenantStatus Status { get; set; } = TenantStatus.Active;
 
     public ICollection<Branch> Branches { get; set; } = new List<Branch>();
