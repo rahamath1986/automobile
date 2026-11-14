@@ -5,8 +5,8 @@ import '../../features/branding/domain/entities/branding.dart';
 class AppTheme {
   const AppTheme._();
 
-  static const _fallbackPrimary = Color(0xFF002C6C);
-  static const _fallbackSecondary = Color(0xFFE60012);
+  static const _fallbackPrimary = Color(0xFFDC2626); // Alagendra Crimson Red
+  static const _fallbackSecondary = Color(0xFF0F172A); // Dark Slate
 
   static ThemeData build(Branding branding) {
     final primary = colorFromHex(branding.primaryColor, _fallbackPrimary);
@@ -110,11 +110,20 @@ class AppTheme {
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: Colors.white,
         elevation: 0,
-        height: 72,
+        height: 68,
         indicatorColor: primary.withValues(alpha: 0.12),
-        labelTextStyle: WidgetStateProperty.all(
-          const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
-        ),
+        iconTheme: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return IconThemeData(color: primary, size: 24);
+          }
+          return const IconThemeData(color: Color(0xFF64748B), size: 24);
+        }),
+        labelTextStyle: WidgetStateProperty.resolveWith((states) {
+          if (states.contains(WidgetState.selected)) {
+            return TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: primary);
+          }
+          return const TextStyle(fontSize: 11, fontWeight: FontWeight.w500, color: Color(0xFF64748B));
+        }),
       ),
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,

@@ -110,6 +110,23 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   child: const Text('Continue'),
                 )
               else ...[
+                Wrap(
+                  spacing: 8,
+                  children: [
+                    ActionChip(
+                      avatar: const Icon(Icons.bolt_rounded, size: 16, color: Color(0xFF002C6C)),
+                      label: const Text('Preload 8015581405 (Pass: 123456)', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+                      backgroundColor: const Color(0xFFEBF3FC),
+                      side: const BorderSide(color: Color(0xFFBED8F7)),
+                      onPressed: () {
+                        setState(() {
+                          _phoneController.text = '8015581405';
+                        });
+                      },
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
                 Form(
                   key: _formKey,
                   child: TextFormField(

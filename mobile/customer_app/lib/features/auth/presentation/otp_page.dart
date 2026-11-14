@@ -45,11 +45,17 @@ class _OtpPageState extends ConsumerState<OtpPage> {
     });
 
     try {
-      await ref.read(authControllerProvider.notifier).verifyOtp(
+      await ref
+          .read(authControllerProvider.notifier)
+          .verifyOtp(
             phone: widget.phone,
             otp: _otpController.text.trim(),
-            firstName: _firstNameController.text.trim().isEmpty ? null : _firstNameController.text.trim(),
-            lastName: _lastNameController.text.trim().isEmpty ? null : _lastNameController.text.trim(),
+            firstName: _firstNameController.text.trim().isEmpty
+                ? null
+                : _firstNameController.text.trim(),
+            lastName: _lastNameController.text.trim().isEmpty
+                ? null
+                : _lastNameController.text.trim(),
           );
 
       ref.invalidate(profileControllerProvider);
@@ -57,7 +63,9 @@ class _OtpPageState extends ConsumerState<OtpPage> {
       if (!mounted) return;
       ScaffoldMessenger.of(context)
         ..clearSnackBars()
-        ..showSnackBar(const SnackBar(content: Text('Signed in successfully.')));
+        ..showSnackBar(
+          const SnackBar(content: Text('Signed in successfully.')),
+        );
 
       final redirect = widget.redirect;
       if (redirect != null && redirect.isNotEmpty) {
@@ -83,13 +91,18 @@ class _OtpPageState extends ConsumerState<OtpPage> {
     });
     try {
       await ref.read(authControllerProvider.notifier).requestOtp(widget.phone);
-      if (widget.phone.replaceAll(RegExp(r'\D'), '').endsWith('8015581405') || _otpController.text.isEmpty) {
+      if (widget.phone.replaceAll(RegExp(r'\D'), '').endsWith('8015581405') ||
+          _otpController.text.isEmpty) {
         _otpController.text = '123456';
       }
       if (!mounted) return;
       ScaffoldMessenger.of(context)
         ..clearSnackBars()
-        ..showSnackBar(const SnackBar(content: Text('A fresh OTP has been sent (Use 123456).')));
+        ..showSnackBar(
+          const SnackBar(
+            content: Text('A fresh OTP has been sent (Use 123456).'),
+          ),
+        );
     } on ApiException catch (error) {
       if (!mounted) return;
       setState(() => _inlineError = error.message);
@@ -135,7 +148,11 @@ class _OtpPageState extends ConsumerState<OtpPage> {
                 const SizedBox(height: 8),
                 Text(
                   'We sent it to $formattedPhone. It expires in 5 minutes.',
-                  style: const TextStyle(fontSize: 13.5, color: Color(0xFF64748B), height: 1.45),
+                  style: const TextStyle(
+                    fontSize: 13.5,
+                    color: Color(0xFF64748B),
+                    height: 1.45,
+                  ),
                 ),
                 const SizedBox(height: 24),
                 TextFormField(
@@ -145,7 +162,11 @@ class _OtpPageState extends ConsumerState<OtpPage> {
                   autofocus: true,
                   maxLength: 6,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 26, fontWeight: FontWeight.w700, letterSpacing: 12),
+                  style: const TextStyle(
+                    fontSize: 26,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 12,
+                  ),
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   validator: Validators.otp,
                   onFieldSubmitted: (_) => _verify(),
@@ -153,6 +174,16 @@ class _OtpPageState extends ConsumerState<OtpPage> {
                     counterText: '',
                     labelText: 'One-time password',
                     hintText: kDebugMode ? '123456' : '------',
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Center(
+                  child: ActionChip(
+                    avatar: const Icon(Icons.pin_rounded, size: 16, color: Color(0xFF002C6C)),
+                    label: const Text('Preload OTP: 123456', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+                    backgroundColor: const Color(0xFFEBF3FC),
+                    side: const BorderSide(color: Color(0xFFBED8F7)),
+                    onPressed: () => setState(() => _otpController.text = '123456'),
                   ),
                 ),
                 if (_inlineError != null) ...[
@@ -165,12 +196,19 @@ class _OtpPageState extends ConsumerState<OtpPage> {
                     ),
                     child: Row(
                       children: [
-                        const Icon(Icons.error_outline_rounded, size: 18, color: Color(0xFFB91C1C)),
+                        const Icon(
+                          Icons.error_outline_rounded,
+                          size: 18,
+                          color: Color(0xFFB91C1C),
+                        ),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
                             _inlineError!,
-                            style: const TextStyle(fontSize: 12.5, color: Color(0xFFB91C1C)),
+                            style: const TextStyle(
+                              fontSize: 12.5,
+                              color: Color(0xFFB91C1C),
+                            ),
                           ),
                         ),
                       ],
@@ -184,7 +222,10 @@ class _OtpPageState extends ConsumerState<OtpPage> {
                       ? const SizedBox(
                           width: 20,
                           height: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
                         )
                       : const Text('Verify & continue'),
                 ),
@@ -194,7 +235,10 @@ class _OtpPageState extends ConsumerState<OtpPage> {
                   children: [
                     const Text(
                       'Didn\'t receive it?',
-                      style: TextStyle(fontSize: 12.5, color: Color(0xFF64748B)),
+                      style: TextStyle(
+                        fontSize: 12.5,
+                        color: Color(0xFF64748B),
+                      ),
                     ),
                     TextButton(
                       onPressed: _resending ? null : _resend,
@@ -207,7 +251,11 @@ class _OtpPageState extends ConsumerState<OtpPage> {
                 const SizedBox(height: 16),
                 const Text(
                   'New to us? Add your name (optional)',
-                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Color(0xFF0F172A)),
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF0F172A),
+                  ),
                 ),
                 const SizedBox(height: 4),
                 const Text(
@@ -221,10 +269,13 @@ class _OtpPageState extends ConsumerState<OtpPage> {
                       child: TextFormField(
                         controller: _firstNameController,
                         textCapitalization: TextCapitalization.words,
-                        validator: (value) => value == null || value.trim().isEmpty
+                        validator: (value) =>
+                            value == null || value.trim().isEmpty
                             ? null
                             : Validators.name(value, label: 'First name'),
-                        decoration: const InputDecoration(labelText: 'First name'),
+                        decoration: const InputDecoration(
+                          labelText: 'First name',
+                        ),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -232,7 +283,9 @@ class _OtpPageState extends ConsumerState<OtpPage> {
                       child: TextFormField(
                         controller: _lastNameController,
                         textCapitalization: TextCapitalization.words,
-                        decoration: const InputDecoration(labelText: 'Last name'),
+                        decoration: const InputDecoration(
+                          labelText: 'Last name',
+                        ),
                       ),
                     ),
                   ],

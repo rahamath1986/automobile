@@ -74,17 +74,17 @@ class GaragePage extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SectionHeader(
-                    title: 'My vehicles',
+                    title: 'My Two-Wheelers & Garage',
                     subtitle: items.isEmpty
-                        ? 'Vehicles appear here after delivery'
-                        : '${items.length} owned vehicle${items.length == 1 ? '' : 's'}',
+                        ? 'Active registered rides & digital warranty'
+                        : '${items.length} registered vehicle${items.length == 1 ? '' : 's'} · Tap for health & live status',
                   ),
                   const SizedBox(height: 12),
                   if (items.isEmpty)
                     _NoVehicles()
                   else
                     ...items.map((vehicle) => Padding(
-                          padding: const EdgeInsets.only(bottom: 12),
+                          padding: const EdgeInsets.only(bottom: 14),
                           child: _VehicleCard(vehicle: vehicle),
                         )),
                 ],
@@ -95,8 +95,8 @@ class GaragePage extends ConsumerWidget {
               children: [
                 const Expanded(
                   child: SectionHeader(
-                    title: 'Service appointments',
-                    subtitle: 'Live status from the workshop',
+                    title: 'Service & Workshop Bookings',
+                    subtitle: 'Live bay updates, quotes & inspection history',
                   ),
                 ),
                 if (vehicles.value?.isNotEmpty ?? false)
@@ -146,44 +146,74 @@ class GaragePage extends ConsumerWidget {
   }
 }
 
-class _NoVehicles extends StatelessWidget {
+class _NoVehicles extends ConsumerWidget {
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: const BorderSide(color: Color(0xFFE2E8F0)),
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(18),
+        padding: const EdgeInsets.all(20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
                 Container(
-                  width: 44,
-                  height: 44,
+                  width: 48,
+                  height: 48,
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.08),
-                    borderRadius: BorderRadius.circular(12),
+                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(14),
                   ),
-                  child: Icon(Icons.two_wheeler_rounded, color: Theme.of(context).colorScheme.primary),
+                  child: Icon(Icons.two_wheeler_rounded, color: Theme.of(context).colorScheme.primary, size: 26),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 14),
                 const Expanded(
-                  child: Text(
-                    'No vehicle linked yet',
-                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Your Digital Two-Wheeler Garage',
+                        style: TextStyle(fontSize: 15.5, fontWeight: FontWeight.w700),
+                      ),
+                      SizedBox(height: 2),
+                      Text(
+                        'Delivery linkage in progress',
+                        style: TextStyle(fontSize: 12, color: Color(0xFF64748B)),
+                      ),
+                    ],
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 14),
             const Text(
-              'Once your vehicle is delivered, it will be linked to your mobile number automatically. You can then book service and follow the repair live.',
-              style: TextStyle(fontSize: 12.5, color: Color(0xFF64748B), height: 1.45),
+              'Upon handover, your vehicle registration, warranty coverage, and live telematics link directly to your mobile number. Tap below to preview sample garage records or browse our showroom.',
+              style: TextStyle(fontSize: 13, color: Color(0xFF475569), height: 1.5),
             ),
-            const SizedBox(height: 12),
-            OutlinedButton(
-              onPressed: () => context.go('/home'),
-              child: const Text('Explore models'),
+            const SizedBox(height: 16),
+            Wrap(
+              spacing: 10,
+              runSpacing: 10,
+              children: [
+                FilledButton.icon(
+                  onPressed: () {
+                    ref.invalidate(myVehiclesProvider);
+                    ref.invalidate(myServiceBookingsProvider);
+                  },
+                  icon: const Icon(Icons.sync_rounded, size: 18),
+                  label: const Text('Load sample garage'),
+                ),
+                OutlinedButton.icon(
+                  onPressed: () => context.go('/home'),
+                  icon: const Icon(Icons.motorcycle_rounded, size: 18),
+                  label: const Text('Explore showroom'),
+                ),
+              ],
             ),
           ],
         ),
@@ -203,13 +233,15 @@ class _VehicleCard extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: Column(
         children: [
-          SizedBox(
-            height: 130,
+          Container(
+            height: 140,
             width: double.infinity,
+            color: const Color(0xFFF8FAFC),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: RemoteImage(
               url: vehicle.heroImageUrl,
               fallbackAsset: RemoteImage.resolveVehicleAsset(vehicle.modelName),
-              fit: BoxFit.cover,
+              fit: BoxFit.contain,
             ),
           ),
           Padding(

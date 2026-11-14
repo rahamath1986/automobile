@@ -63,14 +63,17 @@ class RemoteImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Filter out old wikimedia delivery snapshots in favor of authentic bundled manufacturer assets
+    final isWikimediaDelivery = url != null && (url!.contains('upload.wikimedia.org') || url!.contains('wikipedia'));
+    final cleanUrl = isWikimediaDelivery ? null : url;
     final effectiveFallback = fallbackAsset ?? resolveVehicleAsset(url);
-    final isLocalAsset = url != null && url!.startsWith('assets/');
-    final isNetworkUrl = url != null && (url!.startsWith('http://') || url!.startsWith('https://'));
+    final isLocalAsset = cleanUrl != null && cleanUrl.startsWith('assets/');
+    final isNetworkUrl = cleanUrl != null && (cleanUrl.startsWith('http://') || cleanUrl.startsWith('https://'));
 
     Widget content;
     if (isLocalAsset) {
       content = Image.asset(
-        url!,
+        cleanUrl,
         fit: fit,
         width: width,
         height: height,
@@ -78,7 +81,7 @@ class RemoteImage extends StatelessWidget {
       );
     } else if (isNetworkUrl) {
       content = CachedNetworkImage(
-        imageUrl: url!,
+        imageUrl: cleanUrl,
         fit: fit,
         width: width,
         height: height,

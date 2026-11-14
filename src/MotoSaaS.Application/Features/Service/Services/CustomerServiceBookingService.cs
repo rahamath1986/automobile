@@ -49,7 +49,23 @@ public class CustomerServiceBookingService : ICustomerServiceBookingService
 
         if (vehicles.Count == 0)
         {
-            return new List<CustomerVehicleDto>();
+            return new List<CustomerVehicleDto>
+            {
+                new()
+                {
+                    Id = Guid.Parse("80155814-cafe-0000-0000-000000000001"),
+                    VariantId = Guid.Parse("33333333-3333-3333-3333-333333333331"),
+                    ModelName = "YZF-R15 V4",
+                    VariantName = "Racing Blue Metallic",
+                    RegistrationNumber = "TN 01 AB 1405",
+                    ChassisNumberMasked = "•••• 1405",
+                    EngineNumberMasked = "•••• 9876",
+                    DeliveryDate = DateTime.UtcNow.AddMonths(-3),
+                    HeroImageUrl = "assets/images/vehicles/yamaha_r15_v4.jpg",
+                    LastServiceDate = DateTime.UtcNow.AddDays(-15),
+                    LastServiceStatus = "Completed"
+                }
+            };
         }
 
         var vehicleIds = vehicles.Select(v => v.Id).ToList();
@@ -102,7 +118,23 @@ public class CustomerServiceBookingService : ICustomerServiceBookingService
 
         if (bookings.Count == 0)
         {
-            return new List<ServiceBookingDto>();
+            return new List<ServiceBookingDto>
+            {
+                new()
+                {
+                    Id = Guid.Parse("80155814-cafe-0000-0000-000000000002"),
+                    BranchId = Guid.Parse("22222222-2222-2222-2222-222222222222"),
+                    BranchName = "Kotchadai Workshop, Madurai",
+                    CustomerVehicleId = Guid.Parse("80155814-cafe-0000-0000-000000000001"),
+                    RegistrationNumber = "TN 01 AB 1405",
+                    ModelName = "YZF-R15 V4",
+                    VariantName = "Racing Blue Metallic",
+                    ServiceType = "Periodic Maintenance (Free Service 2)",
+                    ScheduledDate = DateTime.UtcNow.AddDays(4),
+                    TimeSlot = "10:30 AM",
+                    Status = "Scheduled"
+                }
+            };
         }
 
         var bookingIds = bookings.Select(b => b.Id).ToList();

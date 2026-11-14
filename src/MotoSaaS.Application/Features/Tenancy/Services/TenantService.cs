@@ -27,6 +27,41 @@ public class TenantService : ITenantService
             return null;
         }
 
+        var branches = tenant.Branches.Select(b => new BranchDto
+        {
+            Id = b.Id,
+            TenantId = b.TenantId,
+            Code = b.Code,
+            Name = b.Name,
+            AddressLine1 = b.AddressLine1,
+            City = b.City,
+            State = b.State,
+            PostalCode = b.PostalCode,
+            Phone = b.Phone,
+            Email = b.Email,
+            IsHeadquarters = b.IsHeadquarters,
+            IsActive = b.IsActive
+        }).ToList();
+
+        if (branches.Count == 0)
+        {
+            branches.Add(new BranchDto
+            {
+                Id = Guid.Parse("22222222-2222-2222-2222-222222222222"),
+                TenantId = tenant.Id,
+                Code = "KOTCHADAI",
+                Name = "Alagendra Kotchadai Branch",
+                AddressLine1 = "Theni Main Road, Kotchadai",
+                City = "Madurai",
+                State = "Tamil Nadu",
+                PostalCode = "625016",
+                Phone = "+91 80155 81405",
+                Email = "kotchadai@alagendra.in",
+                IsHeadquarters = true,
+                IsActive = true
+            });
+        }
+
         return new TenantDto
         {
             Id = tenant.Id,
@@ -35,24 +70,10 @@ public class TenantService : ITenantService
             TradeName = tenant.TradeName,
             TaxId = tenant.TaxId,
             LogoUrl = tenant.LogoUrl,
-            PrimaryColor = tenant.PrimaryColor,
-            SecondaryColor = tenant.SecondaryColor,
+            PrimaryColor = string.IsNullOrWhiteSpace(tenant.PrimaryColor) || tenant.PrimaryColor == "#002C6C" ? "#DC2626" : tenant.PrimaryColor,
+            SecondaryColor = string.IsNullOrWhiteSpace(tenant.SecondaryColor) || tenant.SecondaryColor == "#E60012" ? "#0F172A" : tenant.SecondaryColor,
             Status = tenant.Status.ToString().ToUpperInvariant(),
-            Branches = tenant.Branches.Select(b => new BranchDto
-            {
-                Id = b.Id,
-                TenantId = b.TenantId,
-                Code = b.Code,
-                Name = b.Name,
-                AddressLine1 = b.AddressLine1,
-                City = b.City,
-                State = b.State,
-                PostalCode = b.PostalCode,
-                Phone = b.Phone,
-                Email = b.Email,
-                IsHeadquarters = b.IsHeadquarters,
-                IsActive = b.IsActive
-            }).ToList()
+            Branches = branches
         };
     }
 
@@ -68,6 +89,41 @@ public class TenantService : ITenantService
             return null;
         }
 
+        var branches = tenant.Branches.Select(b => new BranchDto
+        {
+            Id = b.Id,
+            TenantId = b.TenantId,
+            Code = b.Code,
+            Name = b.Name,
+            AddressLine1 = b.AddressLine1,
+            City = b.City,
+            State = b.State,
+            PostalCode = b.PostalCode,
+            Phone = b.Phone,
+            Email = b.Email,
+            IsHeadquarters = b.IsHeadquarters,
+            IsActive = b.IsActive
+        }).ToList();
+
+        if (branches.Count == 0)
+        {
+            branches.Add(new BranchDto
+            {
+                Id = Guid.Parse("22222222-2222-2222-2222-222222222222"),
+                TenantId = tenant.Id,
+                Code = "KOTCHADAI",
+                Name = "Alagendra Kotchadai Branch",
+                AddressLine1 = "Theni Main Road, Kotchadai",
+                City = "Madurai",
+                State = "Tamil Nadu",
+                PostalCode = "625016",
+                Phone = "+91 80155 81405",
+                Email = "kotchadai@alagendra.in",
+                IsHeadquarters = true,
+                IsActive = true
+            });
+        }
+
         return new TenantDto
         {
             Id = tenant.Id,
@@ -76,30 +132,16 @@ public class TenantService : ITenantService
             TradeName = tenant.TradeName,
             TaxId = tenant.TaxId,
             LogoUrl = tenant.LogoUrl,
-            PrimaryColor = tenant.PrimaryColor,
-            SecondaryColor = tenant.SecondaryColor,
+            PrimaryColor = string.IsNullOrWhiteSpace(tenant.PrimaryColor) || tenant.PrimaryColor == "#002C6C" ? "#DC2626" : tenant.PrimaryColor,
+            SecondaryColor = string.IsNullOrWhiteSpace(tenant.SecondaryColor) || tenant.SecondaryColor == "#E60012" ? "#0F172A" : tenant.SecondaryColor,
             Status = tenant.Status.ToString().ToUpperInvariant(),
-            Branches = tenant.Branches.Select(b => new BranchDto
-            {
-                Id = b.Id,
-                TenantId = b.TenantId,
-                Code = b.Code,
-                Name = b.Name,
-                AddressLine1 = b.AddressLine1,
-                City = b.City,
-                State = b.State,
-                PostalCode = b.PostalCode,
-                Phone = b.Phone,
-                Email = b.Email,
-                IsHeadquarters = b.IsHeadquarters,
-                IsActive = b.IsActive
-            }).ToList()
+            Branches = branches
         };
     }
 
     public async Task<List<BranchDto>> GetBranchesByTenantIdAsync(Guid tenantId, CancellationToken cancellationToken = default)
     {
-        return await _context.Branches
+        var branches = await _context.Branches
             .Where(b => b.TenantId == tenantId && b.IsActive)
             .AsNoTracking()
             .Select(b => new BranchDto
@@ -118,6 +160,27 @@ public class TenantService : ITenantService
                 IsActive = b.IsActive
             })
             .ToListAsync(cancellationToken);
+
+        if (branches.Count == 0)
+        {
+            branches.Add(new BranchDto
+            {
+                Id = Guid.Parse("22222222-2222-2222-2222-222222222222"),
+                TenantId = tenantId,
+                Code = "KOTCHADAI",
+                Name = "Alagendra Kotchadai Branch",
+                AddressLine1 = "Theni Main Road, Kotchadai",
+                City = "Madurai",
+                State = "Tamil Nadu",
+                PostalCode = "625016",
+                Phone = "+91 80155 81405",
+                Email = "kotchadai@alagendra.in",
+                IsHeadquarters = true,
+                IsActive = true
+            });
+        }
+
+        return branches;
     }
 }
 

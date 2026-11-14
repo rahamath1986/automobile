@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/utils/formatters.dart';
-import '../../../core/widgets/app_states.dart';
 import '../../../core/widgets/remote_image.dart';
 import '../application/catalog_controllers.dart';
 
@@ -26,14 +25,52 @@ class ComparePage extends ConsumerWidget {
         ],
       ),
       body: items.isEmpty
-          ? EmptyState(
-              icon: Icons.compare_arrows_rounded,
-              title: 'No vehicles to compare',
-              message:
-                  'Select up to 3 variants while browsing models to compare prices, specifications and features side-by-side.',
-              action: FilledButton(
-                onPressed: () => context.go('/home'),
-                child: const Text('Browse showroom'),
+          ? Center(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 72,
+                      height: 72,
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.compare_arrows_rounded,
+                        size: 36,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                    const SizedBox(height: 18),
+                    const Text(
+                      'Side-by-Side Model Comparison',
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      'Compare power, top speed, mileage, on-road prices, and digital console features side-by-side.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 13, color: Color(0xFF64748B), height: 1.5),
+                    ),
+                    const SizedBox(height: 24),
+                    FilledButton.icon(
+                      onPressed: () {
+                        ref.read(comparisonControllerProvider.notifier).loadSampleComparison();
+                      },
+                      icon: const Icon(Icons.auto_awesome_rounded, size: 18),
+                      label: const Text('Compare Popular (R15 vs Aerox vs iQube)'),
+                    ),
+                    const SizedBox(height: 12),
+                    OutlinedButton.icon(
+                      onPressed: () => context.go('/home'),
+                      icon: const Icon(Icons.search_rounded, size: 18),
+                      label: const Text('Browse showroom catalogue'),
+                    ),
+                  ],
+                ),
               ),
             )
           : SingleChildScrollView(
@@ -107,13 +144,15 @@ class _ComparisonTable extends ConsumerWidget {
                       children: [
                         Stack(
                           children: [
-                            SizedBox(
+                            Container(
                               height: 96,
                               width: double.infinity,
+                              color: const Color(0xFFF8FAFC),
+                              padding: const EdgeInsets.all(4),
                               child: RemoteImage(
                                 url: heroImage,
                                 fallbackAsset: RemoteImage.resolveVehicleAsset('${item.model.code} ${item.variant.name}'),
-                                fit: BoxFit.cover,
+                                fit: BoxFit.contain,
                               ),
                             ),
                             Positioned(

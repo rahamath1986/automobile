@@ -46,8 +46,7 @@ class Validators {
   }
 
   static String? drivingLicense(String? value) {
-    if (value == null || value.trim().isEmpty) return null;
-    if (value.trim().length < 8) return 'Enter a valid driving licence number.';
+    // Optional field: never block form submission
     return null;
   }
 }

@@ -284,7 +284,7 @@ class _GalleryViewerState extends State<_GalleryViewer> {
                 .map((color) => color.imageUrl)
                 .firstOrNull,
             fallbackAsset: RemoteImage.resolveVehicleAsset(widget.asset.variantCode),
-            fit: BoxFit.cover,
+            fit: BoxFit.contain,
           ),
           const Positioned(
             bottom: 24,
@@ -306,10 +306,14 @@ class _GalleryViewerState extends State<_GalleryViewer> {
         PageView.builder(
           itemCount: frames.length,
           onPageChanged: (value) => setState(() => _index = value),
-          itemBuilder: (context, index) => RemoteImage(
-            url: frames[index],
-            fallbackAsset: RemoteImage.resolveVehicleAsset(widget.asset.variantCode),
-            fit: BoxFit.cover,
+          itemBuilder: (context, index) => Container(
+            color: const Color(0xFF0F172A),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+            child: RemoteImage(
+              url: frames[index],
+              fallbackAsset: RemoteImage.resolveVehicleAsset(widget.asset.variantCode),
+              fit: BoxFit.contain,
+            ),
           ),
         ),
         Positioned(

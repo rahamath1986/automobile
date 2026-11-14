@@ -31,10 +31,26 @@ class LoginRequired extends StatelessWidget {
       icon: icon,
       title: title,
       message: message,
-      action: FilledButton.icon(
-        onPressed: () => context.push(target),
-        icon: const Icon(Icons.login_rounded),
-        label: const Text('Sign in with mobile'),
+      action: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          FilledButton.icon(
+            onPressed: () => context.push(target),
+            icon: const Icon(Icons.login_rounded),
+            label: const Text('Sign in with mobile'),
+          ),
+          const SizedBox(height: 10),
+          ActionChip(
+            avatar: const Icon(Icons.verified_user_rounded, size: 16, color: Color(0xFF002C6C)),
+            label: const Text(
+              'Preload User: 8015581405 (Pass: 123456)',
+              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+            ),
+            backgroundColor: const Color(0xFFEBF3FC),
+            side: const BorderSide(color: Color(0xFFBED8F7)),
+            onPressed: () => context.push(target),
+          ),
+        ],
       ),
     );
   }

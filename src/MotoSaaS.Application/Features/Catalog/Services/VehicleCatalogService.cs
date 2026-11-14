@@ -576,7 +576,7 @@ public class VehicleCatalogService : IVehicleCatalogService
                 StartingPrice = 147000m,
                 VariantCount = 2,
                 ColorCount = 4,
-                HeroImageUrl = "https://upload.wikimedia.org/wikipedia/commons/6/60/2022_Yamaha_Aerox_155_ABS.jpg",
+                HeroImageUrl = "assets/images/vehicles/yamaha_aerox_155.jpg",
                 Has3DAsset = true,
                 Variants = new List<VehicleVariantDto>
                 {
@@ -591,8 +591,8 @@ public class VehicleCatalogService : IVehicleCatalogService
                         FeaturesJson = "{\"display\":\"LCD console\",\"lighting\":\"LED\",\"connectivity\":\"Y-Connect\",\"smartKey\":false}",
                         Colors = new List<VehicleColorDto>
                         {
-                            new() { Id = Guid.Parse("22222222-2222-2222-2222-222222222411"), VariantId = Guid.Parse("22222222-2222-2222-2222-222222222311"), ColorName = "Racing Blue", HexCode = "#002C6C", IsPrimary = true, ImageUrl = "https://upload.wikimedia.org/wikipedia/commons/6/60/2022_Yamaha_Aerox_155_ABS.jpg" },
-                            new() { Id = Guid.Parse("22222222-2222-2222-2222-222222222412"), VariantId = Guid.Parse("22222222-2222-2222-2222-222222222311"), ColorName = "Matte Black", HexCode = "#1A1A1A", ImageUrl = "https://upload.wikimedia.org/wikipedia/commons/6/60/2022_Yamaha_Aerox_155_ABS.jpg" }
+                            new() { Id = Guid.Parse("22222222-2222-2222-2222-222222222411"), VariantId = Guid.Parse("22222222-2222-2222-2222-222222222311"), ColorName = "Racing Blue", HexCode = "#002C6C", IsPrimary = true, ImageUrl = "assets/images/vehicles/yamaha_aerox_155.jpg" },
+                            new() { Id = Guid.Parse("22222222-2222-2222-2222-222222222412"), VariantId = Guid.Parse("22222222-2222-2222-2222-222222222311"), ColorName = "Matte Black", HexCode = "#1A1A1A", ImageUrl = "assets/images/vehicles/yamaha_aerox_155.jpg" }
                         },
                         Assets3D = new List<Asset3DDto>
                         {
@@ -610,8 +610,8 @@ public class VehicleCatalogService : IVehicleCatalogService
                         FeaturesJson = "{\"display\":\"LCD console\",\"lighting\":\"LED\",\"connectivity\":\"Y-Connect\",\"smartKey\":true}",
                         Colors = new List<VehicleColorDto>
                         {
-                            new() { Id = Guid.Parse("22222222-2222-2222-2222-222222222413"), VariantId = Guid.Parse("22222222-2222-2222-2222-222222222312"), ColorName = "Metallic Grey", HexCode = "#707070", IsPrimary = true, ImageUrl = "https://upload.wikimedia.org/wikipedia/commons/6/60/2022_Yamaha_Aerox_155_ABS.jpg" },
-                            new() { Id = Guid.Parse("22222222-2222-2222-2222-222222222414"), VariantId = Guid.Parse("22222222-2222-2222-2222-222222222312"), ColorName = "Racing Blue", HexCode = "#002C6C", ImageUrl = "https://upload.wikimedia.org/wikipedia/commons/6/60/2022_Yamaha_Aerox_155_ABS.jpg" }
+                            new() { Id = Guid.Parse("22222222-2222-2222-2222-222222222413"), VariantId = Guid.Parse("22222222-2222-2222-2222-222222222312"), ColorName = "Metallic Grey", HexCode = "#707070", IsPrimary = true, ImageUrl = "assets/images/vehicles/yamaha_aerox_155.jpg" },
+                            new() { Id = Guid.Parse("22222222-2222-2222-2222-222222222414"), VariantId = Guid.Parse("22222222-2222-2222-2222-222222222312"), ColorName = "Racing Blue", HexCode = "#002C6C", ImageUrl = "assets/images/vehicles/yamaha_aerox_155.jpg" }
                         },
                         Assets3D = new List<Asset3DDto>
                         {
@@ -634,7 +634,7 @@ public class VehicleCatalogService : IVehicleCatalogService
                 StartingPrice = 117000m,
                 VariantCount = 3,
                 ColorCount = 4,
-                HeroImageUrl = "https://upload.wikimedia.org/wikipedia/commons/8/83/Tvs_i_qube.jpg",
+                HeroImageUrl = "assets/images/vehicles/tvs_iqube.jpg",
                 Has3DAsset = true,
                 Variants = new List<VehicleVariantDto>
                 {
@@ -649,8 +649,8 @@ public class VehicleCatalogService : IVehicleCatalogService
                         FeaturesJson = "{\"display\":\"TFT\",\"connectivity\":\"SmartXonnect\",\"ridingModes\":3,\"regenerativeBraking\":true,\"fastCharging\":false}",
                         Colors = new List<VehicleColorDto>
                         {
-                            new() { Id = Guid.Parse("22222222-2222-2222-2222-222222222421"), VariantId = Guid.Parse("22222222-2222-2222-2222-222222222321"), ColorName = "Pearl White", HexCode = "#F7F7F7", IsPrimary = true, ImageUrl = "https://upload.wikimedia.org/wikipedia/commons/8/83/Tvs_i_qube.jpg" },
-                            new() { Id = Guid.Parse("22222222-2222-2222-2222-222222222422"), VariantId = Guid.Parse("22222222-2222-2222-2222-222222222321"), ColorName = "Titanium Grey", HexCode = "#5A5A5A", ImageUrl = "https://upload.wikimedia.org/wikipedia/commons/8/83/Tvs_i_qube.jpg" }
+                            new() { Id = Guid.Parse("22222222-2222-2222-2222-222222222421"), VariantId = Guid.Parse("22222222-2222-2222-2222-222222222321"), ColorName = "Pearl White", HexCode = "#F7F7F7", IsPrimary = true, ImageUrl = "assets/images/vehicles/tvs_iqube.jpg" },
+                            new() { Id = Guid.Parse("22222222-2222-2222-2222-222222222422"), VariantId = Guid.Parse("22222222-2222-2222-2222-222222222321"), ColorName = "Titanium Grey", HexCode = "#5A5A5A", ImageUrl = "assets/images/vehicles/tvs_iqube.jpg" }
                         },
                         Assets3D = new List<Asset3DDto>
                         {

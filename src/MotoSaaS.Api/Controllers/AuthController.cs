@@ -37,6 +37,10 @@ public class AuthController : BaseApiController
         {
             return Unauthorized(ApiResponse<object>.Failure(ex.Message, StatusCodes.Status401Unauthorized));
         }
+        catch (Exception ex)
+        {
+            return BadRequest(ApiResponse<object>.Failure(ex.Message, StatusCodes.Status400BadRequest));
+        }
     }
 
     /// <summary>
@@ -72,6 +76,10 @@ public class AuthController : BaseApiController
         {
             return Unauthorized(ApiResponse<object>.Failure(ex.Message, StatusCodes.Status401Unauthorized));
         }
+        catch (Exception ex)
+        {
+            return BadRequest(ApiResponse<object>.Failure(ex.Message, StatusCodes.Status400BadRequest));
+        }
     }
 
     /// <summary>
@@ -90,6 +98,10 @@ public class AuthController : BaseApiController
         catch (UnauthorizedAccessException ex)
         {
             return Unauthorized(ApiResponse<object>.Failure(ex.Message, StatusCodes.Status401Unauthorized));
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ApiResponse<object>.Failure(ex.Message, StatusCodes.Status400BadRequest));
         }
     }
 }

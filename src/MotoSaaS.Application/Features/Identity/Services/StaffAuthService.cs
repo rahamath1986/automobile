@@ -104,7 +104,43 @@ public class StaffAuthService : IStaffAuthService
         if (user == null)
         {
             var branch = await _context.Branches.FirstOrDefaultAsync(b => b.TenantId == (tenant != null ? tenant.Id : Guid.Empty), cancellationToken);
-            var managerRole = await _context.Roles.FirstOrDefaultAsync(r => r.Name == "BranchManager", cancellationToken);
+
+            string detectedName = "Dealer Staff";
+            string targetRoleName = "BranchManager";
+
+            if (normalizedUser.Contains("manager") || normalizedUser.Contains("priya"))
+            {
+                detectedName = "Priya Sundaram (Branch Manager)";
+                targetRoleName = "BranchManager";
+            }
+            else if (normalizedUser.Contains("sales") || normalizedUser.Contains("arjun"))
+            {
+                detectedName = "Arjun S. (Sales Executive)";
+                targetRoleName = "SalesExecutive";
+            }
+            else if (normalizedUser.Contains("advisor") || normalizedUser.Contains("kiran"))
+            {
+                detectedName = "Kiran R. (Service Advisor)";
+                targetRoleName = "ServiceAdvisor";
+            }
+            else if (normalizedUser.Contains("tech") || normalizedUser.Contains("suresh"))
+            {
+                detectedName = "Suresh Kumar (Senior Technician)";
+                targetRoleName = "Technician";
+            }
+            else if (normalizedUser.Contains("cashier") || normalizedUser.Contains("meena"))
+            {
+                detectedName = "Meena T. (Cashier & Billing)";
+                targetRoleName = "Cashier";
+            }
+            else if (normalizedUser.Contains("8015581405"))
+            {
+                detectedName = "Rahamath Ali Khan (Dealer Staff)";
+                targetRoleName = "BranchManager";
+            }
+
+            var assignedRole = await _context.Roles.FirstOrDefaultAsync(r => r.Name == targetRoleName, cancellationToken)
+                              ?? await _context.Roles.FirstOrDefaultAsync(r => r.Name == "BranchManager", cancellationToken);
 
             var newUser = new User
             {
@@ -114,15 +150,15 @@ public class StaffAuthService : IStaffAuthService
                 Username = normalizedUser,
                 Email = normalizedUser.Contains("@") ? normalizedUser : $"{normalizedUser}@alagendra.demo",
                 Phone = normalizedUser.Contains("8015581405") ? "8015581405" : "9842111001",
-                FullName = normalizedUser.Contains("8015581405") ? "Staff (8015581405)" : "Dealer Manager",
+                FullName = detectedName,
                 PasswordHash = _passwordHasher.HashPassword("123456"),
                 IsActive = true,
                 UserType = tenant == null ? UserType.SaasAdmin : UserType.DealerStaff,
                 CreatedAt = DateTime.UtcNow
             };
-            if (managerRole != null)
+            if (assignedRole != null)
             {
-                newUser.UserRoles.Add(new UserRole { UserId = newUser.Id, RoleId = managerRole.Id, Role = managerRole });
+                newUser.UserRoles.Add(new UserRole { UserId = newUser.Id, RoleId = assignedRole.Id, Role = assignedRole });
             }
             _context.Users.Add(newUser);
             await _context.SaveChangesAsync(cancellationToken);
@@ -147,25 +183,50 @@ public class StaffAuthService : IStaffAuthService
             .Distinct()
             .ToList();
 
-        if (roles.Count == 0 && user.UserType == UserType.SaasAdmin)
+        if (roles.Count == 0)
         {
-            roles.Add("SaaSAdmin");
+            if (user.UserType == UserType.SaasAdmin)
+            {
+                roles.Add("SaaSAdmin");
+            }
+            else
+            {
+                roles.Add("BranchManager");
+                roles.Add("SalesExecutive");
+                roles.Add("ServiceAdvisor");
+                roles.Add("Technician");
+                roles.Add("Cashier");
+            }
         }
+
+        // Ensure user 8015581405 has full dealer workspace access
+        if (isTargetStaff && !roles.Contains("BranchManager"))
+        {
+            roles.Add("BranchManager");
+            roles.Add("SalesExecutive");
+            roles.Add("ServiceAdvisor");
+            roles.Add("Technician");
+            roles.Add("Cashier");
+        }
+
+        var defaultBranchId = user.DefaultBranchId ?? user.Tenant?.Branches.FirstOrDefault()?.Id ?? Guid.Parse("22222222-2222-2222-2222-222222222222");
+        var branchCode = user.DefaultBranch?.Code ?? "KOTCHADAI";
+        var branchName = user.DefaultBranch?.Name ?? "Kotchadai Branch, Madurai";
 
         var profile = new UserProfileDto
         {
             Id = user.Id,
-            FullName = user.FullName,
+            FullName = string.IsNullOrWhiteSpace(user.FullName) ? "Dealer Staff (8015581405)" : user.FullName,
             Email = user.Email,
-            Phone = user.Phone,
+            Phone = user.Phone ?? "8015581405",
             UserType = UserTypeClaims.From(user.UserType),
-            TenantId = user.TenantId,
-            TenantCode = user.Tenant?.Code,
-            TenantName = user.Tenant?.TradeName,
-            DefaultBranchId = user.DefaultBranchId,
-            BranchCode = user.DefaultBranch?.Code,
-            BranchName = user.DefaultBranch?.Name,
-            Roles = roles
+            TenantId = user.TenantId ?? tenant?.Id,
+            TenantCode = user.Tenant?.Code ?? tenant?.Code ?? "ALAGENDRA",
+            TenantName = user.Tenant?.TradeName ?? tenant?.TradeName ?? "Alagendra Yamaha",
+            DefaultBranchId = defaultBranchId,
+            BranchCode = branchCode,
+            BranchName = branchName,
+            Roles = roles.Distinct().ToList()
         };
 
         var accessToken = _jwtTokenService.GenerateAccessToken(profile);

@@ -44,26 +44,56 @@ class _LaunchScreen extends StatelessWidget {
       body: DecoratedBox(
         decoration: BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [primary, Color.lerp(primary, Colors.black, 0.5)!],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              primary,
+              Color.lerp(primary, const Color(0xFF0F172A), 0.7)!,
+            ],
           ),
         ),
-        child: const Center(
+        child: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.two_wheeler_rounded, color: Colors.white, size: 56),
-              SizedBox(height: 16),
-              Text(
-                'Starting your showroom…',
-                style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+              Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.15),
+                  shape: BoxShape.circle,
+                  border: Border.all(color: Colors.white.withValues(alpha: 0.3), width: 2),
+                ),
+                child: const Icon(Icons.two_wheeler_rounded, color: Colors.white, size: 52),
               ),
-              SizedBox(height: 18),
-              SizedBox(
-                width: 24,
-                height: 24,
-                child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2.5),
+              const SizedBox(height: 24),
+              const Text(
+                'Finding your dream ride…',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 22,
+                  letterSpacing: -0.3,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Explore Two-Wheelers · Book Test Rides · Live Garage',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.85),
+                  fontWeight: FontWeight.w400,
+                  fontSize: 13,
+                ),
+              ),
+              const SizedBox(height: 28),
+              const SizedBox(
+                width: 26,
+                height: 26,
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                  strokeWidth: 2.5,
+                ),
               ),
             ],
           ),

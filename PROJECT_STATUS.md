@@ -48,7 +48,7 @@ Per the master execution rules, development is gated strictly by sequential phas
 | **Phase 11** | Service Management & Workshop | **Completed** | Check-in, digital job cards, estimates, technician assignment, QC check, service invoicing, closure & feedback; 6 unit tests |
 | **Phase 12** | Dealer Staff Flutter Experience | **Completed** | Role-adaptive mobile workspace (Sales, Advisor, Tech, Cashier, Manager), profile navigation link, 35 Flutter unit tests pass |
 | **Phase 13** | Dealer Branch Management Portal | **Completed** | Next.js 14 / TypeScript responsive web portal (`web/branch_portal`) covering Dashboard, Sales CRM, Quotation/EMI Studio, VIN/Chassis inventory, Service Workshop bays, and Cashier billing |
-| **Phase 14** | Dealer Org Admin Portal | Pending | Multi-branch oversight, staff permissions, inventory, branding, reports |
+| **Phase 14** | Dealer Org Admin Portal | **Completed** | Next.js 14 / TypeScript executive web portal (`web/org_admin_portal`) covering Multi-Branch Command Center, Dealership Branches, Personnel & RBAC, Pricing Rules & Discount limits, Stock Transfers, and Financial Audits |
 | **Phase 15** | SaaS Super Admin Portal | Pending | Tenant onboarding, subscription management, platform metrics, audit |
 | **Phase 16** | Demo Data, Reports & Integrations | Pending | Unified seeder, consolidated reporting dashboard, integration adapters |
 | **Phase 17** | Security, Testing & Performance | Pending | Cross-tenant isolation validation, security penetration audit, load testing |

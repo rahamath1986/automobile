@@ -77,11 +77,12 @@ class _EnquiryPageState extends ConsumerState<EnquiryPage> {
   Future<void> _submit() async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
-    final branchId = _branchId;
-    if (branchId == null || branchId.isEmpty) {
-      _showError('Please choose a dealership branch.');
-      return;
-    }
+    final branches = ref.read(branchesProvider).value ?? const <DealershipBranch>[];
+    final branchId = (_branchId != null && _branchId!.isNotEmpty)
+        ? _branchId!
+        : (widget.branchId.isNotEmpty
+            ? widget.branchId
+            : (branches.isNotEmpty ? branches.first.id : '22222222-2222-2222-2222-222222222222'));
 
     setState(() => _submitting = true);
 
@@ -128,7 +129,9 @@ class _EnquiryPageState extends ConsumerState<EnquiryPage> {
     final session = ref.watch(authControllerProvider).value;
     final branches = ref.watch(branchesProvider).value ?? const <DealershipBranch>[];
     final effectiveBranchId = _branchId ??
-        (branches.isEmpty ? null : branches.first.id);
+        (widget.branchId.isNotEmpty
+            ? widget.branchId
+            : (branches.isNotEmpty ? branches.first.id : '22222222-2222-2222-2222-222222222222'));
     final selectedBranch = branches.where((branch) => branch.id == effectiveBranchId).firstOrNull;
 
     if (_submitted != null) {

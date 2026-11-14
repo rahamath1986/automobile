@@ -89,11 +89,12 @@ class _TestRidePageState extends ConsumerState<TestRidePage> {
   Future<void> _submit() async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
-    final branchId = _branchId;
-    if (branchId == null || branchId.isEmpty) {
-      _showError('Please choose a dealership branch.');
-      return;
-    }
+    final branches = ref.read(branchesProvider).value ?? const <DealershipBranch>[];
+    final branchId = (_branchId != null && _branchId!.isNotEmpty)
+        ? _branchId!
+        : (widget.branchId.isNotEmpty
+            ? widget.branchId
+            : (branches.isNotEmpty ? branches.first.id : '22222222-2222-2222-2222-222222222222'));
 
     final slotHour = _timeSlots.firstWhere((slot) => slot.$1 == _slot).$2;
     final scheduledAt = DateTime(_date.year, _date.month, _date.day, slotHour);
@@ -142,7 +143,10 @@ class _TestRidePageState extends ConsumerState<TestRidePage> {
   Widget build(BuildContext context) {
     final session = ref.watch(authControllerProvider).value;
     final branches = ref.watch(branchesProvider).value ?? const <DealershipBranch>[];
-    final effectiveBranchId = _branchId ?? (branches.isEmpty ? null : branches.first.id);
+    final effectiveBranchId = _branchId ??
+        (widget.branchId.isNotEmpty
+            ? widget.branchId
+            : (branches.isNotEmpty ? branches.first.id : '22222222-2222-2222-2222-222222222222'));
     final selectedBranch = branches.where((branch) => branch.id == effectiveBranchId).firstOrNull;
 
     if (_submitted != null) {
@@ -341,7 +345,7 @@ class _TestRidePageState extends ConsumerState<TestRidePage> {
                 controller: _licenseController,
                 textCapitalization: TextCapitalization.characters,
                 textInputAction: TextInputAction.next,
-                validator: Validators.drivingLicense,
+                validator: null, // Driving licence is strictly optional
                 decoration: const InputDecoration(
                   labelText: 'Driving licence (optional)',
                   hintText: 'KA01 20200000000',

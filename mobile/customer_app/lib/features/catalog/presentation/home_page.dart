@@ -77,6 +77,19 @@ class _HomePageState extends ConsumerState<HomePage> {
                 ),
               ),
               SliverPadding(
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+                sliver: SliverToBoxAdapter(
+                  child: _QuickActionGrid(
+                    onNewVehicles: () => ref.read(catalogFilterProvider.notifier).clear(),
+                    onOffers: () => _showOffersModal(context),
+                    onService: () => context.push('/service/book'),
+                    onTestRide: () => _focusCatalog(context),
+                    onFindStore: () => _showStoreDialog(context),
+                    onSupport: () => _showContact(context, branding),
+                  ),
+                ),
+              ),
+              SliverPadding(
                 padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                 sliver: SliverToBoxAdapter(
                   child: TextField(
@@ -235,6 +248,303 @@ class _HomePageState extends ConsumerState<HomePage> {
       curve: Curves.easeOutCubic,
     );
   }
+
+  void _showStoreDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFEF2F2),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(Icons.storefront_rounded, color: Color(0xFFDC2626), size: 22),
+            ),
+            const SizedBox(width: 10),
+            const Expanded(
+              child: Text(
+                'Alagendra Dealership',
+                style: TextStyle(fontWeight: FontWeight.w800, fontSize: 17),
+              ),
+            ),
+          ],
+        ),
+        content: const Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Kotchadai Branch (Authorised Dealership)',
+              style: TextStyle(fontWeight: FontWeight.w800, fontSize: 14, color: Color(0xFF0F172A)),
+            ),
+            SizedBox(height: 6),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(Icons.location_on_outlined, size: 16, color: Color(0xFF64748B)),
+                SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    'Theni Main Road, Kotchadai, Madurai, Tamil Nadu - 625016',
+                    style: TextStyle(fontSize: 12.5, color: Color(0xFF475569)),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 8),
+            Row(
+              children: [
+                Icon(Icons.access_time_rounded, size: 16, color: Color(0xFF64748B)),
+                SizedBox(width: 6),
+                Text('09:00 AM - 08:00 PM · Open Today', style: TextStyle(fontSize: 12, color: Color(0xFF10B981), fontWeight: FontWeight.w700)),
+              ],
+            ),
+            SizedBox(height: 8),
+            Row(
+              children: [
+                Icon(Icons.phone_outlined, size: 16, color: Color(0xFF64748B)),
+                SizedBox(width: 6),
+                Text('+91 80155 81405 / 0452-2458900', style: TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600, color: Color(0xFF0F172A))),
+              ],
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Close')),
+          FilledButton.icon(
+            onPressed: () {
+              Navigator.pop(ctx);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Opening Google Maps navigation to Kotchadai branch, Madurai...')),
+              );
+            },
+            icon: const Icon(Icons.directions_rounded, size: 16),
+            label: const Text('Get Directions'),
+            style: FilledButton.styleFrom(backgroundColor: const Color(0xFFDC2626)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showOffersModal(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (ctx) => Padding(
+        padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'Festive & Exclusive Offers',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: Color(0xFF0F172A)),
+            ),
+            const SizedBox(height: 4),
+            const Text('Available at Alagendra Kotchadai Branch', style: TextStyle(fontSize: 12, color: Color(0xFF64748B))),
+            const SizedBox(height: 14),
+            _offerCard(
+              title: 'Exchange Your Old 2-Wheeler',
+              desc: 'Get Best Value + Exclusive ₹5,000* Exchange Bonus on new purchases.',
+              badge: 'LIMITED PERIOD',
+              icon: Icons.sync_alt_rounded,
+            ),
+            const SizedBox(height: 10),
+            _offerCard(
+              title: '10% OFF on Paid Service',
+              desc: 'Includes synthetic oil change and multi-point safety check. Valid till 30 Nov 2026.',
+              badge: 'WORKSHOP',
+              icon: Icons.percent_rounded,
+            ),
+            const SizedBox(height: 10),
+            _offerCard(
+              title: 'Free 24-Point Health Check-up',
+              desc: 'Complimentary battery, brakes, and electrical health check for all 2-wheelers.',
+              badge: 'FREE',
+              icon: Icons.health_and_safety_outlined,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _offerCard({required String title, required String desc, required String badge, required IconData icon}) {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFEF2F2),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xFFFECACA)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: const Color(0xFFDC2626),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Icon(icon, color: Colors.white, size: 20),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text(title, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13.5, color: Color(0xFF0F172A))),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(color: const Color(0xFFDC2626), borderRadius: BorderRadius.circular(4)),
+                      child: Text(badge, style: const TextStyle(color: Colors.white, fontSize: 9.5, fontWeight: FontWeight.w900)),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Text(desc, style: const TextStyle(fontSize: 12, color: Color(0xFF475569))),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showContact(BuildContext context, Branding branding) {
+    showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      builder: (context) => Padding(
+        padding: const EdgeInsets.fromLTRB(24, 0, 24, 32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Talk to ${branding.tradeName}',
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800),
+            ),
+            const SizedBox(height: 16),
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: const Icon(Icons.call_rounded, color: Color(0xFFDC2626)),
+              title: Text(branding.supportPhone ?? '+91 80155 81405'),
+              subtitle: const Text('Kotchadai branch sales & service helpline'),
+            ),
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              leading: const Icon(Icons.location_on_outlined, color: Color(0xFFDC2626)),
+              title: const Text('Kotchadai Branch, Madurai'),
+              subtitle: const Text('Theni Main Road, Kotchadai, Madurai - 625016'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _QuickActionGrid extends StatelessWidget {
+  const _QuickActionGrid({
+    required this.onNewVehicles,
+    required this.onOffers,
+    required this.onService,
+    required this.onTestRide,
+    required this.onFindStore,
+    required this.onSupport,
+  });
+
+  final VoidCallback onNewVehicles;
+  final VoidCallback onOffers;
+  final VoidCallback onService;
+  final VoidCallback onTestRide;
+  final VoidCallback onFindStore;
+  final VoidCallback onSupport;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: const Color(0xFFE8EDF5)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.02),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _actionItem(Icons.two_wheeler_rounded, 'New Vehicles', onNewVehicles),
+              _actionItem(Icons.local_offer_outlined, 'Offers', onOffers),
+              _actionItem(Icons.build_circle_outlined, 'Service', onService),
+            ],
+          ),
+          const SizedBox(height: 14),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _actionItem(Icons.speed_rounded, 'Test Ride', onTestRide),
+              _actionItem(Icons.storefront_outlined, 'Find a Store', onFindStore),
+              _actionItem(Icons.support_agent_rounded, 'Support', onSupport),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _actionItem(IconData icon, String label, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        child: Column(
+          children: [
+            Container(
+              width: 48,
+              height: 48,
+              decoration: BoxDecoration(
+                color: const Color(0xFFFEF2F2),
+                shape: BoxShape.circle,
+                border: Border.all(color: const Color(0xFFFECACA), width: 1),
+              ),
+              child: Icon(icon, color: const Color(0xFFDC2626), size: 22),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              label,
+              style: const TextStyle(
+                fontSize: 11.5,
+                fontWeight: FontWeight.w700,
+                color: Color(0xFF334155),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 class _Header extends StatelessWidget {
@@ -336,6 +646,121 @@ class _Header extends StatelessWidget {
               ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class CatalogHeroBanner extends StatelessWidget {
+  const CatalogHeroBanner({super.key, required this.onBrowse});
+
+  final VoidCallback onBrowse;
+
+  @override
+  Widget build(BuildContext context) {
+    final primary = Theme.of(context).colorScheme.primary;
+
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            primary,
+            Color.lerp(primary, const Color(0xFF0F172A), 0.6)!,
+          ],
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: primary.withValues(alpha: 0.25),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: Stack(
+        children: [
+          Positioned(
+            right: -20,
+            bottom: -20,
+            child: Icon(
+              Icons.two_wheeler_rounded,
+              size: 160,
+              color: Colors.white.withValues(alpha: 0.08),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(22),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4.5),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.18),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: Colors.white.withValues(alpha: 0.25)),
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.stars_rounded, size: 14, color: Color(0xFFFDE047)),
+                      SizedBox(width: 4),
+                      Text(
+                        'Direct From Manufacturer',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.3,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  'Explore New Motorcycles\n& Electric Scooters',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w800,
+                    height: 1.25,
+                    letterSpacing: -0.4,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Authentic models, 360° studio views & instant test rides',
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.85),
+                    fontSize: 12.5,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                FilledButton(
+                  onPressed: onBrowse,
+                  style: FilledButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    foregroundColor: const Color(0xFF0F172A),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    textStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text('Browse Showroom'),
+                      SizedBox(width: 6),
+                      Icon(Icons.arrow_downward_rounded, size: 15),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
