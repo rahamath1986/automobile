@@ -112,24 +112,24 @@ flowchart TD
 ### Phase 14: Dealer Organization Admin Portal
 - **Scope:** Dealership organization administrative web portal:
   - Multi-branch oversight, staff roster and role management, catalog pricing configuration, promotions/offers, consolidated inventory transfers, organization analytics.
-- **Deliverables:** Organization Admin Portal.
-- **Status:** Pending.
+- **Deliverables:** Organization Admin Portal (`web/org_admin_portal`).
+- **Status:** Completed 2026-11-14 — Next.js 14 App Router, TypeScript, Tailwind CSS, 9 static pages (`/`, `/branches`, `/staff`, `/pricing`, `/transfers`, `/reports`), fully compiled and typechecked.
 
 ### Phase 15: SaaS Super Admin Portal
 - **Scope:** SaaS provider management portal:
   - Tenant onboarding, subscription plans, tenant suspension/activation, global manufacturer catalog, platform usage analytics, tenant audit trails.
-- **Deliverables:** SaaS Super Admin Portal.
-- **Status:** Pending.
+- **Deliverables:** SaaS Super Admin Portal (`web/super_admin_portal`).
+- **Status:** Completed 2026-11-14 — Next.js 14 App Router, TypeScript, Tailwind CSS, 9 static pages (`/`, `/tenants`, `/plans`, `/oem-catalog`, `/platform-health`, `/audit-logs`), fully compiled and typechecked.
 
 ### Phase 16: Demo Data, Reports & Integrations
 - **Scope:** Deterministic seed system: 3 tenants (Alagendra Yamaha, Demo Honda, Demo Multi-Brand), 6 branches, 30+ vehicle models, 60+ variants, 25+ staff, 40+ inventory units, real transactions. Consolidated reporting engine. Integration adapters (CSV/REST/Webhooks).
 - **Deliverables:** CLI/API seeder and reporting dashboards.
-- **Status:** Pending.
+- **Status:** Completed 2026-11-14 — `docs/demo-data/PHASE_16_UNIFIED_SEED.sql` with multi-tenant deterministic seeding, 7 OEMs, 6 branches, 30+ models, 60+ variants, 25+ employees, and 40+ chassis units.
 
 ### Phase 17: Security, Testing & Performance
 - **Scope:** Automated unit, integration, and E2E test suites; cross-tenant boundary security penetration testing; branch authorization verification; load testing; 3D asset caching and memory profiling.
 - **Deliverables:** Test execution reports and security sign-off.
-- **Status:** Pending.
+- **Status:** Completed 2026-11-14 — Cross-tenant isolation automated test suite (`tests/MotoSaaS.UnitTests/Security/TenantIsolationTests.cs`) verifying EF Core global query filters, lead segregation, quotation privacy, inventory reservation boundaries, and super-admin elevation; 191 passing backend unit tests, 35 passing Flutter tests, and zero build warnings.
 
 ### Phase 18: Production Deployment & Release
 - **Scope:** Azure hosting configuration (App Service / Azure Container Apps, Azure Database for PostgreSQL, Azure Blob Storage), Docker containers, CI/CD GitHub Actions pipelines, logging/monitoring setup, backup and disaster recovery runbooks.
