@@ -11,7 +11,13 @@ Library/
 *.log
 *.sqlite
 
-# .NET build artifacts
+# Mobile / Flutter / Android build artifacts
+.gradle/
+**/android/.gradle/
+**/android/.kotlin/
+**/android/build/
+**/build/
+.dart_tool/
 bin/
 obj/
 *.user
