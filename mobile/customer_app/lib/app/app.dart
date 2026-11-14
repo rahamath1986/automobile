@@ -39,90 +39,20 @@ class _LaunchScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return const Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Column(
           children: [
-            const Spacer(flex: 3),
+            Spacer(flex: 4),
 
-            // Alagendra Logo & Brand Tagline
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  width: 42,
-                  height: 42,
-                  decoration: const BoxDecoration(
-                    color: Color(0xFFDC2626),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Center(
-                    child: Icon(Icons.two_wheeler_rounded, color: Colors.white, size: 26),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    RichText(
-                      text: const TextSpan(
-                        text: 'Alagendra',
-                        style: TextStyle(
-                          fontSize: 26,
-                          fontWeight: FontWeight.w900,
-                          color: Color(0xFF0F172A),
-                          letterSpacing: -0.6,
-                        ),
-                      ),
-                    ),
-                    const Text(
-                      'AUTOMOBILES',
-                      style: TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w800,
-                        color: Color(0xFFDC2626),
-                        letterSpacing: 2.5,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            const Text(
-              'Your Trusted 2-Wheeler Partner',
-              style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-                color: Color(0xFF64748B),
-                letterSpacing: 0.2,
-              ),
-            ),
+            // Prominent Brand Logo & Identity (No vehicle image)
+            _BrandLogoCenter(),
 
-            const Spacer(flex: 2),
+            Spacer(flex: 4),
 
-            // Sports Motorcycle Hero Illustration
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: SizedBox(
-                height: 220,
-                child: Image.asset(
-                  'assets/images/vehicles/yamaha_r15_red.jpg',
-                  fit: BoxFit.contain,
-                  errorBuilder: (_, __, ___) => const Icon(
-                    Icons.two_wheeler_rounded,
-                    size: 96,
-                    color: Color(0xFFDC2626),
-                  ),
-                ),
-              ),
-            ),
-
-            const Spacer(flex: 3),
-
-            // Subtle Loading Progress Indicator (No bottom sheet)
-            const SizedBox(
+            // Subtle Loading Progress Indicator
+            SizedBox(
               width: 24,
               height: 24,
               child: CircularProgressIndicator(
@@ -130,20 +60,91 @@ class _LaunchScreen extends StatelessWidget {
                 color: Color(0xFFDC2626),
               ),
             ),
-            const SizedBox(height: 12),
-            const Text(
-              'Explore · Buy · Service · Track · Offers',
+            SizedBox(height: 14),
+            Text(
+              'Alagendra Automobiles · Kotchadai, Madurai',
               style: TextStyle(
                 color: Color(0xFF94A3B8),
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
-                letterSpacing: 0.3,
+                letterSpacing: 0.2,
               ),
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: 28),
           ],
         ),
       ),
+    );
+  }
+}
+
+class _BrandLogoCenter extends StatelessWidget {
+  const _BrandLogoCenter();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // Prominent Logo Icon Emblem
+        Container(
+          width: 88,
+          height: 88,
+          decoration: BoxDecoration(
+            color: const Color(0xFFDC2626),
+            borderRadius: BorderRadius.circular(26),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFFDC2626).withValues(alpha: 0.28),
+                blurRadius: 24,
+                offset: const Offset(0, 10),
+              ),
+            ],
+          ),
+          child: const Center(
+            child: Icon(
+              Icons.two_wheeler_rounded,
+              color: Colors.white,
+              size: 50,
+            ),
+          ),
+        ),
+        const SizedBox(height: 22),
+
+        // Brand Name Text
+        const Text(
+          'Alagendra',
+          style: TextStyle(
+            fontSize: 32,
+            fontWeight: FontWeight.w900,
+            color: Color(0xFF0F172A),
+            letterSpacing: -0.8,
+            height: 1.1,
+          ),
+        ),
+        const SizedBox(height: 4),
+        const Text(
+          'AUTOMOBILES',
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.w800,
+            color: Color(0xFFDC2626),
+            letterSpacing: 4.0,
+          ),
+        ),
+        const SizedBox(height: 12),
+
+        // Tagline
+        const Text(
+          'Your Trusted 2-Wheeler Partner',
+          style: TextStyle(
+            fontSize: 14.5,
+            fontWeight: FontWeight.w500,
+            color: Color(0xFF64748B),
+            letterSpacing: 0.2,
+          ),
+        ),
+      ],
     );
   }
 }
