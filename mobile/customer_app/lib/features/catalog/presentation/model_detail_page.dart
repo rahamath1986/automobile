@@ -889,16 +889,6 @@ class _BikeWale360ViewerState extends State<_BikeWale360Viewer> {
       _degrees,
     );
 
-    final colorName = (widget.color?.colorName ?? '').toLowerCase();
-    String prefix = 'scooter';
-    if (colorName.contains('blue') || colorName.contains('racing')) {
-      prefix = 'scooter_blue';
-    } else if (colorName.contains('black') || colorName.contains('dark')) {
-      prefix = 'scooter_black';
-    } else if (colorName.contains('grey') || colorName.contains('silver')) {
-      prefix = 'scooter_grey';
-    }
-
     return GestureDetector(
       onHorizontalDragUpdate: (details) {
         if (_isAutoSpinning) _toggleAutoSpin();
@@ -953,7 +943,7 @@ class _BikeWale360ViewerState extends State<_BikeWale360Viewer> {
             // Main Vehicle Photography Display (100% visible, BoxFit.contain)
             Center(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 20, 16, 50),
+                padding: const EdgeInsets.fromLTRB(20, 68, 20, 56),
                 child: Transform(
                   alignment: Alignment.center,
                   transform: isMirrored ? Matrix4.rotationY(math.pi) : Matrix4.identity(),
@@ -965,51 +955,21 @@ class _BikeWale360ViewerState extends State<_BikeWale360Viewer> {
               ),
             ),
 
-            // Top Mode Selection Pills (Matching Image 1)
-            Positioned(
-              top: 52,
-              left: 14,
-              child: Wrap(
-                spacing: 6,
-                children: [
-                  _modePill('Front', _ViewMode.front, Icons.arrow_upward_rounded),
-                  _modePill('Rear', _ViewMode.rear, Icons.arrow_downward_rounded),
-                  _modePill('Side', _ViewMode.side, Icons.swap_horiz_rounded),
-                  _modePill('360°', _ViewMode.rotation360, Icons.sync_rounded),
-                ],
-              ),
-            ),
-
-            // Right-side angle thumbnails preview gallery (Matching Image 1)
-            Positioned(
-              right: 12,
-              top: 60,
-              child: Column(
-                children: [
-                  _angleThumbnail('Front', 'assets/images/vehicles/${prefix}_front.jpg', _ViewMode.front),
-                  const SizedBox(height: 8),
-                  _angleThumbnail('Rear', 'assets/images/vehicles/${prefix}_rear.jpg', _ViewMode.rear),
-                  const SizedBox(height: 8),
-                  _angleThumbnail('Side', 'assets/images/vehicles/${prefix}_side.jpg', _ViewMode.side),
-                ],
-              ),
-            ),
-
             // Bottom 360 Scrubber & Controller (Active when 360° rotation selected)
             if (_activeMode == _ViewMode.rotation360)
               Positioned(
-                bottom: 8,
-                left: 14,
-                right: 14,
+                bottom: 58,
+                left: 20,
+                right: 20,
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF0F172A).withValues(alpha: 0.90),
+                    color: const Color(0xFF0F172A).withValues(alpha: 0.92),
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(color: Colors.white.withValues(alpha: 0.18)),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withValues(alpha: 0.35),
+                        color: Colors.black.withValues(alpha: 0.25),
                         blurRadius: 10,
                         offset: const Offset(0, 4),
                       ),
@@ -1035,7 +995,7 @@ class _BikeWale360ViewerState extends State<_BikeWale360Viewer> {
                                 trackHeight: 3,
                                 thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 6),
                                 overlayShape: const RoundSliderOverlayShape(overlayRadius: 12),
-                                activeTrackColor: const Color(0xFF38BDF8),
+                                activeTrackColor: const Color(0xFFDC2626),
                                 inactiveTrackColor: Colors.white24,
                                 thumbColor: Colors.white,
                               ),
@@ -1060,7 +1020,7 @@ class _BikeWale360ViewerState extends State<_BikeWale360Viewer> {
                             visualDensity: VisualDensity.compact,
                             padding: EdgeInsets.zero,
                             iconSize: 20,
-                            color: _isAutoSpinning ? const Color(0xFF38BDF8) : Colors.white,
+                            color: _isAutoSpinning ? const Color(0xFFDC2626) : Colors.white,
                             onPressed: _toggleAutoSpin,
                             icon: Icon(
                               _isAutoSpinning ? Icons.pause_circle_filled_rounded : Icons.play_circle_fill_rounded,
@@ -1085,7 +1045,7 @@ class _BikeWale360ViewerState extends State<_BikeWale360Viewer> {
                             Text(
                               '${_degrees.round()}° / 360°',
                               style: const TextStyle(
-                                color: Color(0xFF38BDF8),
+                                color: Color(0xFFEF4444),
                                 fontSize: 10,
                                 fontWeight: FontWeight.w700,
                               ),
@@ -1096,35 +1056,43 @@ class _BikeWale360ViewerState extends State<_BikeWale360Viewer> {
                     ],
                   ),
                 ),
-              )
-            else
-              // Angle Label banner at bottom
-              Positioned(
-                bottom: 12,
-                left: 14,
+              ),
+
+            // Bottom Mode Selection Pills (Centered, Clean, Zero Overlap!)
+            Positioned(
+              bottom: 10,
+              left: 16,
+              right: 16,
+              child: Center(
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.all(4),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF0F172A).withValues(alpha: 0.85),
-                    borderRadius: BorderRadius.circular(8),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(30),
+                    border: Border.all(color: const Color(0xFFE2E8F0)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.08),
+                        blurRadius: 10,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.visibility_rounded, size: 14, color: Color(0xFF10B981)),
-                      const SizedBox(width: 5),
-                      Text(
-                        _activeMode == _ViewMode.front
-                            ? 'Front View (Fascia & Headlight)'
-                            : (_activeMode == _ViewMode.rear
-                                ? 'Rear View (Exhaust & Tail lamp)'
-                                : 'Side View (Full Profile)'),
-                        style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w700),
-                      ),
+                      _modePill('Front', _ViewMode.front, Icons.arrow_upward_rounded),
+                      const SizedBox(width: 4),
+                      _modePill('Rear', _ViewMode.rear, Icons.arrow_downward_rounded),
+                      const SizedBox(width: 4),
+                      _modePill('Side', _ViewMode.side, Icons.swap_horiz_rounded),
+                      const SizedBox(width: 4),
+                      _modePill('360°', _ViewMode.rotation360, Icons.sync_rounded),
                     ],
                   ),
                 ),
               ),
+            ),
           ],
         ),
       ),
@@ -1137,21 +1105,10 @@ class _BikeWale360ViewerState extends State<_BikeWale360Viewer> {
       onTap: () => _selectMode(mode),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
-          color: active ? const Color(0xFF0F172A) : Colors.white.withValues(alpha: 0.90),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: active ? const Color(0xFF0F172A) : const Color(0xFFCBD5E1),
-            width: 1.2,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: active ? 0.2 : 0.04),
-              blurRadius: 4,
-              offset: const Offset(0, 1),
-            ),
-          ],
+          color: active ? const Color(0xFFDC2626) : Colors.transparent,
+          borderRadius: BorderRadius.circular(24),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -1159,66 +1116,15 @@ class _BikeWale360ViewerState extends State<_BikeWale360Viewer> {
             Icon(
               icon,
               size: 13,
-              color: active ? const Color(0xFF10B981) : const Color(0xFF475569),
+              color: active ? Colors.white : const Color(0xFF64748B),
             ),
             const SizedBox(width: 4),
             Text(
               label,
               style: TextStyle(
-                fontSize: 11.5,
-                fontWeight: FontWeight.w800,
-                color: active ? Colors.white : const Color(0xFF1E293B),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _angleThumbnail(String label, String imageAsset, _ViewMode mode) {
-    final active = _activeMode == mode;
-    return GestureDetector(
-      onTap: () => _selectMode(mode),
-      child: Container(
-        width: 58,
-        height: 52,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-            color: active ? const Color(0xFFDC2626) : const Color(0xFFCBD5E1),
-            width: active ? 2.5 : 1.0,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: active ? 0.22 : 0.06),
-              blurRadius: 6,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        clipBehavior: Clip.antiAlias,
-        child: Stack(
-          children: [
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.all(2),
-                child: Image.asset(imageAsset, fit: BoxFit.contain),
-              ),
-            ),
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: Container(
-                color: (active ? const Color(0xFFDC2626) : Colors.black87).withValues(alpha: 0.8),
-                padding: const EdgeInsets.symmetric(vertical: 1.5),
-                child: Text(
-                  label,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(color: Colors.white, fontSize: 8.5, fontWeight: FontWeight.w900),
-                ),
+                fontSize: 12,
+                fontWeight: active ? FontWeight.w800 : FontWeight.w600,
+                color: active ? Colors.white : const Color(0xFF334155),
               ),
             ),
           ],
