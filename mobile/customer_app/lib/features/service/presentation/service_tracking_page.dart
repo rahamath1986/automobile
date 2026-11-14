@@ -408,8 +408,21 @@ class _TimelineStep extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final primary = Theme.of(context).colorScheme.primary;
-    final activeColor = step.completed || step.current ? primary : const Color(0xFFCBD5E1);
+    const green = Color(0xFF16A34A);
+    const blue = Color(0xFF2563EB);
+    const grey = Color(0xFFCBD5E1);
+
+    final nodeColor = step.completed ? green : (step.current ? blue : grey);
+    final lineColor = step.completed ? green : const Color(0xFFE2E8F0);
+
+    String subtext;
+    if (step.completed) {
+      subtext = 'Completed on schedule';
+    } else if (step.current) {
+      subtext = 'Active in workshop bay';
+    } else {
+      subtext = 'Pending';
+    }
 
     return IntrinsicHeight(
       child: Row(
@@ -418,21 +431,30 @@ class _TimelineStep extends StatelessWidget {
           Column(
             children: [
               Container(
-                width: 24,
-                height: 24,
+                width: 26,
+                height: 26,
                 decoration: BoxDecoration(
-                  color: step.completed ? primary : Colors.white,
+                  color: step.completed ? green : Colors.white,
                   shape: BoxShape.circle,
-                  border: Border.all(color: activeColor, width: 2),
+                  border: Border.all(color: nodeColor, width: step.current ? 3 : 2),
+                  boxShadow: step.current
+                      ? [
+                          BoxShadow(
+                            color: blue.withValues(alpha: 0.3),
+                            blurRadius: 6,
+                            spreadRadius: 1,
+                          ),
+                        ]
+                      : null,
                 ),
                 child: step.completed
-                    ? const Icon(Icons.check_rounded, size: 15, color: Colors.white)
+                    ? const Icon(Icons.check_rounded, size: 16, color: Colors.white)
                     : step.current
                         ? Center(
                             child: Container(
                               width: 8,
                               height: 8,
-                              decoration: BoxDecoration(color: primary, shape: BoxShape.circle),
+                              decoration: const BoxDecoration(color: blue, shape: BoxShape.circle),
                             ),
                           )
                         : null,
@@ -440,28 +462,46 @@ class _TimelineStep extends StatelessWidget {
               if (!isLast)
                 Expanded(
                   child: Container(
-                    width: 2,
-                    margin: const EdgeInsets.symmetric(vertical: 2),
-                    color: step.completed ? primary.withValues(alpha: 0.4) : const Color(0xFFE2E8F0),
+                    width: 2.5,
+                    margin: const EdgeInsets.symmetric(vertical: 3),
+                    color: lineColor,
                   ),
                 ),
             ],
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 14),
           Expanded(
             child: Padding(
-              padding: EdgeInsets.only(bottom: isLast ? 10 : 20, top: 1),
-              child: Text(
-                step.label,
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: step.current ? FontWeight.w700 : FontWeight.w500,
-                  color: step.current
-                      ? const Color(0xFF0F172A)
-                      : step.completed
-                          ? const Color(0xFF475569)
-                          : const Color(0xFF94A3B8),
-                ),
+              padding: EdgeInsets.only(bottom: isLast ? 8 : 22, top: 2),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    step.label,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: step.current ? FontWeight.w800 : FontWeight.w600,
+                      color: step.current
+                          ? const Color(0xFF0F172A)
+                          : step.completed
+                              ? const Color(0xFF1E293B)
+                              : const Color(0xFF64748B),
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    subtext,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: step.current ? FontWeight.w600 : FontWeight.w400,
+                      color: step.current
+                          ? blue
+                          : step.completed
+                              ? const Color(0xFF64748B)
+                              : const Color(0xFF94A3B8),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

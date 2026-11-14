@@ -1,14 +1,12 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/network/api_exception.dart';
 import '../../../core/utils/validators.dart';
-import '../../../core/widgets/brand_mark.dart';
-import '../../branding/application/branding_controller.dart';
 import '../application/auth_controller.dart';
 
+/// Screen 8: Login / Sign Up (Optional)
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key, this.redirect});
 
@@ -65,68 +63,133 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       ..showSnackBar(SnackBar(content: Text(message)));
   }
 
+  void _finish() {
+    final redirect = widget.redirect;
+    if (redirect != null && redirect.isNotEmpty) {
+      context.go(redirect);
+    } else {
+      context.go('/home');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final branding = ref.watch(brandingControllerProvider).value;
     final session = ref.watch(authControllerProvider).value;
-    final primary = Theme.of(context).colorScheme.primary;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Sign in'), actions: [
-        TextButton(onPressed: () => context.push('/staff'), child: const Text('Dealer staff')),
-      ]),
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: true,
+        title: const Text(
+          'Login / Sign Up\n(Optional)',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w800,
+            color: Color(0xFF0F172A),
+            height: 1.2,
+          ),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.close_rounded, color: Color(0xFF0F172A)),
+            onPressed: () {
+              if (Navigator.canPop(context)) {
+                context.pop();
+              } else {
+                context.go('/home');
+              }
+            },
+          ),
+        ],
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(24, 12, 24, 32),
+          padding: const EdgeInsets.fromLTRB(24, 8, 24, 28),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (branding?.logoUrl != null && branding!.logoUrl!.isNotEmpty)
-                BrandMark(logoUrl: branding.logoUrl, tradeName: branding.tradeName, size: 52)
-              else
-                Image.asset('assets/images/motosaas_logo.png', height: 44, fit: BoxFit.contain),
-              const SizedBox(height: 24),
-              Text(
-                session == null ? 'Your garage, in one place.' : 'You are already signed in',
-                style: const TextStyle(
-                  fontSize: 26,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: -0.6,
-                  color: Color(0xFF0F172A),
-                  height: 1.2,
+              const SizedBox(height: 10),
+
+              // Hero Smartphone Graphic in soft blue rounded box
+              Container(
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration(
+                  color: const Color(0xFFEBF3FC),
+                  borderRadius: BorderRadius.circular(22),
+                  border: Border.all(color: const Color(0xFFDBEAFE)),
+                ),
+                child: const Center(
+                  child: Icon(
+                    Icons.phone_android_rounded,
+                    size: 44,
+                    color: Color(0xFF2563EB),
+                  ),
                 ),
               ),
-              const SizedBox(height: 8),
-              Text(
-                session == null
-                    ? 'Sign in with your mobile number to track enquiries, test rides, ownership and service progress.'
-                    : 'Continue as ${session.fullName}. You can use the app as this customer.',
-                style: const TextStyle(fontSize: 14, color: Color(0xFF64748B), height: 1.5),
-              ),
-              const SizedBox(height: 28),
-              if (session != null)
-                FilledButton(
-                  onPressed: _finish,
-                  child: const Text('Continue'),
-                )
-              else ...[
-                Wrap(
-                  spacing: 8,
+              const SizedBox(height: 24),
+
+              // Benefits Checklist with Green Checkmarks
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF8FAFC),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: const Color(0xFFE2E8F0)),
+                ),
+                child: Column(
                   children: [
-                    ActionChip(
-                      avatar: const Icon(Icons.bolt_rounded, size: 16, color: Color(0xFF002C6C)),
-                      label: const Text('Preload 8015581405 (Pass: 123456)', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
-                      backgroundColor: const Color(0xFFEBF3FC),
-                      side: const BorderSide(color: Color(0xFFBED8F7)),
-                      onPressed: () {
-                        setState(() {
-                          _phoneController.text = '8015581405';
-                        });
-                      },
-                    ),
+                    _benefitRow('Track your service'),
+                    const SizedBox(height: 10),
+                    _benefitRow('View booking history'),
+                    const SizedBox(height: 10),
+                    _benefitRow('Manage your vehicles'),
+                    const SizedBox(height: 10),
+                    _benefitRow('Get personalized offers'),
                   ],
                 ),
-                const SizedBox(height: 12),
+              ),
+              const SizedBox(height: 24),
+
+              if (session != null) ...[
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF0FDF4),
+                    borderRadius: BorderRadius.circular(14),
+                    border: Border.all(color: const Color(0xFFBBF7D0)),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.check_circle_rounded, color: Color(0xFF16A34A)),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          'Signed in as ${session.fullName}',
+                          style: const TextStyle(fontWeight: FontWeight.w700, color: Color(0xFF16A34A)),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 18),
+                SizedBox(
+                  width: double.infinity,
+                  height: 48,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFDC2626),
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    onPressed: _finish,
+                    child: const Text('Continue to App', style: TextStyle(fontWeight: FontWeight.w700)),
+                  ),
+                ),
+              ] else ...[
+                // Phone Input
                 Form(
                   key: _formKey,
                   child: TextFormField(
@@ -136,53 +199,92 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     autofillHints: const [AutofillHints.telephoneNumber],
                     validator: Validators.phone,
                     onFieldSubmitted: (_) => _sendOtp(),
-                    decoration: const InputDecoration(
-                      labelText: 'Mobile number',
-                      hintText: kDebugMode ? '8015581405' : null,
-                      prefixIcon: Icon(Icons.phone_iphone_rounded),
+                    decoration: InputDecoration(
+                      labelText: 'Mobile Number',
+                      hintText: '8015581405',
+                      prefixIcon: const Icon(Icons.phone_iphone_rounded),
                       prefixText: '+91 ',
+                      filled: true,
+                      fillColor: const Color(0xFFF8FAFC),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: Color(0xFFCBD5E1)),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: const BorderSide(color: Color(0xFFCBD5E1)),
+                      ),
                     ),
                   ),
                 ),
-                const SizedBox(height: 16),
-                FilledButton(
-                  onPressed: _sending ? null : _sendOtp,
-                  child: _sending
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                        )
-                      : const Text('Send OTP'),
+                const SizedBox(height: 18),
+
+                // Solid Red Login Button
+                SizedBox(
+                  width: double.infinity,
+                  height: 50,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFDC2626),
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    onPressed: _sending ? null : _sendOtp,
+                    child: _sending
+                        ? const SizedBox(
+                            width: 22,
+                            height: 22,
+                            child: CircularProgressIndicator(strokeWidth: 2.5, color: Colors.white),
+                          )
+                        : const Text('Login', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
+                  ),
                 ),
                 const SizedBox(height: 12),
-                Center(
-                  child: Text(
-                    "We'll send a 6-digit code to verify your number.",
-                    style: TextStyle(fontSize: 12, color: primary.withValues(alpha: 0.7)),
+
+                // Outlined Red Create Account Button
+                SizedBox(
+                  width: double.infinity,
+                  height: 50,
+                  child: OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFFDC2626),
+                      side: const BorderSide(color: Color(0xFFDC2626), width: 1.5),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    onPressed: _sending ? null : _sendOtp,
+                    child: const Text('Create Account', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700)),
                   ),
                 ),
-                const SizedBox(height: 30),
-                Container(
-                  padding: const EdgeInsets.all(18),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(18),
-                    border: Border.all(color: const Color(0xFFE8EDF5)),
+                const SizedBox(height: 18),
+
+                // Continue as Guest
+                TextButton(
+                  onPressed: () {
+                    if (Navigator.canPop(context)) {
+                      context.pop();
+                    } else {
+                      context.go('/home');
+                    }
+                  },
+                  child: const Text(
+                    'Continue as Guest',
+                    style: TextStyle(
+                      color: Color(0xFF64748B),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'What you unlock',
-                        style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: Color(0xFF0F172A)),
-                      ),
-                      const SizedBox(height: 14),
-                      _Benefit(icon: Icons.receipt_long_rounded, text: 'Enquiries and test ride history'),
-                      _Benefit(icon: Icons.garage_rounded, text: 'Your owned vehicles and documents'),
-                      _Benefit(icon: Icons.build_circle_outlined, text: 'Service bookings and live progress'),
-                      _Benefit(icon: Icons.person_rounded, text: 'Saved profile and delivery address'),
-                    ],
+                ),
+                const SizedBox(height: 14),
+
+                // Staff Portal Link
+                TextButton.icon(
+                  onPressed: () => context.push('/staff'),
+                  icon: const Icon(Icons.badge_outlined, size: 16, color: Color(0xFF0F172A)),
+                  label: const Text(
+                    'Dealer Staff Workspace',
+                    style: TextStyle(color: Color(0xFF0F172A), fontSize: 13, fontWeight: FontWeight.w600),
                   ),
                 ),
               ],
@@ -193,38 +295,27 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     );
   }
 
-  void _finish() {
-    final redirect = widget.redirect;
-    if (redirect != null && redirect.isNotEmpty) {
-      context.go(redirect);
-    } else {
-      context.go('/activity');
-    }
-  }
-}
-
-class _Benefit extends StatelessWidget {
-  const _Benefit({required this.icon, required this.text});
-
-  final IconData icon;
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Row(
-        children: [
-          Icon(icon, size: 19, color: Theme.of(context).colorScheme.primary),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              text,
-              style: const TextStyle(fontSize: 13.5, color: Color(0xFF475569)),
-            ),
+  Widget _benefitRow(String text) {
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(2),
+          decoration: const BoxDecoration(
+            color: Color(0xFF16A34A),
+            shape: BoxShape.circle,
           ),
-        ],
-      ),
+          child: const Icon(Icons.check_rounded, color: Colors.white, size: 14),
+        ),
+        const SizedBox(width: 12),
+        Text(
+          text,
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+            color: Color(0xFF0F172A),
+          ),
+        ),
+      ],
     );
   }
 }

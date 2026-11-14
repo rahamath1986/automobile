@@ -12,7 +12,7 @@ class CustomerShell extends StatelessWidget {
       body: navigationShell,
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(
-          border: Border(top: BorderSide(color: Color(0xFFE8EDF5))),
+          border: Border(top: BorderSide(color: Color(0xFFE2E8F0))),
         ),
         child: NavigationBar(
           selectedIndex: navigationShell.currentIndex,
@@ -22,29 +22,29 @@ class CustomerShell extends StatelessWidget {
           ),
           destinations: const [
             NavigationDestination(
-              icon: Icon(Icons.storefront_outlined),
-              selectedIcon: Icon(Icons.storefront_rounded),
-              label: 'Showroom',
+              icon: Icon(Icons.home_outlined),
+              selectedIcon: Icon(Icons.home_rounded),
+              label: 'Home',
             ),
             NavigationDestination(
-              icon: Icon(Icons.compare_arrows_outlined),
-              selectedIcon: Icon(Icons.compare_arrows_rounded),
-              label: 'Compare',
+              icon: Icon(Icons.two_wheeler_outlined),
+              selectedIcon: Icon(Icons.two_wheeler_rounded),
+              label: 'Vehicles',
             ),
             NavigationDestination(
-              icon: Icon(Icons.receipt_long_outlined),
-              selectedIcon: Icon(Icons.receipt_long_rounded),
-              label: 'Activity',
+              icon: Icon(Icons.build_circle_outlined),
+              selectedIcon: Icon(Icons.build_circle_rounded),
+              label: 'Service',
             ),
             NavigationDestination(
-              icon: Icon(Icons.garage_outlined),
-              selectedIcon: Icon(Icons.garage_rounded),
-              label: 'Garage',
+              icon: Icon(Icons.local_offer_outlined),
+              selectedIcon: Icon(Icons.local_offer_rounded),
+              label: 'Offers',
             ),
             NavigationDestination(
               icon: Icon(Icons.person_outline_rounded),
               selectedIcon: Icon(Icons.person_rounded),
-              label: 'Profile',
+              label: 'More',
             ),
           ],
         ),

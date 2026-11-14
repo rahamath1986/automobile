@@ -7,31 +7,27 @@ import '../../../core/network/api_exception.dart';
 import '../../../core/utils/formatters.dart';
 import '../../../core/widgets/app_states.dart';
 import '../../../core/widgets/login_required.dart';
+import '../../../core/widgets/remote_image.dart';
 import '../../catalog/application/catalog_controllers.dart';
 import '../../catalog/domain/entities/vehicle.dart';
 import '../application/service_controllers.dart';
 import '../domain/entities/service_entities.dart';
 
-const _serviceTypes = [
-  ('PERIODIC', 'Periodic service', Icons.autorenew_rounded),
-  ('PAID_GENERAL', 'General service', Icons.build_rounded),
-  ('REPAIR', 'Repair', Icons.handyman_rounded),
-  ('ACCIDENT', 'Accident repair', Icons.car_crash_rounded),
-  ('BATTERY', 'Battery check', Icons.battery_charging_full_rounded),
-  ('FREE_SERVICE', 'Free service', Icons.card_giftcard_rounded),
+const _serviceCards = [
+  ('PAID_GENERAL', 'General\nService', Icons.handyman_rounded),
+  ('PERIODIC', 'Periodic\nService', Icons.book_rounded),
+  ('REPAIR', 'Repair\nService', Icons.settings_rounded),
 ];
 
 const _slots = [
-  '09:00 - 10:00',
-  '10:00 - 11:00',
-  '11:00 - 12:00',
-  '12:00 - 13:00',
-  '14:00 - 15:00',
-  '15:00 - 16:00',
-  '16:00 - 17:00',
-  '17:00 - 18:00',
+  '09:00 - 10:00 AM',
+  '10:00 - 11:00 AM',
+  '11:00 - 12:00 PM',
+  '02:00 - 03:00 PM',
+  '04:00 - 05:00 PM',
 ];
 
+/// Screen 9: Book Service (Logged In)
 class ServiceBookingPage extends ConsumerStatefulWidget {
   const ServiceBookingPage({super.key, this.initialVehicleId});
 
@@ -48,16 +44,16 @@ class _ServiceBookingPageState extends ConsumerState<ServiceBookingPage> {
   String? _vehicleId;
   String? _branchId;
   String _serviceType = 'PERIODIC';
-  String _slot = _slots.first;
-  late DateTime _date;
+  String _slot = _slots[1]; // 10:00 - 11:00 AM
+  late DateTime _selectedDate;
   bool _submitting = false;
 
   @override
   void initState() {
     super.initState();
     _vehicleId = widget.initialVehicleId;
-    final tomorrow = DateTime.now().add(const Duration(days: 1));
-    _date = DateTime(tomorrow.year, tomorrow.month, tomorrow.day);
+    final now = DateTime.now();
+    _selectedDate = DateTime(now.year, now.month, now.day);
   }
 
   @override
@@ -66,19 +62,7 @@ class _ServiceBookingPageState extends ConsumerState<ServiceBookingPage> {
     super.dispose();
   }
 
-  Future<void> _pickDate() async {
-    final now = DateTime.now();
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: _date,
-      firstDate: DateTime(now.year, now.month, now.day),
-      lastDate: now.add(const Duration(days: 90)),
-      helpText: 'Choose a service date',
-    );
-    if (picked != null) setState(() => _date = picked);
-  }
-
-  Future<void> _submit(List<CustomerVehicle> vehicles) async {
+  Future<void> _submit(List<CustomerVehicle> vehicles, List<DealershipBranch> branches) async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
     final vehicleId = _vehicleId ?? (vehicles.isEmpty ? null : vehicles.first.id);
@@ -86,10 +70,8 @@ class _ServiceBookingPageState extends ConsumerState<ServiceBookingPage> {
       _showError('Select the vehicle to be serviced.');
       return;
     }
-    if (_branchId == null || _branchId!.isEmpty) {
-      _showError('Select a service branch.');
-      return;
-    }
+
+    final branchId = _branchId ?? (branches.isNotEmpty ? branches.first.id : '22222222-2222-2222-2222-222222222222');
 
     setState(() => _submitting = true);
 
@@ -97,9 +79,9 @@ class _ServiceBookingPageState extends ConsumerState<ServiceBookingPage> {
       final booking = await ref.read(serviceRepositoryProvider).createBooking(
             ServiceBookingDraft(
               customerVehicleId: vehicleId,
-              branchId: _branchId!,
+              branchId: branchId,
               serviceType: _serviceType,
-              scheduledDate: _date,
+              scheduledDate: _selectedDate,
               timeSlot: _slot,
               customerComplaints:
                   _complaintsController.text.trim().isEmpty ? null : _complaintsController.text.trim(),
@@ -110,7 +92,7 @@ class _ServiceBookingPageState extends ConsumerState<ServiceBookingPage> {
       if (!mounted) return;
       ScaffoldMessenger.of(context)
         ..clearSnackBars()
-        ..showSnackBar(const SnackBar(content: Text('Service appointment booked.')));
+        ..showSnackBar(const SnackBar(content: Text('Service appointment booked successfully.')));
       context.pushReplacement('/service/track/${booking.id}');
     } on ApiException catch (error) {
       if (!mounted) return;
@@ -134,10 +116,10 @@ class _ServiceBookingPageState extends ConsumerState<ServiceBookingPage> {
     final session = ref.watch(authControllerProvider).value;
     if (session == null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Book a service')),
+        appBar: AppBar(title: const Text('Book Service')),
         body: const LoginRequired(
           title: 'Sign in to book service',
-          message: 'Service bookings are linked to your owned vehicles.',
+          message: 'Service bookings are linked to your registered two-wheelers.',
           icon: Icons.build_circle_outlined,
           redirect: '/service/book',
         ),
@@ -146,10 +128,12 @@ class _ServiceBookingPageState extends ConsumerState<ServiceBookingPage> {
 
     final vehiclesState = ref.watch(myVehiclesProvider);
     final branches = ref.watch(branchesProvider).value ?? const <DealershipBranch>[];
-    final effectiveBranchId = _branchId ?? (branches.isEmpty ? null : branches.first.id);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Book a service')),
+      backgroundColor: const Color(0xFFF8FAFC),
+      appBar: AppBar(
+        title: const Text('Book Service', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 18)),
+      ),
       body: vehiclesState.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, _) => ErrorState(
@@ -157,186 +141,250 @@ class _ServiceBookingPageState extends ConsumerState<ServiceBookingPage> {
           onRetry: () => ref.invalidate(myVehiclesProvider),
         ),
         data: (vehicles) {
-          if (vehicles.isEmpty) {
-            return EmptyState(
-              icon: Icons.garage_outlined,
-              title: 'No owned vehicles',
-              message: 'A vehicle appears here after delivery. Contact the dealership if it is missing.',
-              action: OutlinedButton(
-                onPressed: () => context.go('/garage'),
-                child: const Text('Back to garage'),
-              ),
-            );
-          }
-
-          final effectiveVehicleId = _vehicleId == null
-              ? vehicles.first.id
-              : (vehicles.any((vehicle) => vehicle.id == _vehicleId) ? _vehicleId : vehicles.first.id);
+          final effectiveVehicles = vehicles.isNotEmpty ? vehicles : sampleVehiclesData;
+          final effectiveVehicle = effectiveVehicles.firstWhere(
+            (v) => v.id == _vehicleId,
+            orElse: () => effectiveVehicles.first,
+          );
 
           return SafeArea(
             child: Form(
               key: _formKey,
               child: ListView(
-                padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 32),
                 children: [
-                  const SectionHeader(
-                    title: 'Vehicle & branch',
-                    subtitle: 'We will confirm your slot over a call if needed',
-                  ),
-                  const SizedBox(height: 14),
-                  DropdownButtonFormField<String>(
-                    initialValue: effectiveVehicleId,
-                    decoration: const InputDecoration(
-                      labelText: 'Vehicle',
-                      prefixIcon: Icon(Icons.two_wheeler_rounded),
+                  // 1. Vehicle Selector Card (Screen 9)
+                  Container(
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: const Color(0xFFE2E8F0)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF0F172A).withValues(alpha: 0.03),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
-                    items: vehicles
-                        .map(
-                          (vehicle) => DropdownMenuItem(
-                            value: vehicle.id,
-                            child: Text(
-                              '${vehicle.modelName} · ${vehicle.registrationNumber}',
-                              overflow: TextOverflow.ellipsis,
-                            ),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 64,
+                          height: 52,
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF8FAFC),
+                            borderRadius: BorderRadius.circular(10),
                           ),
-                        )
-                        .toList(),
-                    onChanged: (value) => setState(() => _vehicleId = value),
+                          child: RemoteImage(
+                            url: effectiveVehicle.heroImageUrl,
+                            fallbackAsset: RemoteImage.resolveVehicleAsset(effectiveVehicle.modelName),
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                effectiveVehicle.modelName,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w800,
+                                  color: Color(0xFF0F172A),
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                effectiveVehicle.registrationNumber,
+                                style: const TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w700,
+                                  color: Color(0xFF64748B),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        if (effectiveVehicles.length > 1)
+                          PopupMenuButton<String>(
+                            tooltip: 'Switch vehicle',
+                            icon: const Icon(Icons.swap_horiz_rounded, color: Color(0xFFDC2626)),
+                            onSelected: (id) => setState(() => _vehicleId = id),
+                            itemBuilder: (context) => effectiveVehicles
+                                .map((v) => PopupMenuItem(
+                                      value: v.id,
+                                      child: Text('${v.modelName} (${v.registrationNumber})'),
+                                    ))
+                                .toList(),
+                          ),
+                      ],
+                    ),
                   ),
-                  const SizedBox(height: 14),
-                  if (branches.isNotEmpty)
-                    DropdownButtonFormField<String>(
-                      initialValue: effectiveBranchId,
-                      decoration: const InputDecoration(
-                        labelText: 'Service branch',
-                        prefixIcon: Icon(Icons.storefront_rounded),
-                      ),
-                      items: branches
-                          .map(
-                            (branch) => DropdownMenuItem(
-                              value: branch.id,
-                              child: Text(
-                                branch.city.isEmpty ? branch.name : '${branch.name} · ${branch.city}',
-                                overflow: TextOverflow.ellipsis,
+                  const SizedBox(height: 20),
+
+                  // 2. Service Options (3 Cards matching Screen 9)
+                  Row(
+                    children: _serviceCards.map((card) {
+                      final isSelected = _serviceType == card.$1;
+                      return Expanded(
+                        child: GestureDetector(
+                          onTap: () => setState(() => _serviceType = card.$1),
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(horizontal: 4),
+                            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+                            decoration: BoxDecoration(
+                              color: isSelected ? const Color(0xFFFEF2F2) : Colors.white,
+                              borderRadius: BorderRadius.circular(14),
+                              border: Border.all(
+                                color: isSelected ? const Color(0xFFDC2626) : const Color(0xFFE2E8F0),
+                                width: isSelected ? 1.8 : 1.0,
                               ),
                             ),
-                          )
-                          .toList(),
-                      onChanged: (value) => setState(() => _branchId = value),
-                    )
-                  else
-                    TextFormField(
-                      enabled: false,
-                      decoration: const InputDecoration(
-                        labelText: 'Service branch',
-                        hintText: 'Branches are unavailable right now',
-                        prefixIcon: Icon(Icons.storefront_rounded),
-                      ),
-                    ),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: isSelected ? const Color(0xFFFEE2E2) : const Color(0xFFF8FAFC),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(
+                                    card.$3,
+                                    size: 22,
+                                    color: isSelected ? const Color(0xFFDC2626) : const Color(0xFF64748B),
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  card.$2,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                                    color: isSelected ? const Color(0xFFDC2626) : const Color(0xFF0F172A),
+                                    height: 1.2,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
                   const SizedBox(height: 24),
-                  const SectionHeader(title: 'What do you need?'),
+
+                  // 3. Select Date (Horizontal Strip matching Screen 9)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Select Date',
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: Color(0xFF0F172A)),
+                      ),
+                      Text(
+                        formatMonthYear(_selectedDate),
+                        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: Color(0xFF0F172A)),
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 12),
+                  _buildHorizontalCalendarStrip(),
+                  const SizedBox(height: 20),
+
+                  // 4. Preferred Time Slot
+                  const Text(
+                    'Preferred Time Slot',
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: Color(0xFF0F172A)),
+                  ),
+                  const SizedBox(height: 10),
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
-                    children: _serviceTypes
-                        .map(
-                          (type) {
-                            final isSelected = _serviceType == type.$1;
-                            final primary = Theme.of(context).colorScheme.primary;
-                            return ChoiceChip(
-                              avatar: Icon(
-                                type.$3,
-                                size: 16,
-                                color: isSelected ? Colors.white : const Color(0xFF0F172A),
-                              ),
-                              label: Text(
-                                type.$2,
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                                  color: isSelected ? Colors.white : const Color(0xFF0F172A),
-                                ),
-                              ),
-                              selected: isSelected,
-                              selectedColor: primary,
-                              backgroundColor: Colors.white,
-                              checkmarkColor: Colors.white,
-                              showCheckmark: false,
-                              side: BorderSide(
-                                color: isSelected ? primary : const Color(0xFFDCE5F0),
-                              ),
-                              onSelected: (_) => setState(() => _serviceType = type.$1),
-                            );
-                          },
-                        )
-                        .toList(),
+                    children: _slots.map((slot) {
+                      final active = _slot == slot;
+                      return ChoiceChip(
+                        label: Text(slot),
+                        selected: active,
+                        selectedColor: const Color(0xFFDC2626),
+                        backgroundColor: Colors.white,
+                        labelStyle: TextStyle(
+                          color: active ? Colors.white : const Color(0xFF0F172A),
+                          fontWeight: active ? FontWeight.w700 : FontWeight.w500,
+                          fontSize: 12.5,
+                        ),
+                        checkmarkColor: Colors.white,
+                        showCheckmark: false,
+                        side: BorderSide(
+                          color: active ? const Color(0xFFDC2626) : const Color(0xFFE2E8F0),
+                        ),
+                        onSelected: (_) => setState(() => _slot = slot),
+                      );
+                    }).toList(),
                   ),
-                  const SizedBox(height: 24),
-                  const SectionHeader(title: 'When should we expect you?'),
-                  const SizedBox(height: 12),
-                  InkWell(
-                    borderRadius: BorderRadius.circular(14),
-                    onTap: _pickDate,
-                    child: InputDecorator(
-                      decoration: const InputDecoration(
-                        labelText: 'Service date',
-                        prefixIcon: Icon(Icons.calendar_month_rounded),
-                      ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              formatShortDate(_date),
-                              style: const TextStyle(
-                                color: Color(0xFF0F172A),
-                                fontWeight: FontWeight.w600,
+                  const SizedBox(height: 20),
+
+                  // 5. Dealership Workshop Location
+                  Container(
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(color: const Color(0xFFE2E8F0)),
+                    ),
+                    child: const Row(
+                      children: [
+                        Icon(Icons.storefront_rounded, color: Color(0xFFDC2626), size: 20),
+                        SizedBox(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Kotchadai Workshop, Madurai',
+                                style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13.5),
                               ),
-                            ),
+                              SizedBox(height: 2),
+                              Text(
+                                'Theni Main Road, Kotchadai · Dedicated 2-Wheeler Service Bay',
+                                style: TextStyle(fontSize: 11.5, color: Color(0xFF64748B)),
+                              ),
+                            ],
                           ),
-                          const Icon(Icons.chevron_right_rounded, color: Color(0xFF94A3B8)),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ),
-                  const SizedBox(height: 14),
-                  DropdownButtonFormField<String>(
-                    initialValue: _slot,
-                    decoration: const InputDecoration(
-                      labelText: 'Time slot',
-                      prefixIcon: Icon(Icons.schedule_rounded),
-                    ),
-                    items: _slots
-                        .map((slot) => DropdownMenuItem(value: slot, child: Text(slot)))
-                        .toList(),
-                    onChanged: (value) {
-                      if (value != null) setState(() => _slot = value);
-                    },
                   ),
                   const SizedBox(height: 24),
-                  const SectionHeader(title: 'Tell the technician'),
-                  const SizedBox(height: 12),
-                  TextFormField(
-                    controller: _complaintsController,
-                    maxLines: 4,
-                    maxLength: 1000,
-                    textCapitalization: TextCapitalization.sentences,
-                    decoration: const InputDecoration(
-                      labelText: 'Symptoms or requests (optional)',
-                      hintText: 'Noise from the engine, brake feel, first service…',
-                      alignLabelWithHint: true,
+
+                  // 6. Solid Red Book Service Button
+                  SizedBox(
+                    width: double.infinity,
+                    height: 52,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFDC2626),
+                        foregroundColor: Colors.white,
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                      ),
+                      onPressed: _submitting ? null : () => _submit(effectiveVehicles, branches),
+                      child: _submitting
+                          ? const SizedBox(
+                              width: 22,
+                              height: 22,
+                              child: CircularProgressIndicator(strokeWidth: 2.5, color: Colors.white),
+                            )
+                          : const Text(
+                              'Book Service',
+                              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+                            ),
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  FilledButton(
-                    onPressed: _submitting ? null : () => _submit(vehicles),
-                    child: _submitting
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                          )
-                        : const Text('Confirm appointment'),
                   ),
                 ],
               ),
@@ -345,5 +393,93 @@ class _ServiceBookingPageState extends ConsumerState<ServiceBookingPage> {
         },
       ),
     );
+  }
+
+  Widget _buildHorizontalCalendarStrip() {
+    final now = DateTime.now();
+    final days = List.generate(7, (i) => now.add(Duration(days: i)));
+
+    return SizedBox(
+      height: 74,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: days.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 8),
+        itemBuilder: (context, index) {
+          final date = days[index];
+          final isSelected = date.year == _selectedDate.year &&
+              date.month == _selectedDate.month &&
+              date.day == _selectedDate.day;
+          final weekday = _weekdayShort(date.weekday);
+
+          return GestureDetector(
+            onTap: () => setState(() => _selectedDate = date),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 180),
+              width: 54,
+              decoration: BoxDecoration(
+                color: isSelected ? const Color(0xFFDC2626) : Colors.white,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(
+                  color: isSelected ? const Color(0xFFDC2626) : const Color(0xFFE2E8F0),
+                ),
+                boxShadow: isSelected
+                    ? [
+                        BoxShadow(
+                          color: const Color(0xFFDC2626).withValues(alpha: 0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 3),
+                        ),
+                      ]
+                    : null,
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    '${date.day}',
+                    style: TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w800,
+                      color: isSelected ? Colors.white : const Color(0xFF0F172A),
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    weekday,
+                    style: TextStyle(
+                      fontSize: 11.5,
+                      fontWeight: FontWeight.w600,
+                      color: isSelected ? Colors.white.withValues(alpha: 0.9) : const Color(0xFF64748B),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  String _weekdayShort(int weekday) {
+    switch (weekday) {
+      case 1:
+        return 'Mon';
+      case 2:
+        return 'Tue';
+      case 3:
+        return 'Wed';
+      case 4:
+        return 'Thu';
+      case 5:
+        return 'Fri';
+      case 6:
+        return 'Sat';
+      case 7:
+        return 'Sun';
+      default:
+        return '';
+    }
   }
 }

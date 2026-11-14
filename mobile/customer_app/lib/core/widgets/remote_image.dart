@@ -29,6 +29,22 @@ class RemoteImage extends StatelessWidget {
     final lower = hint.toLowerCase();
 
     // Check specific color cues first for instant visual feedback
+    if (lower.contains('activa')) {
+      return 'assets/images/vehicles/scooter_front.jpg';
+    }
+
+    if (lower.contains('dio')) {
+      return 'assets/images/vehicles/scooter_blue_front.jpg';
+    }
+
+    if (lower.contains('grazia')) {
+      return 'assets/images/vehicles/scooter_grey_front.jpg';
+    }
+
+    if (lower.contains('shine')) {
+      return 'assets/images/vehicles/bike_red.jpg';
+    }
+
     if (lower.contains('radeon')) {
       if (lower.contains('red')) return 'assets/images/vehicles/bike_red.jpg';
       return 'assets/images/vehicles/bike_black.jpg';

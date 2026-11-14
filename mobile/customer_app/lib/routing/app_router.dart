@@ -6,9 +6,11 @@ import '../features/auth/presentation/otp_page.dart';
 import '../features/catalog/presentation/compare_page.dart';
 import '../features/catalog/presentation/home_page.dart';
 import '../features/catalog/presentation/model_detail_page.dart';
+import '../features/catalog/presentation/vehicles_browse_page.dart';
 import '../features/leads/presentation/activity_page.dart';
 import '../features/leads/presentation/enquiry_page.dart';
 import '../features/leads/presentation/test_ride_page.dart';
+import '../features/offers/presentation/offers_page.dart';
 import '../features/profile/presentation/edit_profile_page.dart';
 import '../features/profile/presentation/profile_page.dart';
 import '../features/service/presentation/garage_page.dart';
@@ -16,7 +18,6 @@ import '../features/service/presentation/service_booking_page.dart';
 import '../features/service/presentation/service_tracking_page.dart';
 import '../features/shell/presentation/customer_shell.dart';
 import '../features/showroom/presentation/showroom_viewer_page.dart';
-
 import '../features/staff/staff_page.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -34,12 +35,12 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
           StatefulShellBranch(
             routes: [
-              GoRoute(path: '/compare', builder: (context, state) => const ComparePage()),
-            ],
-          ),
-          StatefulShellBranch(
-            routes: [
-              GoRoute(path: '/activity', builder: (context, state) => const ActivityPage()),
+              GoRoute(
+                path: '/vehicles',
+                builder: (context, state) => VehiclesBrowsePage(
+                  initialCategory: state.uri.queryParameters['category'],
+                ),
+              ),
             ],
           ),
           StatefulShellBranch(
@@ -49,10 +50,23 @@ final routerProvider = Provider<GoRouter>((ref) {
           ),
           StatefulShellBranch(
             routes: [
+              GoRoute(path: '/offers', builder: (context, state) => const OffersPage()),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
               GoRoute(path: '/profile', builder: (context, state) => const ProfilePage()),
             ],
           ),
         ],
+      ),
+      GoRoute(
+        path: '/compare',
+        builder: (context, state) => const ComparePage(),
+      ),
+      GoRoute(
+        path: '/activity',
+        builder: (context, state) => const ActivityPage(),
       ),
       GoRoute(
         path: '/models/:modelId',

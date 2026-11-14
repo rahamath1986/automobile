@@ -80,10 +80,10 @@ class _HomePageState extends ConsumerState<HomePage> {
                 padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
                 sliver: SliverToBoxAdapter(
                   child: _QuickActionGrid(
-                    onNewVehicles: () => ref.read(catalogFilterProvider.notifier).clear(),
-                    onOffers: () => _showOffersModal(context),
-                    onService: () => context.push('/service/book'),
-                    onTestRide: () => _focusCatalog(context),
+                    onNewVehicles: () => context.go('/vehicles'),
+                    onOffers: () => context.go('/offers'),
+                    onService: () => context.go('/garage'),
+                    onTestRide: () => context.push('/test-ride'),
                     onFindStore: () => _showStoreDialog(context),
                     onSupport: () => _showContact(context, branding),
                   ),
@@ -155,9 +155,29 @@ class _HomePageState extends ConsumerState<HomePage> {
                 padding: const EdgeInsets.fromLTRB(20, 22, 20, 6),
                 sliver: SliverToBoxAdapter(
                   child: modelsState.maybeWhen(
-                    data: (models) => SectionHeader(
-                      title: filter.query.isEmpty ? 'Explore the range' : 'Search results',
-                      subtitle: '${filter.apply(models).length} models available at ${branding.tradeName}',
+                    data: (models) => Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Expanded(
+                          child: SectionHeader(
+                            title: filter.query.isEmpty ? 'Popular Models' : 'Search results',
+                            subtitle: '${filter.apply(models).length} models available at ${branding.tradeName}',
+                          ),
+                        ),
+                        if (filter.query.isEmpty)
+                          TextButton(
+                            onPressed: () => context.go('/vehicles'),
+                            child: const Text(
+                              'View All',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 13,
+                                color: Color(0xFFDC2626),
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
                     orElse: () => const SectionHeader(
                       title: 'Explore the range',
@@ -325,97 +345,6 @@ class _HomePageState extends ConsumerState<HomePage> {
             icon: const Icon(Icons.directions_rounded, size: 16),
             label: const Text('Get Directions'),
             style: FilledButton.styleFrom(backgroundColor: const Color(0xFFDC2626)),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showOffersModal(BuildContext context) {
-    showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      showDragHandle: true,
-      builder: (ctx) => Padding(
-        padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              'Festive & Exclusive Offers',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: Color(0xFF0F172A)),
-            ),
-            const SizedBox(height: 4),
-            const Text('Available at Alagendra Kotchadai Branch', style: TextStyle(fontSize: 12, color: Color(0xFF64748B))),
-            const SizedBox(height: 14),
-            _offerCard(
-              title: 'Exchange Your Old 2-Wheeler',
-              desc: 'Get Best Value + Exclusive ₹5,000* Exchange Bonus on new purchases.',
-              badge: 'LIMITED PERIOD',
-              icon: Icons.sync_alt_rounded,
-            ),
-            const SizedBox(height: 10),
-            _offerCard(
-              title: '10% OFF on Paid Service',
-              desc: 'Includes synthetic oil change and multi-point safety check. Valid till 30 Nov 2026.',
-              badge: 'WORKSHOP',
-              icon: Icons.percent_rounded,
-            ),
-            const SizedBox(height: 10),
-            _offerCard(
-              title: 'Free 24-Point Health Check-up',
-              desc: 'Complimentary battery, brakes, and electrical health check for all 2-wheelers.',
-              badge: 'FREE',
-              icon: Icons.health_and_safety_outlined,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _offerCard({required String title, required String desc, required String badge, required IconData icon}) {
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: const Color(0xFFFEF2F2),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: const Color(0xFFFECACA)),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: const Color(0xFFDC2626),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Icon(icon, color: Colors.white, size: 20),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Text(title, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13.5, color: Color(0xFF0F172A))),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                      decoration: BoxDecoration(color: const Color(0xFFDC2626), borderRadius: BorderRadius.circular(4)),
-                      child: Text(badge, style: const TextStyle(color: Colors.white, fontSize: 9.5, fontWeight: FontWeight.w900)),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 4),
-                Text(desc, style: const TextStyle(fontSize: 12, color: Color(0xFF475569))),
-              ],
-            ),
           ),
         ],
       ),

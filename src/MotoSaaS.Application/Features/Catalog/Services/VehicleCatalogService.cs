@@ -393,6 +393,57 @@ public class VehicleCatalogService : IVehicleCatalogService
         {
             new()
             {
+                Id = Guid.Parse("22222222-2222-2222-2222-222222222204"),
+                ManufacturerId = Guid.Parse("11111111-1111-1111-1111-111111111102"),
+                ManufacturerCode = "HONDA",
+                ManufacturerName = "Honda Motorcycle and Scooter India",
+                Code = "ACTIVA-6G",
+                Name = "Honda Activa 6G",
+                Category = "SCOOTER",
+                FuelType = "PETROL",
+                DisplacementCc = 110,
+                StartingPrice = 78684m,
+                VariantCount = 3,
+                ColorCount = 6,
+                HeroImageUrl = "assets/images/vehicles/scooter_front.jpg",
+                Has3DAsset = true
+            },
+            new()
+            {
+                Id = Guid.Parse("22222222-2222-2222-2222-222222222205"),
+                ManufacturerId = Guid.Parse("11111111-1111-1111-1111-111111111102"),
+                ManufacturerCode = "HONDA",
+                ManufacturerName = "Honda Motorcycle and Scooter India",
+                Code = "DIO-125",
+                Name = "Honda Dio 125",
+                Category = "SCOOTER",
+                FuelType = "PETROL",
+                DisplacementCc = 125,
+                StartingPrice = 83400m,
+                VariantCount = 2,
+                ColorCount = 4,
+                HeroImageUrl = "assets/images/vehicles/scooter_blue_front.jpg",
+                Has3DAsset = true
+            },
+            new()
+            {
+                Id = Guid.Parse("22222222-2222-2222-2222-222222222206"),
+                ManufacturerId = Guid.Parse("11111111-1111-1111-1111-111111111102"),
+                ManufacturerCode = "HONDA",
+                ManufacturerName = "Honda Motorcycle and Scooter India",
+                Code = "SHINE-125",
+                Name = "Honda Shine 125",
+                Category = "MOTORCYCLE",
+                FuelType = "PETROL",
+                DisplacementCc = 125,
+                StartingPrice = 81200m,
+                VariantCount = 2,
+                ColorCount = 5,
+                HeroImageUrl = "assets/images/vehicles/bike_red.jpg",
+                Has3DAsset = true
+            },
+            new()
+            {
                 Id = Guid.Parse("22222222-2222-2222-2222-222222222201"),
                 ManufacturerId = Guid.Parse("11111111-1111-1111-1111-111111111101"),
                 ManufacturerCode = "YAMAHA",
@@ -405,7 +456,7 @@ public class VehicleCatalogService : IVehicleCatalogService
                 StartingPrice = 182000m,
                 VariantCount = 3,
                 ColorCount = 5,
-                HeroImageUrl = "https://upload.wikimedia.org/wikipedia/commons/8/8d/2024_Yamaha_YZF-R15_155_%2820241102%29.jpg",
+                HeroImageUrl = "assets/images/vehicles/yamaha_r15_v4.jpg",
                 Has3DAsset = true
             },
             new()
@@ -422,7 +473,7 @@ public class VehicleCatalogService : IVehicleCatalogService
                 StartingPrice = 147000m,
                 VariantCount = 2,
                 ColorCount = 4,
-                HeroImageUrl = "https://upload.wikimedia.org/wikipedia/commons/6/60/2022_Yamaha_Aerox_155_ABS.jpg",
+                HeroImageUrl = "assets/images/vehicles/yamaha_aerox_155.jpg",
                 Has3DAsset = true
             },
             new()
@@ -439,7 +490,7 @@ public class VehicleCatalogService : IVehicleCatalogService
                 StartingPrice = 117000m,
                 VariantCount = 3,
                 ColorCount = 4,
-                HeroImageUrl = "https://upload.wikimedia.org/wikipedia/commons/8/83/Tvs_i_qube.jpg",
+                HeroImageUrl = "assets/images/vehicles/tvs_iqube.jpg",
                 Has3DAsset = true
             }
         };
@@ -498,7 +549,7 @@ public class VehicleCatalogService : IVehicleCatalogService
                 StartingPrice = 182000m,
                 VariantCount = 3,
                 ColorCount = 5,
-                HeroImageUrl = "https://upload.wikimedia.org/wikipedia/commons/8/8d/2024_Yamaha_YZF-R15_155_%2820241102%29.jpg",
+                HeroImageUrl = "assets/images/vehicles/yamaha_r15_v4.jpg",
                 Has3DAsset = true,
                 Variants = new List<VehicleVariantDto>
                 {
