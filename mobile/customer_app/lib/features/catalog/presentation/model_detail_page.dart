@@ -7,6 +7,17 @@ import '../../../core/widgets/app_states.dart';
 import '../../../core/widgets/remote_image.dart';
 import '../application/catalog_controllers.dart';
 import '../domain/entities/vehicle.dart';
+import 'widgets/emi_calculator_widget.dart';
+
+enum VehiclePhotoAngle {
+  front('FRONT', Icons.explore_outlined),
+  side('SIDE', Icons.two_wheeler_rounded),
+  back('BACK', Icons.replay_rounded);
+
+  const VehiclePhotoAngle(this.label, this.icon);
+  final String label;
+  final IconData icon;
+}
 
 class ModelDetailPage extends ConsumerStatefulWidget {
   const ModelDetailPage({super.key, required this.modelId});
@@ -21,6 +32,7 @@ class _ModelDetailPageState extends ConsumerState<ModelDetailPage> {
   String? _variantId;
   String? _colorId;
   String? _branchId;
+  VehiclePhotoAngle _photoAngle = VehiclePhotoAngle.side;
 
   @override
   Widget build(BuildContext context) {
@@ -76,12 +88,14 @@ class _ModelDetailPageState extends ConsumerState<ModelDetailPage> {
             variantId: _variantId,
             colorId: _colorId,
             branchId: _branchId,
+            photoAngle: _photoAngle,
             onVariantChanged: (v) => setState(() {
               _variantId = v.id;
-              _colorId = null;
+              _colorId = v.primaryColor?.id ?? (v.colors.isNotEmpty ? v.colors.first.id : null);
             }),
             onColorChanged: (cId) => setState(() => _colorId = cId),
             onBranchChanged: (bId) => setState(() => _branchId = bId),
+            onAngleChanged: (angle) => setState(() => _photoAngle = angle),
           ),
           bottomNavigationBar: variant == null
               ? null
@@ -165,18 +179,22 @@ class _DetailBody extends ConsumerWidget {
     required this.variantId,
     required this.colorId,
     required this.branchId,
+    required this.photoAngle,
     required this.onVariantChanged,
     required this.onColorChanged,
     required this.onBranchChanged,
+    required this.onAngleChanged,
   });
 
   final VehicleModelDetail detail;
   final String? variantId;
   final String? colorId;
   final String? branchId;
+  final VehiclePhotoAngle photoAngle;
   final ValueChanged<VehicleVariant> onVariantChanged;
   final ValueChanged<String> onColorChanged;
   final ValueChanged<String> onBranchChanged;
+  final ValueChanged<VehiclePhotoAngle> onAngleChanged;
 
   VehicleVariant? get _variant {
     if (detail.variants.isEmpty) return null;
@@ -198,6 +216,8 @@ class _DetailBody extends ConsumerWidget {
                 (item) => item.id == colorId,
                 orElse: () => variant.primaryColor ?? variant.colors.first,
               ));
+
+    final activeVehicleImage = _resolveVehicleColorImage(detail, variant, color, photoAngle);
 
     final branchesState = ref.watch(branchesProvider);
     final branches = branchesState.value ?? const <DealershipBranch>[];
@@ -241,13 +261,103 @@ class _DetailBody extends ConsumerWidget {
             background: Stack(
               fit: StackFit.expand,
               children: [
-                RemoteImage(url: color?.imageUrl ?? detail.heroImageUrl, fit: BoxFit.cover),
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 350),
+                  reverseDuration: const Duration(milliseconds: 250),
+                  switchInCurve: Curves.easeOutCubic,
+                  switchOutCurve: Curves.easeInCubic,
+                  transitionBuilder: (Widget child, Animation<double> animation) {
+                    final fadeAnimation = CurvedAnimation(
+                      parent: animation,
+                      curve: Curves.easeInOut,
+                    );
+                    final scaleAnimation = Tween<double>(begin: 0.94, end: 1.0).animate(
+                      CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
+                    );
+                    return FadeTransition(
+                      opacity: fadeAnimation,
+                      child: ScaleTransition(
+                        scale: scaleAnimation,
+                        child: child,
+                      ),
+                    );
+                  },
+                  child: SizedBox.expand(
+                    key: ValueKey('${activeVehicleImage}_${photoAngle.name}'),
+                    child: RemoteImage(
+                      url: activeVehicleImage,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
                 const DecoratedBox(
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
-                      colors: [Colors.transparent, Color(0x22000000)],
+                      colors: [Colors.transparent, Color(0x33000000)],
+                    ),
+                  ),
+                ),
+                Positioned(
+                  bottom: 12,
+                  left: 0,
+                  right: 0,
+                  child: Center(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.72),
+                        borderRadius: BorderRadius.circular(999),
+                        border: Border.all(color: Colors.white.withValues(alpha: 0.2)),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: VehiclePhotoAngle.values.map((angle) {
+                          final isSelected = angle == photoAngle;
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 2),
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(999),
+                              onTap: () => onAngleChanged(angle),
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 200),
+                                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                                decoration: BoxDecoration(
+                                  color: isSelected ? Colors.white : Colors.transparent,
+                                  borderRadius: BorderRadius.circular(999),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      angle.icon,
+                                      size: 14,
+                                      color: isSelected ? const Color(0xFF0F172A) : Colors.white70,
+                                    ),
+                                    const SizedBox(width: 5),
+                                    Text(
+                                      angle.label,
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                                        color: isSelected ? const Color(0xFF0F172A) : Colors.white,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ),
                     ),
                   ),
                 ),
@@ -315,18 +425,20 @@ class _DetailBody extends ConsumerWidget {
                       ],
                     ),
                     const Spacer(),
-                    if (detail.has3DAsset)
-                      OutlinedButton.icon(
-                        onPressed: variant == null
-                            ? null
-                            : () => _openShowroom(context, variant, color?.id),
-                        icon: const Icon(Icons.view_in_ar_rounded, size: 18),
-                        label: const Text('3D showroom'),
-                        style: OutlinedButton.styleFrom(
-                          minimumSize: const Size(0, 44),
-                          padding: const EdgeInsets.symmetric(horizontal: 14),
-                        ),
+                    FilledButton.tonalIcon(
+                      onPressed: () => EmiCalculatorWidget.show(
+                        context,
+                        initialPrice: (variant?.basePrice ?? detail.startingPrice).toDouble(),
+                        modelName: detail.name,
+                        variantName: variant?.name,
                       ),
+                      icon: const Icon(Icons.calculate_outlined, size: 18),
+                      label: const Text('EMI Calculator', style: TextStyle(fontSize: 12)),
+                      style: FilledButton.styleFrom(
+                        minimumSize: const Size(0, 42),
+                        padding: const EdgeInsets.symmetric(horizontal: 14),
+                      ),
+                    ),
                   ],
                 ),
               ],
@@ -343,7 +455,7 @@ class _DetailBody extends ConsumerWidget {
                   const SectionHeader(title: 'Choose your variant'),
                   const SizedBox(height: 12),
                   SizedBox(
-                    height: 78,
+                    height: 58,
                     child: ListView.separated(
                       scrollDirection: Axis.horizontal,
                       itemCount: detail.variants.length,
@@ -371,56 +483,81 @@ class _DetailBody extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   SectionHeader(
-                    title: 'Colour',
-                    subtitle: color?.colorName ?? 'Choose a finish',
+                    title: 'Available colours',
+                    subtitle: color?.colorName != null
+                        ? 'Selected: ${color!.colorName}'
+                        : 'Tap any colour to change bike finish',
                   ),
-                  const SizedBox(height: 12),
-                  Wrap(
-                    spacing: 14,
-                    runSpacing: 12,
-                    children: variant.colors.map((item) {
-                      final selected = item.id == color?.id;
-                      return GestureDetector(
-                        onTap: () => onColorChanged(item.id),
-                        child: Column(
-                          children: [
-                            Container(
-                              width: 42,
-                              height: 42,
-                              decoration: BoxDecoration(
-                                color: _hexColor(item.hexCode),
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: selected ? primary : const Color(0xFFE2E8F0),
-                                  width: selected ? 3 : 1,
-                                ),
+                  const SizedBox(height: 14),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: variant.colors.map((item) {
+                        final selected = item.id == color?.id;
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 18),
+                          child: GestureDetector(
+                            behavior: HitTestBehavior.opaque,
+                            onTap: () => onColorChanged(item.id),
+                            child: AnimatedScale(
+                              scale: selected ? 1.08 : 1.0,
+                              duration: const Duration(milliseconds: 200),
+                              curve: Curves.easeOutBack,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  AnimatedContainer(
+                                    duration: const Duration(milliseconds: 200),
+                                    width: 48,
+                                    height: 48,
+                                    decoration: BoxDecoration(
+                                      color: _hexColor(item.hexCode),
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: selected ? const Color(0xFF0F172A) : const Color(0xFFE2E8F0),
+                                        width: selected ? 3.5 : 1.5,
+                                      ),
+                                      boxShadow: selected
+                                          ? [
+                                              BoxShadow(
+                                                color: Colors.black.withValues(alpha: 0.22),
+                                                blurRadius: 8,
+                                                offset: const Offset(0, 3),
+                                              )
+                                            ]
+                                          : null,
+                                    ),
+                                    child: selected
+                                        ? Icon(
+                                            Icons.check_rounded,
+                                            size: 22,
+                                            color: _contrastColor(item.hexCode),
+                                          )
+                                        : null,
+                                  ),
+                                  const SizedBox(height: 8),
+                                  SizedBox(
+                                    width: 82,
+                                    child: Text(
+                                      item.colorName,
+                                      textAlign: TextAlign.center,
+                                      maxLines: 2,
+                                      style: TextStyle(
+                                        fontSize: 11.5,
+                                        fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                                        color: selected ? const Color(0xFF0F172A) : const Color(0xFF64748B),
+                                        height: 1.25,
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                              child: selected
-                                  ? Icon(
-                                      Icons.check_rounded,
-                                      size: 20,
-                                      color: _contrastColor(item.hexCode),
-                                    )
-                                  : null,
                             ),
-                            const SizedBox(height: 6),
-                            SizedBox(
-                              width: 74,
-                              child: Text(
-                                item.colorName,
-                                textAlign: TextAlign.center,
-                                maxLines: 2,
-                                style: TextStyle(
-                                  fontSize: 11,
-                                  fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
-                                  color: selected ? const Color(0xFF0F172A) : const Color(0xFF64748B),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }).toList(),
+                          ),
+                        );
+                      }).toList(),
+                    ),
                   ),
                 ],
               ),
@@ -497,6 +634,66 @@ class _DetailBody extends ConsumerWidget {
     );
   }
 
+  static String _resolveVehicleColorImage(
+    VehicleModelDetail detail,
+    VehicleVariant? variant,
+    VehicleColor? color,
+    VehiclePhotoAngle angle,
+  ) {
+    final colorName = (color?.colorName ?? '').toLowerCase();
+    final modelCode = detail.code.toLowerCase();
+
+    // 1. Dark Knight / Black
+    if (colorName.contains('dark') || colorName.contains('knight') || colorName.contains('black')) {
+      return switch (angle) {
+        VehiclePhotoAngle.front => 'assets/images/vehicles/r15_black_front.jpg',
+        VehiclePhotoAngle.side => 'assets/images/vehicles/r15_black_side.jpg',
+        VehiclePhotoAngle.back => 'assets/images/vehicles/r15_black_back.jpg',
+      };
+    }
+
+    // 2. Red / Crimson
+    if (colorName.contains('red') || colorName.contains('vermilion') || colorName.contains('crimson')) {
+      return switch (angle) {
+        VehiclePhotoAngle.front => 'assets/images/vehicles/r15_red_front.jpg',
+        VehiclePhotoAngle.side => 'assets/images/vehicles/r15_red_side.jpg',
+        VehiclePhotoAngle.back => 'assets/images/vehicles/r15_red_back.jpg',
+      };
+    }
+
+    // 3. Metallic Grey / Silver / Intensity White
+    if (colorName.contains('grey') ||
+        colorName.contains('gray') ||
+        colorName.contains('silver') ||
+        colorName.contains('white') ||
+        (variant?.code.toLowerCase().contains('r15m') ?? false)) {
+      return switch (angle) {
+        VehiclePhotoAngle.front => 'assets/images/vehicles/r15_grey_front.jpg',
+        VehiclePhotoAngle.side => 'assets/images/vehicles/r15_grey_side.jpg',
+        VehiclePhotoAngle.back => 'assets/images/vehicles/r15_grey_back.jpg',
+      };
+    }
+
+    // 4. Racing Blue / Blue (Default for R15)
+    if (colorName.contains('blue') || colorName.contains('racing') || modelCode.contains('r15')) {
+      return switch (angle) {
+        VehiclePhotoAngle.front => 'assets/images/vehicles/r15_blue_front.jpg',
+        VehiclePhotoAngle.side => 'assets/images/vehicles/r15_blue_side.jpg',
+        VehiclePhotoAngle.back => 'assets/images/vehicles/r15_blue_back.jpg',
+      };
+    }
+
+    // 5. Scooters & EVs
+    if (modelCode.contains('aerox')) {
+      return 'assets/images/vehicles/yamaha_aerox_155.jpg';
+    }
+    if (modelCode.contains('iqube')) {
+      return 'assets/images/vehicles/tvs_iqube.jpg';
+    }
+
+    return color?.imageUrl ?? detail.heroImageUrl ?? 'assets/images/vehicles/r15_blue_side.jpg';
+  }
+
   Color _hexColor(String hex) {
     var value = hex.replaceFirst('#', '');
     if (value.length == 6) value = 'FF$value';
@@ -506,14 +703,6 @@ class _DetailBody extends ConsumerWidget {
   Color _contrastColor(String hex) {
     final color = _hexColor(hex);
     return color.computeLuminance() > 0.55 ? const Color(0xFF0F172A) : Colors.white;
-  }
-
-  void _openShowroom(BuildContext context, VehicleVariant variant, String? colorId) {
-    final uri = Uri(
-      path: '/viewer/${variant.id}',
-      queryParameters: {if (colorId != null) 'colorId': colorId},
-    );
-    context.push(uri.toString());
   }
 }
 
@@ -603,10 +792,52 @@ class _PricingPanel extends ConsumerWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 8),
-              Text(
-                'EMI from ${formatEmiEstimate(pricing.estimatedOnRoadPrice)} / month · 36 months, 10.5% p.a.',
-                style: const TextStyle(fontSize: 11.5, color: Color(0xFF64748B)),
+              const SizedBox(height: 12),
+              InkWell(
+                onTap: () => EmiCalculatorWidget.show(
+                  context,
+                  initialPrice: pricing.estimatedOnRoadPrice,
+                  modelName: variant.name,
+                  variantName: variant.name,
+                ),
+                borderRadius: BorderRadius.circular(12),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.25),
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.calculate_rounded, size: 22, color: Theme.of(context).colorScheme.primary),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'EMI from ${formatEmiEstimate(pricing.estimatedOnRoadPrice)} / month',
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w700,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            const Text(
+                              'Tap to calculate custom down payment & tenure',
+                              style: TextStyle(fontSize: 11, color: Color(0xFF64748B)),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Icon(Icons.chevron_right_rounded, size: 20, color: Theme.of(context).colorScheme.primary),
+                    ],
+                  ),
+                ),
               ),
               if (pricing.disclaimer.isNotEmpty) ...[
                 const SizedBox(height: 10),
@@ -791,36 +1022,51 @@ class _VariantCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final primary = Theme.of(context).colorScheme.primary;
     return InkWell(
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(14),
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
-        width: 156,
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: selected ? primary.withValues(alpha: 0.08) : Colors.white,
-          borderRadius: BorderRadius.circular(16),
+          color: selected ? const Color(0xFF262626) : const Color(0xFFF1F5F9),
+          borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: selected ? primary : const Color(0xFFE2E8F0),
-            width: selected ? 1.6 : 1,
+            color: selected ? const Color(0xFF262626) : const Color(0xFFE2E8F0),
+            width: selected ? 1.5 : 1,
           ),
+          boxShadow: selected
+              ? [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.12),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
+                  )
+                ]
+              : null,
         ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text(
               variant.name,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+                color: selected ? Colors.white : const Color(0xFF1E293B),
+              ),
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 2),
             Text(
               formatCurrency(variant.basePrice),
-              style: const TextStyle(fontSize: 12, color: Color(0xFF64748B)),
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: selected ? const Color(0xFFCBD5E1) : const Color(0xFF64748B),
+              ),
             ),
           ],
         ),

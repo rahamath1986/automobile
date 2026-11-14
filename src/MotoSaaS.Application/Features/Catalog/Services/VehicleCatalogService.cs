@@ -405,6 +405,7 @@ public class VehicleCatalogService : IVehicleCatalogService
                 StartingPrice = 182000m,
                 VariantCount = 3,
                 ColorCount = 5,
+                HeroImageUrl = "https://upload.wikimedia.org/wikipedia/commons/8/8d/2024_Yamaha_YZF-R15_155_%2820241102%29.jpg",
                 Has3DAsset = true
             },
             new()
@@ -421,6 +422,7 @@ public class VehicleCatalogService : IVehicleCatalogService
                 StartingPrice = 147000m,
                 VariantCount = 2,
                 ColorCount = 4,
+                HeroImageUrl = "https://upload.wikimedia.org/wikipedia/commons/6/60/2022_Yamaha_Aerox_155_ABS.jpg",
                 Has3DAsset = true
             },
             new()
@@ -437,6 +439,7 @@ public class VehicleCatalogService : IVehicleCatalogService
                 StartingPrice = 117000m,
                 VariantCount = 3,
                 ColorCount = 4,
+                HeroImageUrl = "https://upload.wikimedia.org/wikipedia/commons/8/83/Tvs_i_qube.jpg",
                 Has3DAsset = true
             }
         };
@@ -495,6 +498,7 @@ public class VehicleCatalogService : IVehicleCatalogService
                 StartingPrice = 182000m,
                 VariantCount = 3,
                 ColorCount = 5,
+                HeroImageUrl = "https://upload.wikimedia.org/wikipedia/commons/8/8d/2024_Yamaha_YZF-R15_155_%2820241102%29.jpg",
                 Has3DAsset = true,
                 Variants = new List<VehicleVariantDto>
                 {
@@ -509,8 +513,10 @@ public class VehicleCatalogService : IVehicleCatalogService
                         FeaturesJson = "{\"display\":\"LCD console\",\"lighting\":\"LED\",\"connectivity\":\"Y-Connect\",\"quickShifter\":false,\"tractionControl\":false}",
                         Colors = new List<VehicleColorDto>
                         {
-                            new() { Id = Guid.Parse("22222222-2222-2222-2222-222222222401"), VariantId = Guid.Parse("22222222-2222-2222-2222-222222222301"), ColorName = "Metallic Grey", HexCode = "#707070", IsPrimary = true },
-                            new() { Id = Guid.Parse("22222222-2222-2222-2222-222222222402"), VariantId = Guid.Parse("22222222-2222-2222-2222-222222222301"), ColorName = "Racing Blue", HexCode = "#002C6C" }
+                            new() { Id = Guid.Parse("22222222-2222-2222-2222-222222222401"), VariantId = Guid.Parse("22222222-2222-2222-2222-222222222301"), ColorName = "Metallic Grey", HexCode = "#707070", IsPrimary = true, ImageUrl = "assets/images/vehicles/yamaha_r15m.jpg" },
+                            new() { Id = Guid.Parse("22222222-2222-2222-2222-222222222402"), VariantId = Guid.Parse("22222222-2222-2222-2222-222222222301"), ColorName = "Racing Blue", HexCode = "#002C6C", ImageUrl = "assets/images/vehicles/yamaha_r15_v4.jpg" },
+                            new() { Id = Guid.Parse("22222222-2222-2222-2222-222222222406"), VariantId = Guid.Parse("22222222-2222-2222-2222-222222222301"), ColorName = "Vivid Red", HexCode = "#D32F2F", ImageUrl = "assets/images/vehicles/yamaha_r15_red.jpg" },
+                            new() { Id = Guid.Parse("22222222-2222-2222-2222-222222222407"), VariantId = Guid.Parse("22222222-2222-2222-2222-222222222301"), ColorName = "Dark Knight", HexCode = "#1A1A1A", ImageUrl = "assets/images/vehicles/yamaha_r15_dark_knight.jpg" }
                         },
                         Assets3D = new List<Asset3DDto>
                         {
@@ -528,8 +534,8 @@ public class VehicleCatalogService : IVehicleCatalogService
                         FeaturesJson = "{\"display\":\"TFT with Bluetooth\",\"lighting\":\"LED\",\"connectivity\":\"Y-Connect\",\"quickShifter\":true,\"tractionControl\":true}",
                         Colors = new List<VehicleColorDto>
                         {
-                            new() { Id = Guid.Parse("22222222-2222-2222-2222-222222222403"), VariantId = Guid.Parse("22222222-2222-2222-2222-222222222302"), ColorName = "Metallic Grey", HexCode = "#707070", IsPrimary = true },
-                            new() { Id = Guid.Parse("22222222-2222-2222-2222-222222222404"), VariantId = Guid.Parse("22222222-2222-2222-2222-222222222302"), ColorName = "Intensity White", HexCode = "#F2F2F2" }
+                            new() { Id = Guid.Parse("22222222-2222-2222-2222-222222222403"), VariantId = Guid.Parse("22222222-2222-2222-2222-222222222302"), ColorName = "Metallic Grey", HexCode = "#707070", IsPrimary = true, ImageUrl = "assets/images/vehicles/yamaha_r15m.jpg" },
+                            new() { Id = Guid.Parse("22222222-2222-2222-2222-222222222404"), VariantId = Guid.Parse("22222222-2222-2222-2222-222222222302"), ColorName = "Intensity White", HexCode = "#F2F2F2", ImageUrl = "assets/images/vehicles/yamaha_r15m.jpg" }
                         },
                         Assets3D = new List<Asset3DDto>
                         {
@@ -547,7 +553,7 @@ public class VehicleCatalogService : IVehicleCatalogService
                         FeaturesJson = "{\"display\":\"LCD console\",\"lighting\":\"LED\",\"connectivity\":\"Y-Connect\",\"quickShifter\":false,\"tractionControl\":false}",
                         Colors = new List<VehicleColorDto>
                         {
-                            new() { Id = Guid.Parse("22222222-2222-2222-2222-222222222405"), VariantId = Guid.Parse("22222222-2222-2222-2222-222222222303"), ColorName = "Dark Knight", HexCode = "#1A1A1A", IsPrimary = true }
+                            new() { Id = Guid.Parse("22222222-2222-2222-2222-222222222405"), VariantId = Guid.Parse("22222222-2222-2222-2222-222222222303"), ColorName = "Dark Knight", HexCode = "#1A1A1A", IsPrimary = true, ImageUrl = "assets/images/vehicles/yamaha_r15_dark_knight.jpg" }
                         },
                         Assets3D = new List<Asset3DDto>
                         {
@@ -570,6 +576,7 @@ public class VehicleCatalogService : IVehicleCatalogService
                 StartingPrice = 147000m,
                 VariantCount = 2,
                 ColorCount = 4,
+                HeroImageUrl = "https://upload.wikimedia.org/wikipedia/commons/6/60/2022_Yamaha_Aerox_155_ABS.jpg",
                 Has3DAsset = true,
                 Variants = new List<VehicleVariantDto>
                 {
@@ -584,8 +591,8 @@ public class VehicleCatalogService : IVehicleCatalogService
                         FeaturesJson = "{\"display\":\"LCD console\",\"lighting\":\"LED\",\"connectivity\":\"Y-Connect\",\"smartKey\":false}",
                         Colors = new List<VehicleColorDto>
                         {
-                            new() { Id = Guid.Parse("22222222-2222-2222-2222-222222222411"), VariantId = Guid.Parse("22222222-2222-2222-2222-222222222311"), ColorName = "Racing Blue", HexCode = "#002C6C", IsPrimary = true },
-                            new() { Id = Guid.Parse("22222222-2222-2222-2222-222222222412"), VariantId = Guid.Parse("22222222-2222-2222-2222-222222222311"), ColorName = "Matte Black", HexCode = "#1A1A1A" }
+                            new() { Id = Guid.Parse("22222222-2222-2222-2222-222222222411"), VariantId = Guid.Parse("22222222-2222-2222-2222-222222222311"), ColorName = "Racing Blue", HexCode = "#002C6C", IsPrimary = true, ImageUrl = "https://upload.wikimedia.org/wikipedia/commons/6/60/2022_Yamaha_Aerox_155_ABS.jpg" },
+                            new() { Id = Guid.Parse("22222222-2222-2222-2222-222222222412"), VariantId = Guid.Parse("22222222-2222-2222-2222-222222222311"), ColorName = "Matte Black", HexCode = "#1A1A1A", ImageUrl = "https://upload.wikimedia.org/wikipedia/commons/6/60/2022_Yamaha_Aerox_155_ABS.jpg" }
                         },
                         Assets3D = new List<Asset3DDto>
                         {
@@ -603,8 +610,8 @@ public class VehicleCatalogService : IVehicleCatalogService
                         FeaturesJson = "{\"display\":\"LCD console\",\"lighting\":\"LED\",\"connectivity\":\"Y-Connect\",\"smartKey\":true}",
                         Colors = new List<VehicleColorDto>
                         {
-                            new() { Id = Guid.Parse("22222222-2222-2222-2222-222222222413"), VariantId = Guid.Parse("22222222-2222-2222-2222-222222222312"), ColorName = "Metallic Grey", HexCode = "#707070", IsPrimary = true },
-                            new() { Id = Guid.Parse("22222222-2222-2222-2222-222222222414"), VariantId = Guid.Parse("22222222-2222-2222-2222-222222222312"), ColorName = "Racing Blue", HexCode = "#002C6C" }
+                            new() { Id = Guid.Parse("22222222-2222-2222-2222-222222222413"), VariantId = Guid.Parse("22222222-2222-2222-2222-222222222312"), ColorName = "Metallic Grey", HexCode = "#707070", IsPrimary = true, ImageUrl = "https://upload.wikimedia.org/wikipedia/commons/6/60/2022_Yamaha_Aerox_155_ABS.jpg" },
+                            new() { Id = Guid.Parse("22222222-2222-2222-2222-222222222414"), VariantId = Guid.Parse("22222222-2222-2222-2222-222222222312"), ColorName = "Racing Blue", HexCode = "#002C6C", ImageUrl = "https://upload.wikimedia.org/wikipedia/commons/6/60/2022_Yamaha_Aerox_155_ABS.jpg" }
                         },
                         Assets3D = new List<Asset3DDto>
                         {
@@ -627,6 +634,7 @@ public class VehicleCatalogService : IVehicleCatalogService
                 StartingPrice = 117000m,
                 VariantCount = 3,
                 ColorCount = 4,
+                HeroImageUrl = "https://upload.wikimedia.org/wikipedia/commons/8/83/Tvs_i_qube.jpg",
                 Has3DAsset = true,
                 Variants = new List<VehicleVariantDto>
                 {
@@ -641,8 +649,8 @@ public class VehicleCatalogService : IVehicleCatalogService
                         FeaturesJson = "{\"display\":\"TFT\",\"connectivity\":\"SmartXonnect\",\"ridingModes\":3,\"regenerativeBraking\":true,\"fastCharging\":false}",
                         Colors = new List<VehicleColorDto>
                         {
-                            new() { Id = Guid.Parse("22222222-2222-2222-2222-222222222421"), VariantId = Guid.Parse("22222222-2222-2222-2222-222222222321"), ColorName = "Pearl White", HexCode = "#F7F7F7", IsPrimary = true },
-                            new() { Id = Guid.Parse("22222222-2222-2222-2222-222222222422"), VariantId = Guid.Parse("22222222-2222-2222-2222-222222222321"), ColorName = "Titanium Grey", HexCode = "#5A5A5A" }
+                            new() { Id = Guid.Parse("22222222-2222-2222-2222-222222222421"), VariantId = Guid.Parse("22222222-2222-2222-2222-222222222321"), ColorName = "Pearl White", HexCode = "#F7F7F7", IsPrimary = true, ImageUrl = "https://upload.wikimedia.org/wikipedia/commons/8/83/Tvs_i_qube.jpg" },
+                            new() { Id = Guid.Parse("22222222-2222-2222-2222-222222222422"), VariantId = Guid.Parse("22222222-2222-2222-2222-222222222321"), ColorName = "Titanium Grey", HexCode = "#5A5A5A", ImageUrl = "https://upload.wikimedia.org/wikipedia/commons/8/83/Tvs_i_qube.jpg" }
                         },
                         Assets3D = new List<Asset3DDto>
                         {

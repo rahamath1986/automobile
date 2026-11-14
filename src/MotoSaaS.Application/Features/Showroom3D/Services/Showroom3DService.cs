@@ -291,11 +291,17 @@ public class Showroom3DService : IShowroom3DService
             HasDracoCompression = true,
             CameraPresets = new CameraPresetsManifestDto(),
             Hotspots = GetDefaultHotspots("Yamaha YZF R15 V4"),
+            StaticGalleryImageUrls = new List<string>
+            {
+                "https://upload.wikimedia.org/wikipedia/commons/8/8d/2024_Yamaha_YZF-R15_155_%2820241102%29.jpg",
+                "https://upload.wikimedia.org/wikipedia/commons/d/d7/2026_Yamaha_YZF-R15M_ABS_70th_Anniversary_Edition_155_%2820260208%29.jpg",
+                "https://upload.wikimedia.org/wikipedia/commons/6/60/2022_Yamaha_Aerox_155_ABS.jpg"
+            },
             AvailableColors = new List<VehicleColorDto>
             {
-                new() { ColorName = "Metallic Grey", HexCode = "#707070", IsPrimary = true },
-                new() { ColorName = "Racing Blue", HexCode = "#002C6C" },
-                new() { ColorName = "Dark Knight", HexCode = "#1A1A1A" }
+                new() { ColorName = "Metallic Grey", HexCode = "#707070", IsPrimary = true, ImageUrl = "https://upload.wikimedia.org/wikipedia/commons/8/8d/2024_Yamaha_YZF-R15_155_%2820241102%29.jpg" },
+                new() { ColorName = "Racing Blue", HexCode = "#002C6C", ImageUrl = "https://upload.wikimedia.org/wikipedia/commons/8/8d/2024_Yamaha_YZF-R15_155_%2820241102%29.jpg" },
+                new() { ColorName = "Dark Knight", HexCode = "#1A1A1A", ImageUrl = "https://upload.wikimedia.org/wikipedia/commons/8/8d/2024_Yamaha_YZF-R15_155_%2820241102%29.jpg" }
             }
         };
     }

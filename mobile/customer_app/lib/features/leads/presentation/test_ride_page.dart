@@ -253,11 +253,29 @@ class _TestRidePageState extends ConsumerState<TestRidePage> {
                 runSpacing: 8,
                 children: _timeSlots
                     .map(
-                      (slot) => ChoiceChip(
-                        label: Text(slot.$1, style: const TextStyle(fontSize: 12)),
-                        selected: _slot == slot.$1,
-                        onSelected: (_) => setState(() => _slot = slot.$1),
-                      ),
+                      (slot) {
+                        final isSelected = _slot == slot.$1;
+                        final primary = Theme.of(context).colorScheme.primary;
+                        return ChoiceChip(
+                          label: Text(
+                            slot.$1,
+                            style: TextStyle(
+                              fontSize: 12,
+                              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                              color: isSelected ? Colors.white : const Color(0xFF0F172A),
+                            ),
+                          ),
+                          selected: isSelected,
+                          selectedColor: primary,
+                          backgroundColor: Colors.white,
+                          checkmarkColor: Colors.white,
+                          showCheckmark: false,
+                          side: BorderSide(
+                            color: isSelected ? primary : const Color(0xFFDCE5F0),
+                          ),
+                          onSelected: (_) => setState(() => _slot = slot.$1),
+                        );
+                      },
                     )
                     .toList(),
               ),

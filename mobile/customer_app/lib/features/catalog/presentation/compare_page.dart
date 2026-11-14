@@ -73,6 +73,9 @@ class _ComparisonTable extends ConsumerWidget {
 
   final List<ComparisonItem> items;
 
+  static const double _labelWidth = 110.0;
+  static const double _colWidth = 160.0;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final specKeys = _collectSpecKeys(items);
@@ -86,13 +89,18 @@ class _ComparisonTable extends ConsumerWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(width: 140),
+              const SizedBox(width: _labelWidth),
               ...items.map((item) {
                 final heroImage = item.variant.primaryColor?.imageUrl ?? item.model.heroImageUrl;
                 return Container(
-                  width: 200,
-                  margin: const EdgeInsets.only(left: 12),
+                  width: _colWidth,
+                  margin: const EdgeInsets.only(left: 10),
                   child: Card(
+                    elevation: 1,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      side: const BorderSide(color: Color(0xFFE2E8F0)),
+                    ),
                     clipBehavior: Clip.antiAlias,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -100,22 +108,26 @@ class _ComparisonTable extends ConsumerWidget {
                         Stack(
                           children: [
                             SizedBox(
-                              height: 110,
+                              height: 96,
                               width: double.infinity,
-                              child: RemoteImage(url: heroImage, fit: BoxFit.cover),
+                              child: RemoteImage(
+                                url: heroImage,
+                                fallbackAsset: RemoteImage.resolveVehicleAsset('${item.model.code} ${item.variant.name}'),
+                                fit: BoxFit.cover,
+                              ),
                             ),
                             Positioned(
                               top: 4,
                               right: 4,
                               child: Material(
-                                color: Colors.black.withValues(alpha: 0.5),
+                                color: Colors.black.withValues(alpha: 0.55),
                                 shape: const CircleBorder(),
                                 child: InkWell(
                                   customBorder: const CircleBorder(),
                                   onTap: () => ref.read(comparisonControllerProvider.notifier).remove(item.variant.id),
                                   child: const Padding(
                                     padding: EdgeInsets.all(4),
-                                    child: Icon(Icons.close_rounded, size: 16, color: Colors.white),
+                                    child: Icon(Icons.close_rounded, size: 15, color: Colors.white),
                                   ),
                                 ),
                               ),
@@ -123,39 +135,40 @@ class _ComparisonTable extends ConsumerWidget {
                           ],
                         ),
                         Padding(
-                          padding: const EdgeInsets.all(12),
+                          padding: const EdgeInsets.all(10),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 item.model.manufacturerName.toUpperCase(),
-                                style: const TextStyle(fontSize: 9, fontWeight: FontWeight.w700, color: Color(0xFF94A3B8)),
+                                style: const TextStyle(fontSize: 8.5, fontWeight: FontWeight.w700, color: Color(0xFF94A3B8)),
                               ),
                               const SizedBox(height: 2),
                               Text(
                                 item.model.name,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w800),
+                                style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w800),
                               ),
                               Text(
                                 item.variant.name,
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(fontSize: 12, color: Color(0xFF64748B)),
+                                style: const TextStyle(fontSize: 11, color: Color(0xFF64748B)),
                               ),
-                              const SizedBox(height: 6),
+                              const SizedBox(height: 4),
                               Text(
                                 formatCurrency(item.variant.basePrice),
-                                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800, color: primary),
+                                style: TextStyle(fontSize: 13.5, fontWeight: FontWeight.w800, color: primary),
                               ),
-                              const SizedBox(height: 10),
+                              const SizedBox(height: 8),
                               SizedBox(
                                 width: double.infinity,
                                 child: OutlinedButton(
                                   style: OutlinedButton.styleFrom(
-                                    minimumSize: const Size(0, 36),
-                                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                                    minimumSize: const Size(0, 32),
+                                    padding: const EdgeInsets.symmetric(horizontal: 6),
+                                    side: BorderSide(color: primary.withValues(alpha: 0.5)),
                                   ),
                                   onPressed: () {
                                     final uri = Uri(
@@ -168,7 +181,7 @@ class _ComparisonTable extends ConsumerWidget {
                                     );
                                     context.push(uri.toString());
                                   },
-                                  child: const Text('Enquire', style: TextStyle(fontSize: 12)),
+                                  child: const Text('Enquire', style: TextStyle(fontSize: 11.5)),
                                 ),
                               ),
                             ],
@@ -181,7 +194,7 @@ class _ComparisonTable extends ConsumerWidget {
               }),
             ],
           ),
-          const SizedBox(height: 18),
+          const SizedBox(height: 14),
 
           _buildSectionHeader('General details'),
           _buildRow('Category', items.map((i) => i.model.categoryLabel).toList()),
@@ -194,8 +207,13 @@ class _ComparisonTable extends ConsumerWidget {
               return '—';
             }).toList(),
           ),
-          _buildRow('Colours available', items.map((i) => '${i.variant.colors.length} colours').toList()),
-          _buildRow('3D showroom', items.map((i) => i.variant.has3DAsset ? 'Available' : 'Standard view').toList()),
+          _buildRow(
+            'Colours available',
+            items.map((i) {
+              if (i.variant.colors.isEmpty) return 'Standard finish';
+              return i.variant.colors.map((c) => c.colorName).join('\n');
+            }).toList(),
+          ),
 
           if (specKeys.isNotEmpty) ...[
             const SizedBox(height: 14),
@@ -216,32 +234,38 @@ class _ComparisonTable extends ConsumerWidget {
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Text(
         title,
-        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: Color(0xFF0F172A)),
+        style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: Color(0xFF0F172A)),
       ),
     );
   }
 
   Widget _buildRow(String label, List<String> values) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+      padding: const EdgeInsets.symmetric(vertical: 9, horizontal: 4),
       decoration: const BoxDecoration(
         border: Border(bottom: BorderSide(color: Color(0xFFE8EDF5))),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            width: 140,
+            width: _labelWidth,
             child: Text(
               label,
-              style: const TextStyle(fontSize: 12.5, color: Color(0xFF64748B), fontWeight: FontWeight.w500),
+              style: const TextStyle(fontSize: 12, color: Color(0xFF64748B), fontWeight: FontWeight.w500),
             ),
           ),
           ...values.map((v) => Container(
-                width: 200,
-                margin: const EdgeInsets.only(left: 12),
+                width: _colWidth,
+                margin: const EdgeInsets.only(left: 10),
                 child: Text(
                   v,
-                  style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: Color(0xFF0F172A)),
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF0F172A),
+                    height: 1.35,
+                  ),
                 ),
               )),
         ],

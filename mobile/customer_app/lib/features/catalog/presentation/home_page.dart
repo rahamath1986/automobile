@@ -111,9 +111,25 @@ class _HomePageState extends ConsumerState<HomePage> {
                       separatorBuilder: (_, __) => const SizedBox(width: 8),
                       itemBuilder: (context, index) {
                         final category = CatalogCategory.values[index];
+                        final isSelected = filter.category == category;
+                        final primary = Theme.of(context).colorScheme.primary;
                         return ChoiceChip(
-                          label: Text(category.label),
-                          selected: filter.category == category,
+                          label: Text(
+                            category.label,
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
+                              color: isSelected ? Colors.white : const Color(0xFF0F172A),
+                            ),
+                          ),
+                          selected: isSelected,
+                          selectedColor: primary,
+                          backgroundColor: Colors.white,
+                          checkmarkColor: Colors.white,
+                          showCheckmark: false,
+                          side: BorderSide(
+                            color: isSelected ? primary : const Color(0xFFDCE5F0),
+                          ),
                           onSelected: (_) =>
                               ref.read(catalogFilterProvider.notifier).setCategory(category),
                         );

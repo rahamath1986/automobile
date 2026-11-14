@@ -111,72 +111,453 @@
 
       function buildProceduralMotorcycle() {
         var group = new THREE.Group();
-        var paint = new THREE.MeshStandardMaterial({ color: '#002c6c', roughness: 0.28, metalness: 0.55 });
-        var black = new THREE.MeshStandardMaterial({ color: '#111827', roughness: 0.7, metalness: 0.25 });
-        var metal = new THREE.MeshStandardMaterial({ color: '#9ca3af', roughness: 0.25, metalness: 0.85 });
-        var glass = new THREE.MeshStandardMaterial({ color: '#93c5fd', roughness: 0.08, metalness: 0.2, transparent: true, opacity: 0.55 });
-        paintMaterials = [paint];
+        paintMaterials = [];
 
-        function add(mesh) { mesh.castShadow = true; mesh.receiveShadow = true; group.add(mesh); return mesh; }
+        // --- Materials ---
+        var paint = new THREE.MeshStandardMaterial({
+          color: '#002c6c',
+          roughness: 0.22,
+          metalness: 0.65,
+          envMapIntensity: 1.2
+        });
+        paintMaterials.push(paint);
 
-        var frontWheel = add(new THREE.Mesh(new THREE.TorusGeometry(0.36, 0.09, 18, 40), black));
-        frontWheel.position.set(0, 0.46, 0.86);
-        frontWheel.rotation.y = Math.PI / 2;
+        var tireRubber = new THREE.MeshStandardMaterial({
+          color: '#15171e',
+          roughness: 0.85,
+          metalness: 0.08
+        });
 
-        var rearWheel = add(new THREE.Mesh(new THREE.TorusGeometry(0.36, 0.10, 18, 40), black));
-        rearWheel.position.set(0, 0.46, -0.82);
-        rearWheel.rotation.y = Math.PI / 2;
+        var wheelRimMat = new THREE.MeshStandardMaterial({
+          color: '#0f172a',
+          roughness: 0.35,
+          metalness: 0.8
+        });
 
-        var frontRim = add(new THREE.Mesh(new THREE.CylinderGeometry(0.27, 0.27, 0.06, 24), metal));
-        frontRim.position.copy(frontWheel.position);
-        frontRim.rotation.z = Math.PI / 2;
-        var rearRim = add(new THREE.Mesh(new THREE.CylinderGeometry(0.27, 0.27, 0.06, 24), metal));
-        rearRim.position.copy(rearWheel.position);
-        rearRim.rotation.z = Math.PI / 2;
+        var rimLipMat = new THREE.MeshStandardMaterial({
+          color: '#cbd5e1',
+          roughness: 0.15,
+          metalness: 0.95
+        });
 
-        var engine = add(new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.30, 0.48), metal));
-        engine.position.set(0, 0.50, 0.04);
+        var brakeDiscMat = new THREE.MeshStandardMaterial({
+          color: '#e2e8f0',
+          roughness: 0.28,
+          metalness: 0.9,
+          side: THREE.DoubleSide
+        });
 
-        var tank = add(new THREE.Mesh(new THREE.SphereGeometry(0.30, 32, 24), paint));
-        tank.scale.set(0.9, 0.72, 1.35);
-        tank.position.set(0, 0.82, 0.16);
+        var caliperGold = new THREE.MeshStandardMaterial({
+          color: '#d97706',
+          roughness: 0.3,
+          metalness: 0.8
+        });
 
-        var fairing = add(new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.34, 0.56), paint));
-        fairing.position.set(0, 0.70, 0.58);
-        fairing.rotation.x = -0.18;
+        var frameAlum = new THREE.MeshStandardMaterial({
+          color: '#64748b',
+          roughness: 0.35,
+          metalness: 0.85
+        });
 
-        var seat = add(new THREE.Mesh(new THREE.BoxGeometry(0.30, 0.12, 0.52), black));
-        seat.position.set(0, 0.82, -0.36);
+        var forkGold = new THREE.MeshStandardMaterial({
+          color: '#eab308',
+          roughness: 0.18,
+          metalness: 0.88
+        });
 
-        var tail = add(new THREE.Mesh(new THREE.BoxGeometry(0.20, 0.16, 0.36), paint));
-        tail.position.set(0, 0.83, -0.72);
-        tail.rotation.x = 0.16;
+        var engineMetal = new THREE.MeshStandardMaterial({
+          color: '#334155',
+          roughness: 0.45,
+          metalness: 0.75
+        });
 
-        var forkLeft = add(new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.62, 12), metal));
-        forkLeft.position.set(0.14, 0.58, 0.78);
-        forkLeft.rotation.x = 0.22;
-        var forkRight = forkLeft.clone();
-        forkRight.position.x = -0.14;
-        group.add(forkRight);
+        var exhaustStainless = new THREE.MeshStandardMaterial({
+          color: '#94a3b8',
+          roughness: 0.2,
+          metalness: 0.92
+        });
 
-        var bar = add(new THREE.Mesh(new THREE.CylinderGeometry(0.02, 0.02, 0.62, 12), black));
-        bar.position.set(0, 0.98, 0.68);
-        bar.rotation.z = Math.PI / 2;
+        var exhaustCarbon = new THREE.MeshStandardMaterial({
+          color: '#1e293b',
+          roughness: 0.6,
+          metalness: 0.3
+        });
 
-        var headlight = add(new THREE.Mesh(new THREE.SphereGeometry(0.13, 20, 16), glass));
-        headlight.scale.set(1, 0.7, 0.5);
-        headlight.position.set(0, 0.85, 0.87);
+        var seatLeather = new THREE.MeshStandardMaterial({
+          color: '#1e2029',
+          roughness: 0.92,
+          metalness: 0.05
+        });
 
-        var screen = add(new THREE.Mesh(new THREE.BoxGeometry(0.30, 0.22, 0.02), glass));
-        screen.position.set(0, 1.02, 0.82);
-        screen.rotation.x = -0.45;
+        var windscreenGlass = new THREE.MeshStandardMaterial({
+          color: '#38bdf8',
+          roughness: 0.05,
+          metalness: 0.1,
+          transparent: true,
+          opacity: 0.45
+        });
 
-        var exhaust = add(new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.07, 0.62, 16), metal));
-        exhaust.position.set(0.20, 0.38, -0.55);
-        exhaust.rotation.x = Math.PI / 2.7;
+        var headlightLED = new THREE.MeshStandardMaterial({
+          color: '#ffffff',
+          emissive: '#e2e8f0',
+          emissiveIntensity: 0.9,
+          roughness: 0.1
+        });
 
-        var tailLight = add(new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.05, 0.04), new THREE.MeshStandardMaterial({ color: '#ef4444', emissive: '#7f1d1d', emissiveIntensity: 0.8 })));
-        tailLight.position.set(0, 0.86, -0.92);
+        var drlCyan = new THREE.MeshStandardMaterial({
+          color: '#38bdf8',
+          emissive: '#0284c7',
+          emissiveIntensity: 0.95
+        });
+
+        var taillightRed = new THREE.MeshStandardMaterial({
+          color: '#ef4444',
+          emissive: '#dc2626',
+          emissiveIntensity: 0.9
+        });
+
+        var springYellow = new THREE.MeshStandardMaterial({
+          color: '#facc15',
+          roughness: 0.3,
+          metalness: 0.5
+        });
+
+        var tftScreen = new THREE.MeshStandardMaterial({
+          color: '#0284c7',
+          emissive: '#0369a1',
+          emissiveIntensity: 0.8,
+          roughness: 0.2
+        });
+
+        function add(mesh) {
+          mesh.castShadow = true;
+          mesh.receiveShadow = true;
+          group.add(mesh);
+          return mesh;
+        }
+
+        function createWheel(isFront) {
+          var wheelGroup = new THREE.Group();
+          var zPos = isFront ? 0.88 : -0.84;
+          var tireRadius = 0.38;
+          var tireThickness = isFront ? 0.082 : 0.098;
+
+          // Tire
+          var tire = new THREE.Mesh(new THREE.TorusGeometry(tireRadius, tireThickness, 24, 48), tireRubber);
+          tire.rotation.y = Math.PI / 2;
+          tire.castShadow = true;
+          wheelGroup.add(tire);
+
+          // Outer rim lip
+          var rimLip = new THREE.Mesh(new THREE.TorusGeometry(tireRadius * 0.78, 0.022, 16, 48), rimLipMat);
+          rimLip.rotation.y = Math.PI / 2;
+          wheelGroup.add(rimLip);
+
+          // Center Hub
+          var hub = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, isFront ? 0.14 : 0.18, 24), wheelRimMat);
+          hub.rotation.z = Math.PI / 2;
+          hub.castShadow = true;
+          wheelGroup.add(hub);
+
+          // 10-Spoke Alloy Wheels (5 pairs)
+          for (var i = 0; i < 5; i++) {
+            var angle = (i * Math.PI * 2) / 5;
+            for (var pair = -1; pair <= 1; pair += 2) {
+              var spoke = new THREE.Mesh(new THREE.CylinderGeometry(0.012, 0.016, tireRadius * 0.75, 12), wheelRimMat);
+              spoke.rotation.x = angle + pair * 0.12;
+              spoke.position.y = (tireRadius * 0.38) * Math.cos(angle);
+              spoke.position.z = (tireRadius * 0.38) * Math.sin(angle);
+              spoke.castShadow = true;
+              wheelGroup.add(spoke);
+            }
+          }
+
+          // Brake Disc Rotors
+          var discRadius = isFront ? 0.24 : 0.19;
+          var discGeom = new THREE.RingGeometry(discRadius * 0.55, discRadius, 36);
+          if (isFront) {
+            [-0.075, 0.075].forEach(function(xOffset) {
+              var disc = new THREE.Mesh(discGeom, brakeDiscMat);
+              disc.position.x = xOffset;
+              disc.rotation.y = Math.PI / 2;
+              wheelGroup.add(disc);
+
+              var caliper = new THREE.Mesh(new THREE.BoxGeometry(0.045, 0.09, 0.055), caliperGold);
+              caliper.position.set(xOffset * 1.05, 0.18, 0.08);
+              caliper.castShadow = true;
+              wheelGroup.add(caliper);
+            });
+          } else {
+            var rearDisc = new THREE.Mesh(discGeom, brakeDiscMat);
+            rearDisc.position.x = 0.08;
+            rearDisc.rotation.y = Math.PI / 2;
+            wheelGroup.add(rearDisc);
+
+            var rearCaliper = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.08, 0.05), caliperGold);
+            rearCaliper.position.set(0.085, 0.16, -0.06);
+            wheelGroup.add(rearCaliper);
+
+            var sprocket = new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.16, 0.015, 32), frameAlum);
+            sprocket.position.x = -0.075;
+            sprocket.rotation.z = Math.PI / 2;
+            wheelGroup.add(sprocket);
+          }
+
+          wheelGroup.position.set(0, 0.46, zPos);
+          add(wheelGroup);
+          return wheelGroup;
+        }
+
+        createWheel(true);
+        createWheel(false);
+
+        // --- Front Suspension (Inverted USD Forks) ---
+        [-0.14, 0.14].forEach(function(x) {
+          var upperTube = add(new THREE.Mesh(new THREE.CylinderGeometry(0.032, 0.032, 0.38, 16), forkGold));
+          upperTube.position.set(x, 0.72, 0.78);
+          upperTube.rotation.x = 0.26;
+
+          var lowerTube = add(new THREE.Mesh(new THREE.CylinderGeometry(0.026, 0.026, 0.34, 16), rimLipMat));
+          lowerTube.position.set(x, 0.48, 0.84);
+          lowerTube.rotation.x = 0.26;
+
+          var forkBottom = add(new THREE.Mesh(new THREE.BoxGeometry(0.045, 0.08, 0.07), frameAlum));
+          forkBottom.position.set(x, 0.45, 0.88);
+          forkBottom.rotation.x = 0.26;
+        });
+
+        var lowerYoke = add(new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.035, 0.08), frameAlum));
+        lowerYoke.position.set(0, 0.78, 0.76);
+        lowerYoke.rotation.x = 0.26;
+
+        var upperYoke = add(new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.035, 0.08), frameAlum));
+        upperYoke.position.set(0, 0.94, 0.72);
+        upperYoke.rotation.x = 0.26;
+
+        // Front Fender / Hugger (Painted)
+        var fender = add(new THREE.Mesh(new THREE.CylinderGeometry(0.40, 0.40, 0.17, 24, 1, false, Math.PI * 0.1, Math.PI * 0.8), paint));
+        fender.position.set(0, 0.47, 0.88);
+        fender.rotation.z = Math.PI / 2;
+
+        // --- Clip-on Handlebars, Grips & Mirrors ---
+        [-0.26, 0.26].forEach(function(x) {
+          var barAngle = x > 0 ? -0.22 : 0.22;
+          var bar = add(new THREE.Mesh(new THREE.CylinderGeometry(0.014, 0.014, 0.18, 12), tireRubber));
+          bar.position.set(x, 0.98, 0.68);
+          bar.rotation.z = Math.PI / 2;
+          bar.rotation.y = barAngle;
+
+          var weight = add(new THREE.Mesh(new THREE.CylinderGeometry(0.016, 0.016, 0.03, 12), frameAlum));
+          weight.position.set(x > 0 ? x + 0.09 : x - 0.09, 0.98, 0.68);
+          weight.rotation.z = Math.PI / 2;
+
+          var stem = add(new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.008, 0.16, 8), tireRubber));
+          stem.position.set(x * 0.85, 1.05, 0.78);
+          stem.rotation.z = x > 0 ? -0.65 : 0.65;
+          stem.rotation.x = -0.3;
+
+          var mirrorHousing = add(new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.06, 0.02), tireRubber));
+          mirrorHousing.position.set(x > 0 ? x * 1.15 : x * 1.15, 1.12, 0.74);
+          mirrorHousing.rotation.y = x > 0 ? -0.25 : 0.25;
+
+          var mirrorFace = add(new THREE.Mesh(new THREE.PlaneGeometry(0.11, 0.05), rimLipMat));
+          mirrorFace.position.set(x > 0 ? x * 1.15 : x * 1.15, 1.12, 0.73);
+          mirrorFace.rotation.y = (x > 0 ? -0.25 : 0.25) + Math.PI;
+        });
+
+        // Digital TFT Instrument Console
+        var tftCase = add(new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.09, 0.03), tireRubber));
+        tftCase.position.set(0, 1.02, 0.66);
+        tftCase.rotation.x = -0.65;
+
+        var tftDisplay = add(new THREE.Mesh(new THREE.PlaneGeometry(0.14, 0.07), tftScreen));
+        tftDisplay.position.set(0, 1.025, 0.65);
+        tftDisplay.rotation.x = -0.65;
+
+        // --- Supersport Aerodynamic Nose Fairing & Windscreen ---
+        var nose = add(new THREE.Mesh(new THREE.ConeGeometry(0.24, 0.44, 16), paint));
+        nose.position.set(0, 0.88, 0.92);
+        nose.rotation.x = -Math.PI / 3.2;
+        nose.scale.set(1.2, 0.9, 0.75);
+
+        // Twin LED Projector Headlights
+        [-0.08, 0.08].forEach(function(x) {
+          var light = add(new THREE.Mesh(new THREE.SphereGeometry(0.045, 16, 16), headlightLED));
+          light.position.set(x, 0.82, 0.97);
+
+          var drl = add(new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.015, 0.04), drlCyan));
+          drl.position.set(x * 1.1, 0.87, 0.95);
+          drl.rotation.z = x > 0 ? -0.2 : 0.2;
+        });
+
+        var screen = add(new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.22, 0.32, 16, 1, true, 0, Math.PI), windscreenGlass));
+        screen.position.set(0, 1.08, 0.76);
+        screen.rotation.x = -0.65;
+        screen.rotation.z = Math.PI;
+
+        // MotoGP Aerodynamic Downforce Winglets
+        [-0.24, 0.24].forEach(function(x) {
+          var winglet = add(new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.02, 0.16), paint));
+          winglet.position.set(x, 0.78, 0.76);
+          winglet.rotation.y = x > 0 ? -0.2 : 0.2;
+          winglet.rotation.z = x > 0 ? -0.15 : 0.15;
+
+          var wingTip = add(new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.06, 0.14), tireRubber));
+          wingTip.position.set(x > 0 ? x + 0.06 : x - 0.06, 0.80, 0.76);
+        });
+
+        // --- Sculpted Muscular Fuel Tank ---
+        var tankMain = add(new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.18, 0.54, 16), paint));
+        tankMain.position.set(0, 0.88, 0.18);
+        tankMain.rotation.x = Math.PI / 2.3;
+        tankMain.scale.set(1.15, 1.0, 0.85);
+
+        var tankShoulder = add(new THREE.Mesh(new THREE.SphereGeometry(0.28, 24, 16), paint));
+        tankShoulder.position.set(0, 0.91, 0.32);
+        tankShoulder.scale.set(1.1, 0.75, 1.35);
+
+        // Knee-grip fairing flanks
+        [-0.22, 0.22].forEach(function(x) {
+          var kneePad = add(new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.14, 0.24), tireRubber));
+          kneePad.position.set(x, 0.86, 0.18);
+          kneePad.rotation.y = x > 0 ? -0.2 : 0.2;
+        });
+
+        var capBase = add(new THREE.Mesh(new THREE.CylinderGeometry(0.055, 0.055, 0.015, 16), frameAlum));
+        capBase.position.set(0, 1.03, 0.28);
+        capBase.rotation.x = -0.25;
+
+        var capCenter = add(new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 0.02, 16), rimLipMat));
+        capCenter.position.set(0, 1.038, 0.28);
+        capCenter.rotation.x = -0.25;
+
+        var tankPad = add(new THREE.Mesh(new THREE.BoxGeometry(0.06, 0.01, 0.32), tireRubber));
+        tankPad.position.set(0, 0.99, 0.12);
+        tankPad.rotation.x = 0.32;
+
+        // --- Aluminum Deltabox Twin-Spar Frame ---
+        [-0.18, 0.18].forEach(function(x) {
+          var mainBeam = add(new THREE.Mesh(new THREE.BoxGeometry(0.065, 0.14, 0.68), frameAlum));
+          mainBeam.position.set(x, 0.74, 0.22);
+          mainBeam.rotation.x = 0.42;
+          mainBeam.rotation.y = x > 0 ? -0.1 : 0.1;
+
+          var pivotPlate = add(new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.22, 0.16), frameAlum));
+          pivotPlate.position.set(x, 0.58, -0.16);
+        });
+
+        // --- 4-Valve Engine Block, Crankcase & Radiator ---
+        var engineBlock = add(new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.34, 0.44), engineMetal));
+        engineBlock.position.set(0, 0.54, 0.08);
+
+        for (var fin = 0; fin < 5; fin++) {
+          var coolingFin = add(new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.015, 0.32), frameAlum));
+          coolingFin.position.set(0, 0.58 + fin * 0.03, 0.12);
+        }
+
+        var clutchCover = add(new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 0.05, 24), engineMetal));
+        clutchCover.position.set(0.18, 0.46, -0.04);
+        clutchCover.rotation.z = Math.PI / 2;
+
+        var statorCover = add(new THREE.Mesh(new THREE.CylinderGeometry(0.10, 0.10, 0.05, 24), engineMetal));
+        statorCover.position.set(-0.18, 0.48, 0.02);
+        statorCover.rotation.z = Math.PI / 2;
+
+        var radiator = add(new THREE.Mesh(new THREE.BoxGeometry(0.30, 0.26, 0.04), engineMetal));
+        radiator.position.set(0, 0.64, 0.48);
+        radiator.rotation.x = 0.22;
+
+        var radMesh = add(new THREE.Mesh(new THREE.PlaneGeometry(0.28, 0.24), tireRubber));
+        radMesh.position.set(0, 0.64, 0.505);
+        radMesh.rotation.x = 0.22;
+
+        var bellyPan = add(new THREE.Mesh(new THREE.BoxGeometry(0.34, 0.16, 0.58), paint));
+        bellyPan.position.set(0, 0.38, 0.14);
+        bellyPan.rotation.x = -0.08;
+
+        [-0.21, 0.21].forEach(function(x) {
+          var sideFairing = add(new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.36, 0.62), paint));
+          sideFairing.position.set(x, 0.68, 0.38);
+          sideFairing.rotation.y = x > 0 ? -0.12 : 0.12;
+        });
+
+        // --- Performance Stainless Steel Exhaust System ---
+        var header = add(new THREE.Mesh(new THREE.CylinderGeometry(0.032, 0.032, 0.42, 16), exhaustStainless));
+        header.position.set(0.10, 0.44, 0.28);
+        header.rotation.x = Math.PI / 3;
+
+        var collector = add(new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.10, 0.26), exhaustStainless));
+        collector.position.set(0.12, 0.33, -0.04);
+
+        var silencer = add(new THREE.Mesh(new THREE.CylinderGeometry(0.065, 0.085, 0.58, 20), exhaustStainless));
+        silencer.position.set(0.24, 0.48, -0.48);
+        silencer.rotation.x = -Math.PI / 3.4;
+        silencer.rotation.y = 0.15;
+
+        var heatShield = add(new THREE.Mesh(new THREE.CylinderGeometry(0.075, 0.075, 0.28, 16, 1, true, 0, Math.PI), exhaustCarbon));
+        heatShield.position.set(0.25, 0.46, -0.42);
+        heatShield.rotation.x = -Math.PI / 3.4;
+        heatShield.rotation.z = Math.PI / 2;
+
+        var exhaustTip = add(new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.06, 0.06, 16), rimLipMat));
+        exhaustTip.position.set(0.27, 0.66, -0.71);
+        exhaustTip.rotation.x = -Math.PI / 3.4;
+
+        // --- Rear Swingarm & Monoshock Suspension ---
+        [-0.14, 0.14].forEach(function(x) {
+          var arm = add(new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.09, 0.72), frameAlum));
+          arm.position.set(x, 0.47, -0.48);
+          arm.rotation.x = -0.14;
+        });
+
+        var shockBody = add(new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.035, 0.26, 16), frameAlum));
+        shockBody.position.set(0, 0.62, -0.28);
+        shockBody.rotation.x = 0.52;
+
+        var shockSpring = add(new THREE.Mesh(new THREE.CylinderGeometry(0.052, 0.052, 0.20, 16), springYellow));
+        shockSpring.position.set(0, 0.62, -0.28);
+        shockSpring.rotation.x = 0.52;
+
+        var rearHugger = add(new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 0.18, 24, 1, false, Math.PI * 0.1, Math.PI * 0.5), tireRubber));
+        rearHugger.position.set(0, 0.48, -0.82);
+        rearHugger.rotation.z = Math.PI / 2;
+        rearHugger.rotation.x = 0.25;
+
+        // --- Split Rider Saddles & Aerodynamic Tail Cowl ---
+        var riderSeat = add(new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.09, 0.38), seatLeather));
+        riderSeat.position.set(0, 0.81, -0.14);
+        riderSeat.rotation.x = 0.18;
+
+        var pillionCowl = add(new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.11, 0.36), paint));
+        pillionCowl.position.set(0, 0.88, -0.52);
+        pillionCowl.rotation.x = 0.24;
+
+        var tailFairing = add(new THREE.Mesh(new THREE.ConeGeometry(0.18, 0.42, 16), paint));
+        tailFairing.position.set(0, 0.90, -0.74);
+        tailFairing.rotation.x = Math.PI / 1.7;
+        tailFairing.scale.set(1.0, 0.6, 1.2);
+
+        [-0.06, 0.06].forEach(function(x) {
+          var tailLight = add(new THREE.Mesh(new THREE.BoxGeometry(0.035, 0.045, 0.03), taillightRed));
+          tailLight.position.set(x, 0.88, -0.89);
+        });
+
+        var tailTidy = add(new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.18, 0.04), tireRubber));
+        tailTidy.position.set(0, 0.77, -0.92);
+        tailTidy.rotation.x = -0.35;
+
+        var licensePlate = add(new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.08, 0.01), rimLipMat));
+        licensePlate.position.set(0, 0.72, -0.95);
+        licensePlate.rotation.x = -0.35;
+
+        [-0.22, 0.22].forEach(function(x) {
+          var peg = add(new THREE.Mesh(new THREE.CylinderGeometry(0.015, 0.015, 0.10, 12), frameAlum));
+          peg.position.set(x > 0 ? x + 0.05 : x - 0.05, 0.54, -0.18);
+          peg.rotation.z = Math.PI / 2;
+
+          var heelGuard = add(new THREE.Mesh(new THREE.BoxGeometry(0.01, 0.09, 0.08), rimLipMat));
+          heelGuard.position.set(x, 0.58, -0.16);
+        });
 
         group.position.y = 0.02;
         return group;

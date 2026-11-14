@@ -546,8 +546,23 @@ class _StaffPageState extends State<StaffPage> {
                   children: [
                     for (final section in sections)
                       ChoiceChip(
-                        label: Text(section),
+                        label: Text(
+                          section,
+                          style: TextStyle(
+                            color: _section == section ? Colors.white : const Color(0xFF0F172A),
+                            fontWeight: _section == section ? FontWeight.w700 : FontWeight.w500,
+                          ),
+                        ),
                         selected: _section == section,
+                        selectedColor: Theme.of(context).colorScheme.primary,
+                        backgroundColor: Colors.white,
+                        checkmarkColor: Colors.white,
+                        showCheckmark: false,
+                        side: BorderSide(
+                          color: _section == section
+                              ? Theme.of(context).colorScheme.primary
+                              : const Color(0xFFDCE5F0),
+                        ),
                         onSelected: _busy
                             ? null
                             : (_) => _run(() => _load(section)),

@@ -283,6 +283,7 @@ class _GalleryViewerState extends State<_GalleryViewer> {
                 .where((color) => color.id == widget.asset.colorId)
                 .map((color) => color.imageUrl)
                 .firstOrNull,
+            fallbackAsset: RemoteImage.resolveVehicleAsset(widget.asset.variantCode),
             fit: BoxFit.cover,
           ),
           const Positioned(
@@ -305,7 +306,11 @@ class _GalleryViewerState extends State<_GalleryViewer> {
         PageView.builder(
           itemCount: frames.length,
           onPageChanged: (value) => setState(() => _index = value),
-          itemBuilder: (context, index) => RemoteImage(url: frames[index], fit: BoxFit.cover),
+          itemBuilder: (context, index) => RemoteImage(
+            url: frames[index],
+            fallbackAsset: RemoteImage.resolveVehicleAsset(widget.asset.variantCode),
+            fit: BoxFit.cover,
+          ),
         ),
         Positioned(
           top: 14,
@@ -493,8 +498,17 @@ class _ControlPanel extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final hotspot = asset.hotspots[index];
                     return ActionChip(
-                      avatar: const Icon(Icons.adjust_rounded, size: 15),
-                      label: Text(hotspot.title),
+                      avatar: const Icon(Icons.adjust_rounded, size: 15, color: Color(0xFF0F172A)),
+                      label: Text(
+                        hotspot.title,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF0F172A),
+                        ),
+                      ),
+                      backgroundColor: Colors.white,
+                      side: const BorderSide(color: Color(0xFFDCE5F0)),
                       onPressed: () => onHotspotSelected(hotspot),
                     );
                   },

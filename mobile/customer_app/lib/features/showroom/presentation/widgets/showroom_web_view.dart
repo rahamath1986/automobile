@@ -51,7 +51,10 @@ class ShowroomWebViewState extends State<ShowroomWebView> {
             _loadManifest();
           },
           onWebResourceError: (error) {
-            if (mounted) {
+            // Only trigger fatal webview error if the main HTML document failed to load.
+            // Subresource network failures (e.g., remote GLB URL offline) are handled
+            // gracefully by the 3D engine falling back to the procedural motorcycle.
+            if (error.isForMainFrame == true && mounted) {
               widget.onEvent?.call('webview-error', {'message': error.description});
             }
           },

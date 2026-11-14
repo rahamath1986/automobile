@@ -17,7 +17,7 @@ void main() {
     expect(find.text('Work In Progress'), findsOneWidget);
   });
 
-  testWidgets('VehicleCard renders model name, price and 3D badge', (tester) async {
+  testWidgets('VehicleCard renders model name, price and category', (tester) async {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
@@ -31,7 +31,6 @@ void main() {
 
     expect(find.text('R15 V4'), findsOneWidget);
     expect(find.textContaining('₹1,80,000'), findsOneWidget);
-    expect(find.text('3D'), findsOneWidget);
     expect(find.text('Motorcycle'), findsOneWidget);
   });
 

@@ -206,7 +206,11 @@ class _VehicleCard extends StatelessWidget {
           SizedBox(
             height: 130,
             width: double.infinity,
-            child: RemoteImage(url: vehicle.heroImageUrl, fit: BoxFit.cover),
+            child: RemoteImage(
+              url: vehicle.heroImageUrl,
+              fallbackAsset: RemoteImage.resolveVehicleAsset(vehicle.modelName),
+              fit: BoxFit.cover,
+            ),
           ),
           Padding(
             padding: const EdgeInsets.all(16),

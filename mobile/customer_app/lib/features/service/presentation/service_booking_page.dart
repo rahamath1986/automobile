@@ -241,12 +241,34 @@ class _ServiceBookingPageState extends ConsumerState<ServiceBookingPage> {
                     runSpacing: 8,
                     children: _serviceTypes
                         .map(
-                          (type) => ChoiceChip(
-                            avatar: Icon(type.$3, size: 16),
-                            label: Text(type.$2),
-                            selected: _serviceType == type.$1,
-                            onSelected: (_) => setState(() => _serviceType = type.$1),
-                          ),
+                          (type) {
+                            final isSelected = _serviceType == type.$1;
+                            final primary = Theme.of(context).colorScheme.primary;
+                            return ChoiceChip(
+                              avatar: Icon(
+                                type.$3,
+                                size: 16,
+                                color: isSelected ? Colors.white : const Color(0xFF0F172A),
+                              ),
+                              label: Text(
+                                type.$2,
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                                  color: isSelected ? Colors.white : const Color(0xFF0F172A),
+                                ),
+                              ),
+                              selected: isSelected,
+                              selectedColor: primary,
+                              backgroundColor: Colors.white,
+                              checkmarkColor: Colors.white,
+                              showCheckmark: false,
+                              side: BorderSide(
+                                color: isSelected ? primary : const Color(0xFFDCE5F0),
+                              ),
+                              onSelected: (_) => setState(() => _serviceType = type.$1),
+                            );
+                          },
                         )
                         .toList(),
                   ),

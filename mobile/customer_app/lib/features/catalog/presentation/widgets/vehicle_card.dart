@@ -27,6 +27,7 @@ class VehicleCard extends StatelessWidget {
                   height: 168,
                   child: RemoteImage(
                     url: model.heroImageUrl,
+                    fallbackAsset: RemoteImage.resolveVehicleAsset(model.code),
                     fit: BoxFit.cover,
                     backgroundColor: primary,
                   ),
@@ -52,33 +53,6 @@ class VehicleCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                if (model.has3DAsset)
-                  Positioned(
-                    top: 12,
-                    right: 12,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF0F172A).withValues(alpha: 0.78),
-                        borderRadius: BorderRadius.circular(999),
-                      ),
-                      child: const Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.view_in_ar_rounded, size: 13, color: Colors.white),
-                          SizedBox(width: 4),
-                          Text(
-                            '3D',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 10,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
               ],
             ),
             Padding(
@@ -185,7 +159,7 @@ class CatalogHeroBanner extends StatelessWidget {
               borderRadius: BorderRadius.circular(999),
             ),
             child: const Text(
-              'LIVE 3D SHOWROOM',
+              'TWO-WHEELER SHOWROOM',
               style: TextStyle(
                 color: Colors.white,
                 fontSize: 10,
@@ -196,7 +170,7 @@ class CatalogHeroBanner extends StatelessWidget {
           ),
           const SizedBox(height: 14),
           const Text(
-            'Walk around every\ndetail before you ride.',
+            'Explore every colour\nand angle before you ride.',
             style: TextStyle(
               color: Colors.white,
               fontSize: 24,
@@ -207,7 +181,7 @@ class CatalogHeroBanner extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            'Explore colours, camera views and on-road pricing at your dealership.',
+            'Explore colours, multi-angle photos and on-road pricing at your dealership.',
             style: TextStyle(color: Colors.white.withValues(alpha: 0.78), height: 1.4, fontSize: 13),
           ),
           const SizedBox(height: 18),
