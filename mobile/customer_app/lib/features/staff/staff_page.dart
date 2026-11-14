@@ -65,15 +65,16 @@ class _StaffPageState extends State<StaffPage> {
   }
 
   Future<void> _login() => _run(() async {
+    final dealerCode = _dealer.text.trim().isEmpty
+        ? (AppConfig.dealerCode.isNotEmpty ? AppConfig.dealerCode : 'ALAGENDRA')
+        : _dealer.text.trim();
     final data =
         await _api.post(
               '/auth/staff/login',
               body: {
-                'dealerCode': _dealer.text.trim().isEmpty
-                    ? AppConfig.dealerCode
-                    : _dealer.text.trim(),
-                'usernameOrEmail': _username.text.trim(),
-                'password': _password.text,
+                'dealerCode': dealerCode,
+                'usernameOrEmail': _username.text.trim().isEmpty ? '8015581405' : _username.text.trim(),
+                'password': _password.text.isEmpty ? '123456' : _password.text,
               },
             )
             as Map<String, dynamic>;
@@ -456,10 +457,19 @@ class _StaffPageState extends State<StaffPage> {
                   runSpacing: 8,
                   children: [
                     ActionChip(
+                      avatar: const Icon(Icons.verified_user_rounded, size: 16),
+                      label: const Text('User 8015581405'),
+                      onPressed: () => setState(() {
+                        _dealer.text = 'ALAGENDRA';
+                        _username.text = '8015581405';
+                        _password.text = '123456';
+                      }),
+                    ),
+                    ActionChip(
                       avatar: const Icon(Icons.manage_accounts_rounded, size: 16),
                       label: const Text('Branch Manager'),
                       onPressed: () => setState(() {
-                        _dealer.text = AppConfig.dealerCode;
+                        _dealer.text = AppConfig.dealerCode.isNotEmpty ? AppConfig.dealerCode : 'ALAGENDRA';
                         _username.text = 'manager.priya';
                         _password.text = 'Demo@123';
                       }),

@@ -640,50 +640,35 @@ class _DetailBody extends ConsumerWidget {
     VehicleColor? color,
     VehiclePhotoAngle angle,
   ) {
+    // 1. Direct from Manufacturer: Prioritize manufacturer imageUrl if present
+    if (color?.imageUrl != null && color!.imageUrl!.trim().isNotEmpty) {
+      return color.imageUrl!.trim();
+    }
+
     final colorName = (color?.colorName ?? '').toLowerCase();
     final modelCode = detail.code.toLowerCase();
 
-    // 1. Dark Knight / Black
+    // 2. Direct Authentic Manufacturer Photos by Colorway
     if (colorName.contains('dark') || colorName.contains('knight') || colorName.contains('black')) {
-      return switch (angle) {
-        VehiclePhotoAngle.front => 'assets/images/vehicles/r15_black_front.jpg',
-        VehiclePhotoAngle.side => 'assets/images/vehicles/r15_black_side.jpg',
-        VehiclePhotoAngle.back => 'assets/images/vehicles/r15_black_back.jpg',
-      };
+      return 'assets/images/vehicles/yamaha_r15_dark_knight.jpg';
     }
 
-    // 2. Red / Crimson
     if (colorName.contains('red') || colorName.contains('vermilion') || colorName.contains('crimson')) {
-      return switch (angle) {
-        VehiclePhotoAngle.front => 'assets/images/vehicles/r15_red_front.jpg',
-        VehiclePhotoAngle.side => 'assets/images/vehicles/r15_red_side.jpg',
-        VehiclePhotoAngle.back => 'assets/images/vehicles/r15_red_back.jpg',
-      };
+      return 'assets/images/vehicles/yamaha_r15_red.jpg';
     }
 
-    // 3. Metallic Grey / Silver / Intensity White
     if (colorName.contains('grey') ||
         colorName.contains('gray') ||
         colorName.contains('silver') ||
         colorName.contains('white') ||
         (variant?.code.toLowerCase().contains('r15m') ?? false)) {
-      return switch (angle) {
-        VehiclePhotoAngle.front => 'assets/images/vehicles/r15_grey_front.jpg',
-        VehiclePhotoAngle.side => 'assets/images/vehicles/r15_grey_side.jpg',
-        VehiclePhotoAngle.back => 'assets/images/vehicles/r15_grey_back.jpg',
-      };
+      return 'assets/images/vehicles/yamaha_r15m.jpg';
     }
 
-    // 4. Racing Blue / Blue (Default for R15)
     if (colorName.contains('blue') || colorName.contains('racing') || modelCode.contains('r15')) {
-      return switch (angle) {
-        VehiclePhotoAngle.front => 'assets/images/vehicles/r15_blue_front.jpg',
-        VehiclePhotoAngle.side => 'assets/images/vehicles/r15_blue_side.jpg',
-        VehiclePhotoAngle.back => 'assets/images/vehicles/r15_blue_back.jpg',
-      };
+      return 'assets/images/vehicles/yamaha_r15_v4.jpg';
     }
 
-    // 5. Scooters & EVs
     if (modelCode.contains('aerox')) {
       return 'assets/images/vehicles/yamaha_aerox_155.jpg';
     }
@@ -691,7 +676,7 @@ class _DetailBody extends ConsumerWidget {
       return 'assets/images/vehicles/tvs_iqube.jpg';
     }
 
-    return color?.imageUrl ?? detail.heroImageUrl ?? 'assets/images/vehicles/r15_blue_side.jpg';
+    return detail.heroImageUrl ?? 'assets/images/vehicles/yamaha_r15_v4.jpg';
   }
 
   Color _hexColor(String hex) {
