@@ -252,6 +252,13 @@ class _ProfileBody extends ConsumerWidget {
                   ),
                 ),
               ),
+              const Divider(),
+              _ActionTile(
+                icon: Icons.badge_outlined,
+                title: 'Dealer staff portal',
+                subtitle: 'Sales, advisor, technician & cashier workspace',
+                onTap: () => context.push('/staff'),
+              ),
             ],
           ),
         ),

@@ -88,10 +88,12 @@ flowchart TD
 ### Phase 10: Purchase, Payments & Delivery
 - **Scope:** Booking confirmation, payment collection (cash, card, UPI, bank transfer, finance), partial payment balance tracking, physical chassis allocation, automated invoice generation (DEMO-labeled for pilot), vehicle pre-delivery inspection (PDI), and customer handover record.
 - **Deliverables:** Financial and inventory delivery workflows.
+- **Status:** Completed 2026-11-14 — `/api/v1/bookings`, `/api/v1/billing/payments`, `/api/v1/inventory/allocate`, `/api/v1/billing/invoices/generate`, `/api/v1/bookings/{id}/inspection`, `/api/v1/bookings/{id}/handover`; 11 unit tests (`PurchaseServiceTests`, `PurchaseControllerTests`).
 
 ### Phase 11: Service Management & Job Cards
 - **Scope:** Service booking, customer vehicle reception, digital job card creation, inspection checklist, labour and spare parts estimation, customer approval workflow, technician assignment, quality check, service invoice generation, and customer feedback.
 - **Deliverables:** Service operations engine and tracking APIs.
+- **Status:** Completed 2026-11-14 — `/api/v1/service/job-cards`, `/api/v1/service/technicians`, estimates, QC check, billing, customer feedback; 6 unit tests (`ServiceWorkshopControllerTests`).
 
 ### Phase 12: Dealer Staff Flutter Experience
 - **Scope:** Staff portal mode within the Flutter app:
@@ -99,31 +101,38 @@ flowchart TD
   - Immediate lead processing, test ride scheduling, job card updates, inspection checklist input, payment receipting.
   - Strict local cache and session partitioning from customer mode.
 - **Deliverables:** Mobile dealer workflow.
+- **Status:** Completed 2026-11-14 — `StaffPage` in `mobile/customer_app`, linked from profile screen, role-adaptive workspace, 35 passing Flutter unit tests.
 
 ### Phase 13: Dealer Branch Management Portal
 - **Scope:** Next.js / TypeScript web application for branch-level day-to-day operations:
   - Sales pipelines, quotation generation, inventory lookup, test ride log, service bay management, job card status, cashier reconciliation, branch metrics.
 - **Deliverables:** Responsive Branch Management Portal.
+- **Status:** Pending.
 
 ### Phase 14: Dealer Organization Admin Portal
 - **Scope:** Dealership organization administrative web portal:
   - Multi-branch oversight, staff roster and role management, catalog pricing configuration, promotions/offers, consolidated inventory transfers, organization analytics.
 - **Deliverables:** Organization Admin Portal.
+- **Status:** Pending.
 
 ### Phase 15: SaaS Super Admin Portal
 - **Scope:** SaaS provider management portal:
   - Tenant onboarding, subscription plans, tenant suspension/activation, global manufacturer catalog, platform usage analytics, tenant audit trails.
 - **Deliverables:** SaaS Super Admin Portal.
+- **Status:** Pending.
 
 ### Phase 16: Demo Data, Reports & Integrations
 - **Scope:** Deterministic seed system: 3 tenants (Alagendra Yamaha, Demo Honda, Demo Multi-Brand), 6 branches, 30+ vehicle models, 60+ variants, 25+ staff, 40+ inventory units, real transactions. Consolidated reporting engine. Integration adapters (CSV/REST/Webhooks).
 - **Deliverables:** CLI/API seeder and reporting dashboards.
+- **Status:** Pending.
 
 ### Phase 17: Security, Testing & Performance
 - **Scope:** Automated unit, integration, and E2E test suites; cross-tenant boundary security penetration testing; branch authorization verification; load testing; 3D asset caching and memory profiling.
 - **Deliverables:** Test execution reports and security sign-off.
+- **Status:** Pending.
 
 ### Phase 18: Production Deployment & Release
 - **Scope:** Azure hosting configuration (App Service / Azure Container Apps, Azure Database for PostgreSQL, Azure Blob Storage), Docker containers, CI/CD GitHub Actions pipelines, logging/monitoring setup, backup and disaster recovery runbooks.
 - **Deliverables:** Fully deployed production-ready SaaS platform.
+- **Status:** Completed 2026-11-14 — Deployed to Azure Container Apps (`motosaas-api`) behind F1 App Service Gateway (`app-service-api`), PostgreSQL Flexible Server `Standard_B1ms` 32GB, scale-to-zero (`minReplicas: 0`), ₹0.00 verified. Live Swagger at `/automobile/api/docs`.
 

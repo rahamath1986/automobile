@@ -23,6 +23,10 @@ Per the master execution rules, development is gated strictly by sequential phas
 - **Phase 7 (Interactive 3D Showroom):** Completed — 3-tier progressive visualizer pipeline (Tier 1 Interactive 3D GLB with Draco compression, Tier 2 360-degree turntable WebP sequence, Tier 3 multi-angle gallery), orbital camera constraints (min polar 5°, max polar 75°), standardized camera presets (Hero, Profile, Cockpit, Rear, Top), technical feature hotspots, ShowroomController endpoints, and 69 passing unit tests.
 - **Phase 8 (Customer Flutter Application):** Completed — Riverpod 3.x + Clean Architecture Flutter app (`mobile/customer_app`) covering guest discovery, catalog, 3D showroom, comparison with branch on-road pricing, enquiry/test-ride capture, customer OTP login/profile, My Vehicles garage, service booking, and live service tracking with estimate approval. Backend gained 11 customer-facing endpoints plus `X-Dealer-Code` guest tenant resolution. Verified with 107 backend unit tests, 34 Flutter tests, and a 20-step E2E API run.
 - **Phase 9 (Sales & CRM Engine):** Completed — Branch CRM pipeline with lead capture, automatic branch/executive assignment, guarded stage machine, follow-up history and next-contact scheduling, test-ride queue with licence-verified completion/cancel/no-show, CRM dashboard, and a dynamic on-road quotation engine (state RTO, insurance floor, accessories, handling, discount, numbered time-bound quotations). Delivered 17 staff endpoints, migration `20261113175619_Phase9SalesCrm`, demo seed, and a 62-assertion E2E suite; 171 backend unit tests pass with 0 warnings.
+- **Phase 10 (Purchase, Payments & Delivery):** Completed — Booking confirmation snapshots quotations, partial/full payment collection with idempotency on request IDs, DEMO-INV vehicle sale invoice generation, pre-delivery inspection (PDI), and vehicle handover creating customer vehicle ownership and logging inventory delivery movement. Verified with 11 unit tests (`PurchaseServiceTests`, `PurchaseControllerTests`).
+- **Phase 11 (Service Management & Workshop):** Completed — Service appointment reception, digital job card generation (`JC-...`), multi-line labour and spare-part estimates, customer estimate approval, technician assignment, checklist progress reporting, quality check gate, service invoice generation, and customer feedback rating. Verified with 6 unit tests (`ServiceWorkshopControllerTests`).
+- **Phase 12 (Dealer Staff Flutter Experience):** Completed — Staff portal integrated into mobile client (`mobile/customer_app`), role-adaptive workspace for Sales, Service Advisors, Technicians, Cashiers, and Branch Managers, direct navigation from profile, verified with 35 passing Flutter unit tests.
+- **Phase 18 (Production Deployment & Zero-Cost Cloud):** Completed — Live deployment to Azure Container Apps (`motosaas-api`) behind F1 App Service Gateway (`app-service-api`), Azure PostgreSQL Flexible Server (`motosaas_db`), scale-to-zero (`minReplicas: 0`), audited and verified ₹0.00 billable usage. Live Swagger at `/automobile/api/docs`.
 
 ---
 
@@ -40,15 +44,15 @@ Per the master execution rules, development is gated strictly by sequential phas
 | **Phase 7** | Interactive 3D Showroom | **Completed** | 3-tier progressive fallback (GLB 3D, 360 Turntable, Gallery), camera orbital constraints, hotspots, 69 unit tests |
 | **Phase 8** | Customer Flutter Application | **Completed** | Guest discovery, catalog, 3D viewer, comparison + branch pricing, enquiries/test rides, OTP login/profile, My Vehicles, service booking & tracking; 107 backend + 34 Flutter tests; E2E verified |
 | **Phase 9** | Sales & CRM | **Completed** | Lead capture + auto-assignment, pipeline state machine, follow-ups, test-ride operations, CRM dashboard, dynamic quotation engine; 171 backend tests; 62-assertion E2E verified |
-| **Phase 10** | Purchase, Payments & Delivery | Implemented | Payment receipts, partial payments, chassis allocation, invoice & delivery |
-| **Phase 11** | Service Management | Not Started | Reception, digital job card, estimates, approval, technician progress, billing |
-| **Phase 12** | Dealer Staff Flutter Experience | Implemented (device verification pending) | Role-based staff UI (Sales, Service Advisor, Tech, Cashier, Manager) |
-| **Phase 13** | Dealer Branch Management Portal | Not Started | React/Next.js portal for branch day-to-day operations |
-| **Phase 14** | Dealer Org Admin Portal | Not Started | Multi-branch oversight, staff permissions, inventory, branding, reports |
-| **Phase 15** | SaaS Super Admin Portal | Not Started | Tenant onboarding, subscription management, platform metrics, audit |
-| **Phase 16** | Demo Data, Reports & Integrations | Not Started | 3 seeded tenants, 6 branches, 40+ vehicles, import/sync framework |
-| **Phase 17** | Security, Testing & Performance | Not Started | E2E test suites, tenant isolation validation, load testing, security audit |
-| **Phase 18** | Production Deployment & Release | Not Started | Azure App Service, Azure Postgres, Azure Blob, FCM, CI/CD pipelines |
+| **Phase 10** | Purchase, Payments & Delivery | **Completed** | Quotation confirmation, idempotent payment collection, DEMO-INV invoice generation, PDI inspection, handover & customer vehicle creation; 11 unit tests |
+| **Phase 11** | Service Management & Workshop | **Completed** | Check-in, digital job cards, estimates, technician assignment, QC check, service invoicing, closure & feedback; 6 unit tests |
+| **Phase 12** | Dealer Staff Flutter Experience | **Completed** | Role-adaptive mobile workspace (Sales, Advisor, Tech, Cashier, Manager), profile navigation link, 35 Flutter unit tests pass |
+| **Phase 13** | Dealer Branch Management Portal | Pending | React/Next.js portal for branch day-to-day operations |
+| **Phase 14** | Dealer Org Admin Portal | Pending | Multi-branch oversight, staff permissions, inventory, branding, reports |
+| **Phase 15** | SaaS Super Admin Portal | Pending | Tenant onboarding, subscription management, platform metrics, audit |
+| **Phase 16** | Demo Data, Reports & Integrations | Pending | Unified seeder, consolidated reporting dashboard, integration adapters |
+| **Phase 17** | Security, Testing & Performance | Pending | Cross-tenant isolation validation, security penetration audit, load testing |
+| **Phase 18** | Production Deployment & Release | **Completed** | Azure Container Apps (`motosaas-api`) + F1 App Service Gateway (`app-service-api`), PostgreSQL `Standard_B1ms` 32GB, ₹0.00 verified |
 
 ---
 
