@@ -21,7 +21,7 @@ class OtpPage extends ConsumerStatefulWidget {
 
 class _OtpPageState extends ConsumerState<OtpPage> {
   final _formKey = GlobalKey<FormState>();
-  final _otpController = TextEditingController();
+  final _otpController = TextEditingController(text: '123456');
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
   bool _verifying = false;

@@ -17,9 +17,9 @@ class StaffPage extends StatefulWidget {
 class _StaffPageState extends State<StaffPage> {
   final _tokens = TokenStore(staff: true);
   late final _api = ApiClient(tokenStore: _tokens);
-  final _dealer = TextEditingController();
-  final _username = TextEditingController();
-  final _password = TextEditingController();
+  final _dealer = TextEditingController(text: AppConfig.dealerCode);
+  final _username = TextEditingController(text: 'manager.priya');
+  final _password = TextEditingController(text: 'Demo@123');
   String? _section;
   List<Map<String, dynamic>> _rows = [];
   bool _busy = true;
@@ -442,6 +442,67 @@ class _StaffPageState extends State<StaffPage> {
                   ),
                 ),
               if (!signedIn) ...[
+                Center(
+                  child: Image.asset('assets/images/motosaas_logo.png', height: 48, fit: BoxFit.contain),
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  'Quick-fill demo staff account:',
+                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Color(0xFF64748B)),
+                ),
+                const SizedBox(height: 8),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    ActionChip(
+                      avatar: const Icon(Icons.manage_accounts_rounded, size: 16),
+                      label: const Text('Branch Manager'),
+                      onPressed: () => setState(() {
+                        _dealer.text = AppConfig.dealerCode;
+                        _username.text = 'manager.priya';
+                        _password.text = 'Demo@123';
+                      }),
+                    ),
+                    ActionChip(
+                      avatar: const Icon(Icons.support_agent_rounded, size: 16),
+                      label: const Text('Sales'),
+                      onPressed: () => setState(() {
+                        _dealer.text = AppConfig.dealerCode;
+                        _username.text = 'sales.arjun';
+                        _password.text = 'Demo@123';
+                      }),
+                    ),
+                    ActionChip(
+                      avatar: const Icon(Icons.build_circle_outlined, size: 16),
+                      label: const Text('Advisor'),
+                      onPressed: () => setState(() {
+                        _dealer.text = AppConfig.dealerCode;
+                        _username.text = 'advisor.kiran';
+                        _password.text = 'Demo@123';
+                      }),
+                    ),
+                    ActionChip(
+                      avatar: const Icon(Icons.handyman_outlined, size: 16),
+                      label: const Text('Technician'),
+                      onPressed: () => setState(() {
+                        _dealer.text = AppConfig.dealerCode;
+                        _username.text = 'tech.suresh';
+                        _password.text = 'Demo@123';
+                      }),
+                    ),
+                    ActionChip(
+                      avatar: const Icon(Icons.point_of_sale_rounded, size: 16),
+                      label: const Text('Cashier'),
+                      onPressed: () => setState(() {
+                        _dealer.text = AppConfig.dealerCode;
+                        _username.text = 'cashier.meena';
+                        _password.text = 'Demo@123';
+                      }),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
                 TextField(
                   controller: _dealer,
                   decoration: const InputDecoration(

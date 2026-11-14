@@ -25,21 +25,29 @@ class BrandMark extends StatelessWidget {
       );
     }
 
-    final initial = tradeName.trim().isEmpty ? 'M' : tradeName.trim()[0].toUpperCase();
-    return Container(
-      width: size,
-      height: size,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color: AppTheme.fallbackPrimary,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Text(
-        initial,
-        style: TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.w800,
-          fontSize: size * 0.44,
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: Image.asset(
+        'assets/icons/app_icon.png',
+        width: size,
+        height: size,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) => Container(
+          width: size,
+          height: size,
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: AppTheme.fallbackPrimary,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Text(
+            tradeName.trim().isEmpty ? 'M' : tradeName.trim()[0].toUpperCase(),
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w800,
+              fontSize: size * 0.44,
+            ),
+          ),
         ),
       ),
     );

@@ -20,7 +20,7 @@ class LoginPage extends ConsumerStatefulWidget {
 
 class _LoginPageState extends ConsumerState<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  final _phoneController = TextEditingController();
+  final _phoneController = TextEditingController(text: '9876543210');
   bool _sending = false;
 
   @override
@@ -81,8 +81,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (branding != null)
-                BrandMark(logoUrl: branding.logoUrl, tradeName: branding.tradeName, size: 52),
+              if (branding?.logoUrl != null && branding!.logoUrl!.isNotEmpty)
+                BrandMark(logoUrl: branding.logoUrl, tradeName: branding.tradeName, size: 52)
+              else
+                Image.asset('assets/images/motosaas_logo.png', height: 44, fit: BoxFit.contain),
               const SizedBox(height: 24),
               Text(
                 session == null ? 'Your garage, in one place.' : 'You are already signed in',
