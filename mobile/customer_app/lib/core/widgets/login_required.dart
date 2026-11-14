@@ -41,13 +41,13 @@ class LoginRequired extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           ActionChip(
-            avatar: const Icon(Icons.verified_user_rounded, size: 16, color: Color(0xFF002C6C)),
+            avatar: const Icon(Icons.verified_user_rounded, size: 16, color: Color(0xFFDC2626)),
             label: const Text(
               'Preload User: 8015581405 (Pass: 123456)',
               style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
             ),
-            backgroundColor: const Color(0xFFEBF3FC),
-            side: const BorderSide(color: Color(0xFFBED8F7)),
+            backgroundColor: const Color(0xFFFEF2F2),
+            side: const BorderSide(color: Color(0xFFFECACA)),
             onPressed: () => context.push(target),
           ),
         ],

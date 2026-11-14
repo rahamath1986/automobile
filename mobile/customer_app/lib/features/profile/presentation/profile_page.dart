@@ -102,7 +102,7 @@ class _ProfileBody extends ConsumerWidget {
                 width: 56,
                 height: 56,
                 decoration: const BoxDecoration(
-                  color: Color(0xFF2563EB),
+                  color: Color(0xFFDC2626),
                   shape: BoxShape.circle,
                 ),
                 child: Center(

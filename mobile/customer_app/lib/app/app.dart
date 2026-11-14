@@ -44,24 +44,24 @@ class _LaunchScreen extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            const Spacer(flex: 2),
+            const Spacer(flex: 3),
 
-            // Alagendra Logo & Brand Tagline (Screen 1)
+            // Alagendra Logo & Brand Tagline
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
-                  width: 36,
-                  height: 36,
+                  width: 42,
+                  height: 42,
                   decoration: const BoxDecoration(
                     color: Color(0xFFDC2626),
                     shape: BoxShape.circle,
                   ),
                   child: const Center(
-                    child: Icon(Icons.two_wheeler_rounded, color: Colors.white, size: 22),
+                    child: Icon(Icons.two_wheeler_rounded, color: Colors.white, size: 26),
                   ),
                 ),
-                const SizedBox(width: 10),
+                const SizedBox(width: 12),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -69,20 +69,20 @@ class _LaunchScreen extends StatelessWidget {
                       text: const TextSpan(
                         text: 'Alagendra',
                         style: TextStyle(
-                          fontSize: 22,
+                          fontSize: 26,
                           fontWeight: FontWeight.w900,
                           color: Color(0xFF0F172A),
-                          letterSpacing: -0.5,
+                          letterSpacing: -0.6,
                         ),
                       ),
                     ),
                     const Text(
                       'AUTOMOBILES',
                       style: TextStyle(
-                        fontSize: 9,
+                        fontSize: 10,
                         fontWeight: FontWeight.w800,
                         color: Color(0xFFDC2626),
-                        letterSpacing: 2.2,
+                        letterSpacing: 2.5,
                       ),
                     ),
                   ],
@@ -93,20 +93,20 @@ class _LaunchScreen extends StatelessWidget {
             const Text(
               'Your Trusted 2-Wheeler Partner',
               style: TextStyle(
-                fontSize: 14,
+                fontSize: 15,
                 fontWeight: FontWeight.w600,
                 color: Color(0xFF64748B),
                 letterSpacing: 0.2,
               ),
             ),
 
-            const Spacer(flex: 1),
+            const Spacer(flex: 2),
 
             // Sports Motorcycle Hero Illustration
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: SizedBox(
-                height: 200,
+                height: 220,
                 child: Image.asset(
                   'assets/images/vehicles/yamaha_r15_red.jpg',
                   fit: BoxFit.contain,
@@ -119,42 +119,28 @@ class _LaunchScreen extends StatelessWidget {
               ),
             ),
 
-            const Spacer(flex: 2),
+            const Spacer(flex: 3),
 
-            // Curved Red Accent Container (Screen 1)
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 24),
-              decoration: const BoxDecoration(
+            // Subtle Loading Progress Indicator (No bottom sheet)
+            const SizedBox(
+              width: 24,
+              height: 24,
+              child: CircularProgressIndicator(
+                strokeWidth: 2.5,
                 color: Color(0xFFDC2626),
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(32),
-                  topRight: Radius.circular(32),
-                ),
-              ),
-              child: Column(
-                children: [
-                  Container(
-                    width: 48,
-                    height: 5,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.6),
-                      borderRadius: BorderRadius.circular(99),
-                    ),
-                  ),
-                  const SizedBox(height: 14),
-                  const Text(
-                    'Explore · Buy · Service · Track · Offers',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 0.4,
-                    ),
-                  ),
-                ],
               ),
             ),
+            const SizedBox(height: 12),
+            const Text(
+              'Explore · Buy · Service · Track · Offers',
+              style: TextStyle(
+                color: Color(0xFF94A3B8),
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.3,
+              ),
+            ),
+            const SizedBox(height: 24),
           ],
         ),
       ),

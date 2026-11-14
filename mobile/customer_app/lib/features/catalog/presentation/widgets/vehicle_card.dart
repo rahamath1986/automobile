@@ -192,7 +192,7 @@ class VehicleCard extends StatelessWidget {
                       child: const Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.sync_rounded, size: 13, color: Color(0xFF0284C7)),
+                          Icon(Icons.sync_rounded, size: 13, color: Color(0xFFDC2626)),
                           SizedBox(width: 3.5),
                           Text(
                             '360° View',

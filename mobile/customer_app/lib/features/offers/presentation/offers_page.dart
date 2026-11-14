@@ -132,8 +132,8 @@ class OffersPage extends ConsumerWidget {
             title: 'Free Health Check-up',
             subtitle: 'For all 2 Wheelers',
             icon: Icons.favorite_border_rounded,
-            iconBg: const Color(0xFFEFF6FF),
-            iconColor: const Color(0xFF2563EB),
+            iconBg: const Color(0xFFFEF2F2),
+            iconColor: const Color(0xFFDC2626),
             onTap: () => context.push('/service/book'),
           ),
           const SizedBox(height: 12),
@@ -251,3 +251,4 @@ class _OfferItemCard extends StatelessWidget {
     );
   }
 }
+

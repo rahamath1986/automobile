@@ -179,10 +179,10 @@ class _OtpPageState extends ConsumerState<OtpPage> {
                 const SizedBox(height: 8),
                 Center(
                   child: ActionChip(
-                    avatar: const Icon(Icons.pin_rounded, size: 16, color: Color(0xFF002C6C)),
+                    avatar: const Icon(Icons.pin_rounded, size: 16, color: Color(0xFFDC2626)),
                     label: const Text('Preload OTP: 123456', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
-                    backgroundColor: const Color(0xFFEBF3FC),
-                    side: const BorderSide(color: Color(0xFFBED8F7)),
+                    backgroundColor: const Color(0xFFFEF2F2),
+                    side: const BorderSide(color: Color(0xFFFECACA)),
                     onPressed: () => setState(() => _otpController.text = '123456'),
                   ),
                 ),

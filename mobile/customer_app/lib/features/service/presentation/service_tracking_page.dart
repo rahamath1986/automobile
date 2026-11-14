@@ -409,10 +409,10 @@ class _TimelineStep extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const green = Color(0xFF16A34A);
-    const blue = Color(0xFF2563EB);
+    final activeColor = Theme.of(context).colorScheme.primary;
     const grey = Color(0xFFCBD5E1);
 
-    final nodeColor = step.completed ? green : (step.current ? blue : grey);
+    final nodeColor = step.completed ? green : (step.current ? activeColor : grey);
     final lineColor = step.completed ? green : const Color(0xFFE2E8F0);
 
     String subtext;
@@ -440,7 +440,7 @@ class _TimelineStep extends StatelessWidget {
                   boxShadow: step.current
                       ? [
                           BoxShadow(
-                            color: blue.withValues(alpha: 0.3),
+                            color: activeColor.withValues(alpha: 0.3),
                             blurRadius: 6,
                             spreadRadius: 1,
                           ),
@@ -454,7 +454,7 @@ class _TimelineStep extends StatelessWidget {
                             child: Container(
                               width: 8,
                               height: 8,
-                              decoration: const BoxDecoration(color: blue, shape: BoxShape.circle),
+                              decoration: BoxDecoration(color: activeColor, shape: BoxShape.circle),
                             ),
                           )
                         : null,
@@ -495,7 +495,7 @@ class _TimelineStep extends StatelessWidget {
                       fontSize: 12,
                       fontWeight: step.current ? FontWeight.w600 : FontWeight.w400,
                       color: step.current
-                          ? blue
+                          ? activeColor
                           : step.completed
                               ? const Color(0xFF64748B)
                               : const Color(0xFF94A3B8),

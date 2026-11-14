@@ -982,12 +982,12 @@ class _StaffPageState extends State<StaffPage> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFEFF6FF),
+                        color: const Color(0xFFFEF2F2),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
                         '${isManager ? "Branch Manager" : (isAdvisor ? "Service Advisor" : "Staff")} · ${_roles.join(" · ")}',
-                        style: const TextStyle(fontSize: 10.5, fontWeight: FontWeight.w700, color: Color(0xFF2563EB)),
+                        style: const TextStyle(fontSize: 10.5, fontWeight: FontWeight.w700, color: Color(0xFFDC2626)),
                       ),
                     ),
                   ],
@@ -1275,7 +1275,7 @@ class _StaffPageState extends State<StaffPage> {
                   ],
                 ),
               ),
-              _badge(row['status'], const Color(0xFF2563EB)),
+              _badge(row['status'], const Color(0xFFDC2626)),
               if (row['priority'] != null) ...[
                 const SizedBox(width: 6),
                 _badge(row['priority'], isHot ? const Color(0xFFDC2626) : const Color(0xFFF59E0B)),
@@ -1600,7 +1600,7 @@ class _StaffPageState extends State<StaffPage> {
                   style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 14),
                 ),
               ),
-              _badge(row['stage'] ?? status, isWip ? const Color(0xFF10B981) : const Color(0xFF2563EB)),
+              _badge(row['stage'] ?? status, isWip ? const Color(0xFF10B981) : const Color(0xFFDC2626)),
             ],
           ),
           const SizedBox(height: 8),

@@ -112,20 +112,20 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             children: [
               const SizedBox(height: 10),
 
-              // Hero Smartphone Graphic in soft blue rounded box
+              // Hero Smartphone Graphic in soft red rounded box
               Container(
                 width: 80,
                 height: 80,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFEBF3FC),
+                  color: const Color(0xFFFEF2F2),
                   borderRadius: BorderRadius.circular(22),
-                  border: Border.all(color: const Color(0xFFDBEAFE)),
+                  border: Border.all(color: const Color(0xFFFECACA)),
                 ),
                 child: const Center(
                   child: Icon(
                     Icons.phone_android_rounded,
                     size: 44,
-                    color: Color(0xFF2563EB),
+                    color: Color(0xFFDC2626),
                   ),
                 ),
               ),
