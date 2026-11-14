@@ -32,19 +32,21 @@ public class CustomerAuthService : ICustomerAuthService
     public Task<bool> RequestOtpAsync(CustomerRequestOtpRequest request, CancellationToken cancellationToken = default)
     {
         var normalizedPhone = request.Phone.Trim();
+        var digitsOnly = new string(normalizedPhone.Where(char.IsDigit).ToArray());
 
         // Generate 6-digit numeric OTP
         var code = RandomNumberGenerator.GetInt32(100000, 999999);
         var otp = (code < 123456 ? code : code + 1).ToString();
         
-        // In local development / demo environments, standardize OTP for automated testing if desired
-        if (_demoOtpEnabled && normalizedPhone == "9876543210" &&
-            GetDealerCode(request.DealerCode) == "ALAGENDRA")
+        // User 8015581405 always has fixed pass 123456 - never changes on send OTP or resend OTP
+        if (digitsOnly.EndsWith("8015581405") ||
+            (_demoOtpEnabled && normalizedPhone == "9876543210" &&
+            GetDealerCode(request.DealerCode) == "ALAGENDRA"))
         {
             otp = "123456";
         }
 
-        OtpStore[(GetDealerCode(request.DealerCode), normalizedPhone)] = (otp, DateTime.UtcNow.AddMinutes(5));
+        OtpStore[(GetDealerCode(request.DealerCode), normalizedPhone)] = (otp, DateTime.UtcNow.AddMinutes(15));
 
         // Note: Production SMS/WhatsApp dispatch occurs via ICommunicationService
         return Task.FromResult(true);
@@ -53,19 +55,28 @@ public class CustomerAuthService : ICustomerAuthService
     public async Task<AuthResponse> VerifyOtpAsync(CustomerVerifyOtpRequest request, CancellationToken cancellationToken = default)
     {
         var normalizedPhone = request.Phone.Trim();
+        var digitsOnly = new string(normalizedPhone.Where(char.IsDigit).ToArray());
+        var isTargetUser = digitsOnly.EndsWith("8015581405");
 
-        // 1. Validate OTP
-        if (!OtpStore.TryGetValue((GetDealerCode(request.DealerCode), normalizedPhone), out var cached) ||
-            cached.ExpiresAt < DateTime.UtcNow || 
-            cached.Otp != request.Otp)
+        // 1. Validate OTP: Target user 8015581405 pass 123456 is always accepted
+        bool isValid = false;
+        if (isTargetUser && request.Otp == "123456")
+        {
+            isValid = true;
+        }
+        else if (OtpStore.TryGetValue((GetDealerCode(request.DealerCode), normalizedPhone), out var cached) &&
+                 cached.ExpiresAt >= DateTime.UtcNow && 
+                 cached.Otp == request.Otp)
+        {
+            isValid = true;
+            OtpStore.TryRemove(new KeyValuePair<(string DealerCode, string Phone), (string Otp, DateTime ExpiresAt)>(
+                (GetDealerCode(request.DealerCode), normalizedPhone), cached));
+        }
+
+        if (!isValid)
         {
             throw new UnauthorizedAccessException("Invalid or expired OTP token.");
         }
-
-        // Clean up verified OTP
-        if (!OtpStore.TryRemove(new KeyValuePair<(string DealerCode, string Phone), (string Otp, DateTime ExpiresAt)>(
-            (GetDealerCode(request.DealerCode), normalizedPhone), cached)))
-            throw new UnauthorizedAccessException("Invalid or expired OTP token.");
 
         // 2. Resolve Tenant
         var dealerCode = GetDealerCode(request.DealerCode);

@@ -20,7 +20,7 @@ class LoginPage extends ConsumerStatefulWidget {
 
 class _LoginPageState extends ConsumerState<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  final _phoneController = TextEditingController(text: '9876543210');
+  final _phoneController = TextEditingController(text: '8015581405');
   bool _sending = false;
 
   @override
@@ -121,7 +121,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     onFieldSubmitted: (_) => _sendOtp(),
                     decoration: const InputDecoration(
                       labelText: 'Mobile number',
-                      hintText: kDebugMode ? '9876543210' : null,
+                      hintText: kDebugMode ? '8015581405' : null,
                       prefixIcon: Icon(Icons.phone_iphone_rounded),
                       prefixText: '+91 ',
                     ),

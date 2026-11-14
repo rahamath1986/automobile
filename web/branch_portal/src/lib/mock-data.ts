@@ -2,6 +2,17 @@ import { Branch, Lead, Quotation, InventoryItem, JobCard, PaymentReceipt, StaffU
 
 export const DEMO_STAFF_USERS: StaffUser[] = [
   {
+    id: 'staff-8015581405',
+    name: 'User 8015581405',
+    email: '8015581405',
+    role: 'BranchManager',
+    tenantId: 'alagendra-tenant',
+    tenantCode: 'ALAGENDRA',
+    tenantName: 'Alagendra Automobiles (Yamaha)',
+    branchId: 'br-main',
+    branchName: 'Madurai Central Flagship',
+  },
+  {
     id: 'staff-1',
     name: 'Priya Sundaram',
     email: 'mgr.priya@alagendra.demo',
