@@ -17,10 +17,13 @@ import '../features/service/presentation/service_tracking_page.dart';
 import '../features/shell/presentation/customer_shell.dart';
 import '../features/showroom/presentation/showroom_viewer_page.dart';
 
+import '../features/staff/staff_page.dart';
+
 final routerProvider = Provider<GoRouter>((ref) {
   final router = GoRouter(
     initialLocation: '/home',
     routes: [
+      GoRoute(path: '/staff', builder: (context, state) => const StaffPage()),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) => CustomerShell(navigationShell: navigationShell),
         branches: [

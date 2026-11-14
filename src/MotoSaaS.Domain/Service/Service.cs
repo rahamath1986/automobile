@@ -83,6 +83,9 @@ public class JobCard : BaseEntity, ITenantScopedEntity, IBranchScopedEntity
     public Guid? TechnicianId { get; set; }
     public User? Technician { get; set; }
 
+    public string? InspectionChecklist { get; set; }
+    public int? FeedbackRating { get; set; }
+    public string? FeedbackComment { get; set; }
     public int OdometerReading { get; set; }
     public int FuelLevelPercent { get; set; }
     public decimal EstimatedCost { get; set; } = 0.00m;

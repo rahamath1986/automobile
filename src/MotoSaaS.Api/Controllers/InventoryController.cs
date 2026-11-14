@@ -90,6 +90,7 @@ public class InventoryController : BaseApiController
     /// Enforces strict concurrency control to prevent double allocation.
     /// </summary>
     [HttpPost("allocate")]
+    [Authorize(Roles = "SalesExecutive,SalesManager,BranchManager,SaaSAdmin")]
     [ProducesResponseType(typeof(ApiResponse<InventoryItemDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]

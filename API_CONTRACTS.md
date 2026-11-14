@@ -169,13 +169,16 @@ This document details the RESTful API design standards, envelope formatting, aut
 | `GET` | `/api/v1/quotations/{id}` | Staff | Quotation with full price breakdown |
 | `POST` | `/api/v1/quotations/{id}/expire` | Staff | Manually expire an active quotation |
 
-### E. Billing & Payments (`/api/v1/billing`)
+### E. Purchase, Billing & Delivery
+
+See [Phase 10 API details](docs/api/PHASE_10_PURCHASE.md) for booking confirmation,
+payment request IDs, inspection, and handover.
 
 | Method | Endpoint | Access | Description |
 |---|---|---|---|
-| `POST` | `/api/v1/billing/payments` | Staff (Cashier, Manager) | Record payment collection (Cash/UPI/Card/Financier) |
+| `POST` | `/api/v1/billing/payments` | Staff (Cashier, Manager) | Record a received payment and update the booking balance |
 | `GET` | `/api/v1/billing/invoices/{id}` | Staff / Customer | Retrieve vehicle sales or service invoice |
-| `POST` | `/api/v1/billing/invoices/generate` | Staff (Cashier) | Generate official sales invoice upon full payment |
+| `POST` | `/api/v1/billing/invoices/generate` | Staff (Cashier) | Generate a DEMO sales invoice for a fully paid, allocated booking |
 
 ### E2. Finance & EMI Calculator Engine (`/api/v1/finance`)
 

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -71,7 +72,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     final primary = Theme.of(context).colorScheme.primary;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Sign in')),
+      appBar: AppBar(title: const Text('Sign in'), actions: [
+        TextButton(onPressed: () => context.push('/staff'), child: const Text('Dealer staff')),
+      ]),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(24, 12, 24, 32),
@@ -116,7 +119,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     onFieldSubmitted: (_) => _sendOtp(),
                     decoration: const InputDecoration(
                       labelText: 'Mobile number',
-                      hintText: '98765 43210',
+                      hintText: kDebugMode ? '9876543210' : null,
                       prefixIcon: Icon(Icons.phone_iphone_rounded),
                       prefixText: '+91 ',
                     ),

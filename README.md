@@ -63,4 +63,4 @@ docker exec -i motosaas_postgres psql -U postgres -d motosaas_db < docs/demo-dat
 ./docs/testing/PHASE_9_E2E.sh
 ```
 
-Demo staff login: `manager.priya` / `Demo@123` with dealer code `ALAGENDRA`. Customer demo remains phone `9876543210`, OTP `123456`. Phase 9 API details are in `docs/api/PHASE_9_SALES_CRM.md`. Development proceeds strictly through gated phases; Phase 10 (Purchase, Payments & Delivery) starts only after approval.
+Demo staff login: `manager.priya` / `Demo@123` with dealer code `ALAGENDRA`. Customer demo remains phone `9876543210`, OTP `123456`. Phase 9 API details are in `docs/api/PHASE_9_SALES_CRM.md`. See [Phase 10 API details](docs/api/PHASE_10_PURCHASE.md) for purchase, payments, and delivery.

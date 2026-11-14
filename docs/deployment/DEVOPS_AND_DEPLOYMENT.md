@@ -83,6 +83,52 @@ To host MotoSaaS with **zero ongoing cloud costs ($0/month)** on Microsoft Azure
 
 ---
 
+## 2c. Automated CI/CD Pipeline to Azure & Client Base URL Integration
+
+### 1. GitHub Actions Pipeline (.github/workflows/deploy-azure.yml)
+The automated workflow is modeled after the `service-backend` production deployment:
+1. Builds a multi-stage Docker container from `Dockerfile` and publishes to GitHub Container Registry:
+   - `ghcr.io/${{ github.repository_owner }}/motosaas-api:latest`
+2. Authenticates to Azure via `azure/login@v2` using secret `AZURE_CREDENTIALS`.
+3. Deploys container image and restarts Azure App Service:
+   ```bash
+   az webapp config container set \
+     --name ${{ secrets.AZURE_WEBAPP_NAME }} \
+     --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
+     --container-image-name ghcr.io/${{ github.repository_owner }}/motosaas-api:latest \
+     --container-registry-url https://ghcr.io
+   az webapp restart --name ${{ secrets.AZURE_WEBAPP_NAME }} --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }}
+   ```
+
+### 2. GitHub Secrets Required
+- `AZURE_CREDENTIALS`: Service principal JSON credential (`{"clientId": "...", "clientSecret": "...", "subscriptionId": "...", "tenantId": "..."}`).
+- `AZURE_WEBAPP_NAME`: Name of the Azure App Service (e.g. `motosaas-api`).
+- `AZURE_RESOURCE_GROUP`: Azure Resource Group name (e.g. `rg-motosaas-prod`).
+
+### 3. Production Azure Endpoints & Base URL Configuration
+
+The API gateway routes `automobile` traffic through `https://app-service-api-c3hwa9dpeggseyb5.centralindia-01.azurewebsites.net/automobile`:
+- **Swagger Documentation:** `https://app-service-api-c3hwa9dpeggseyb5.centralindia-01.azurewebsites.net/automobile/api/docs`
+- **API Base URL:** `https://app-service-api-c3hwa9dpeggseyb5.centralindia-01.azurewebsites.net/automobile/api/v1`
+
+#### Flutter Mobile App (`mobile/customer_app`):
+- Config file: `lib/core/config/app_config.dart`
+- Defaults automatically to:
+  `https://app-service-api-c3hwa9dpeggseyb5.centralindia-01.azurewebsites.net/automobile/api/v1`
+- Can be overridden dynamically:
+  ```bash
+  flutter run --dart-define=API_BASE_URL=https://app-service-api-c3hwa9dpeggseyb5.centralindia-01.azurewebsites.net/automobile/api/v1
+  flutter build apk --release --dart-define=API_BASE_URL=https://app-service-api-c3hwa9dpeggseyb5.centralindia-01.azurewebsites.net/automobile/api/v1
+  ```
+
+#### Next.js Web Portals:
+- File: `.env.local` or `.env.production`
+  ```env
+  NEXT_PUBLIC_API_URL=https://app-service-api-c3hwa9dpeggseyb5.centralindia-01.azurewebsites.net/automobile/api/v1
+  ```
+
+---
+
 ## 3. Database Migration & Rollback Strategy
 
 1. **Idempotent EF Core Migrations:** Migrations are applied via automated pipeline scripts during deployment (`dotnet ef database update --idempotent`).

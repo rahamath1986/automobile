@@ -93,6 +93,18 @@ builder.Services.AddSwaggerGen(c =>
         Description = "Production Multi-Tenant Two-Wheeler Dealership Management SaaS Platform API."
     });
 
+    c.AddServer(new OpenApiServer
+    {
+        Url = "https://app-service-api-c3hwa9dpeggseyb5.centralindia-01.azurewebsites.net/automobile",
+        Description = "Azure Gateway (Production)"
+    });
+
+    c.AddServer(new OpenApiServer
+    {
+        Url = "/",
+        Description = "Direct / Relative Host"
+    });
+
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description = "JWT Authorization header using Bearer scheme. Example: \"Bearer {token}\"",
@@ -127,16 +139,25 @@ app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 // Configure HTTP pipeline
 if (app.Environment.IsDevelopment() || true) // Enabled for Demo/Development
 {
-    app.UseSwagger();
+    app.UseSwagger(c =>
+    {
+        c.RouteTemplate = "api/docs/{documentName}/swagger.json";
+    });
     app.UseSwaggerUI(c =>
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "MotoSaaS API v1");
-        c.RoutePrefix = "swagger";
+        c.SwaggerEndpoint("v1/swagger.json", "MotoSaaS API v1");
+        c.RoutePrefix = "api/docs";
     });
 }
 
 app.UseCors("AllowAll");
 app.UseRouting();
+
+// Redirect common docs paths to Swagger UI index.html
+app.MapGet("/api/docs", () => Results.Redirect("api/docs/index.html", permanent: false));
+app.MapGet("/docs", () => Results.Redirect("api/docs/index.html", permanent: false));
+app.MapGet("/swagger", () => Results.Redirect("api/docs/index.html", permanent: false));
+app.MapGet("/", () => Results.Redirect("api/docs/index.html", permanent: false));
 
 app.UseAuthentication();
 

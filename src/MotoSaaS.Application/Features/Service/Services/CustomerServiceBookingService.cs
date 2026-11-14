@@ -146,7 +146,7 @@ public class CustomerServiceBookingService : ICustomerServiceBookingService
             BranchId = branch.Id,
             CustomerVehicleId = vehicle.Id,
             ServiceType = serviceType,
-            ScheduledDate = request.ScheduledDate.Date,
+            ScheduledDate = DateTime.SpecifyKind(request.ScheduledDate.Date, DateTimeKind.Utc),
             TimeSlot = request.TimeSlot.Trim(),
             CustomerComplaints = string.IsNullOrWhiteSpace(request.CustomerComplaints)
                 ? null

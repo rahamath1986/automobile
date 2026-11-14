@@ -1,0 +1,13 @@
+**/.git
+**/.github
+**/.idea
+**/.vscode
+**/bin
+**/obj
+**/TestResults
+mobile/
+docs/
+tests/
+*.md
+.DS_Store
+

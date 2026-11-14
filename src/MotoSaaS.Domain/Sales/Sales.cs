@@ -185,6 +185,16 @@ public class Booking : BaseEntity, ITenantScopedEntity, IBranchScopedEntity
     public decimal BookingAmount { get; set; }
     public decimal TotalPrice { get; set; }
     public decimal BalanceAmount { get; set; }
+    public int ConcurrencyVersion { get; set; }
+    public DateTime? InspectionAt { get; set; }
+    public Guid? InspectedBy { get; set; }
+    public bool? InspectionPassed { get; set; }
+    public string? InspectionNotes { get; set; }
+    public DateTime? DeliveredAt { get; set; }
+    public Guid? DeliveredBy { get; set; }
+    public string? HandoverRecipient { get; set; }
+    public Guid? CustomerVehicleId { get; set; }
+    public Service.CustomerVehicle? CustomerVehicle { get; set; }
     public BookingStatus Status { get; set; } = BookingStatus.Confirmed;
 }
 

@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using System.Security.Cryptography;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using MotoSaaS.Application.Common.Interfaces;
 using MotoSaaS.Application.Features.Identity.Interfaces;
 using MotoSaaS.Application.Features.Identity.Models;
@@ -12,30 +13,38 @@ public class CustomerAuthService : ICustomerAuthService
 {
     private readonly IApplicationDbContext _context;
     private readonly IJwtTokenService _jwtTokenService;
-    private static readonly ConcurrentDictionary<string, (string Otp, DateTime ExpiresAt)> OtpStore = new();
+    private readonly bool _demoOtpEnabled;
+    private static readonly ConcurrentDictionary<(string DealerCode, string Phone), (string Otp, DateTime ExpiresAt)> OtpStore = new();
 
     public CustomerAuthService(
         IApplicationDbContext context,
-        IJwtTokenService jwtTokenService)
+        IJwtTokenService jwtTokenService,
+        IConfiguration configuration)
     {
         _context = context;
         _jwtTokenService = jwtTokenService;
+        _demoOtpEnabled = configuration["CustomerAuth:EnableDemoOtp"] == "true";
     }
+
+    private static string GetDealerCode(string? code) =>
+        string.IsNullOrWhiteSpace(code) ? "ALAGENDRA" : code.Trim().ToUpperInvariant();
 
     public Task<bool> RequestOtpAsync(CustomerRequestOtpRequest request, CancellationToken cancellationToken = default)
     {
         var normalizedPhone = request.Phone.Trim();
 
         // Generate 6-digit numeric OTP
-        var otp = RandomNumberGenerator.GetInt32(100000, 999999).ToString();
+        var code = RandomNumberGenerator.GetInt32(100000, 999999);
+        var otp = (code < 123456 ? code : code + 1).ToString();
         
         // In local development / demo environments, standardize OTP for automated testing if desired
-        if (normalizedPhone.EndsWith("43210") || normalizedPhone == "9999999999")
+        if (_demoOtpEnabled && normalizedPhone == "9876543210" &&
+            GetDealerCode(request.DealerCode) == "ALAGENDRA")
         {
             otp = "123456";
         }
 
-        OtpStore[normalizedPhone] = (otp, DateTime.UtcNow.AddMinutes(5));
+        OtpStore[(GetDealerCode(request.DealerCode), normalizedPhone)] = (otp, DateTime.UtcNow.AddMinutes(5));
 
         // Note: Production SMS/WhatsApp dispatch occurs via ICommunicationService
         return Task.FromResult(true);
@@ -46,22 +55,23 @@ public class CustomerAuthService : ICustomerAuthService
         var normalizedPhone = request.Phone.Trim();
 
         // 1. Validate OTP
-        if (!OtpStore.TryGetValue(normalizedPhone, out var cached) || 
+        if (!OtpStore.TryGetValue((GetDealerCode(request.DealerCode), normalizedPhone), out var cached) ||
             cached.ExpiresAt < DateTime.UtcNow || 
-            (cached.Otp != request.Otp && request.Otp != "123456"))
+            cached.Otp != request.Otp)
         {
             throw new UnauthorizedAccessException("Invalid or expired OTP token.");
         }
 
         // Clean up verified OTP
-        OtpStore.TryRemove(normalizedPhone, out _);
+        if (!OtpStore.TryRemove(new KeyValuePair<(string DealerCode, string Phone), (string Otp, DateTime ExpiresAt)>(
+            (GetDealerCode(request.DealerCode), normalizedPhone), cached)))
+            throw new UnauthorizedAccessException("Invalid or expired OTP token.");
 
         // 2. Resolve Tenant
-        var dealerCode = string.IsNullOrWhiteSpace(request.DealerCode) ? "ALAGENDRA" : request.DealerCode.Trim().ToUpperInvariant();
+        var dealerCode = GetDealerCode(request.DealerCode);
         var tenant = await _context.Tenants
             .AsNoTracking()
-            .FirstOrDefaultAsync(t => t.Code == dealerCode, cancellationToken)
-            ?? await _context.Tenants.AsNoTracking().FirstOrDefaultAsync(cancellationToken);
+            .FirstOrDefaultAsync(t => t.Code == dealerCode, cancellationToken);
 
         if (tenant == null)
         {

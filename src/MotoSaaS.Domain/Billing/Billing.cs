@@ -25,7 +25,8 @@ public enum PaymentMode
     Upi,
     Card,
     NetBanking,
-    Financier
+    Financier,
+    BankTransfer
 }
 
 public enum PaymentStatus
@@ -52,6 +53,7 @@ public class Invoice : BaseEntity, ITenantScopedEntity, IBranchScopedEntity
     public Guid CustomerId { get; set; }
     public Customer? Customer { get; set; }
 
+    public bool IsDemo { get; set; }
     public decimal Subtotal { get; set; }
     public decimal TaxAmount { get; set; }
     public decimal TotalAmount { get; set; }
@@ -66,6 +68,7 @@ public class Payment : BaseEntity, ITenantScopedEntity, IBranchScopedEntity
     public Guid BranchId { get; set; }
     public Branch? Branch { get; set; }
 
+    public Guid? RequestId { get; set; }
     public string ReceiptNumber { get; set; } = string.Empty;
     public Guid? BookingId { get; set; }
     public Booking? Booking { get; set; }

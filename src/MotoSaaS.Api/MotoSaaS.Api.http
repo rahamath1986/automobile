@@ -1,6 +1,6 @@
 @MotoSaaS.Api_HostAddress = http://localhost:5053
 
-GET {{MotoSaaS.Api_HostAddress}}/weatherforecast/
+GET {{MotoSaaS.Api_HostAddress}}/health/live
 Accept: application/json
 
 ###

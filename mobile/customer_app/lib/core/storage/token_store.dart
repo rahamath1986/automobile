@@ -2,15 +2,16 @@ import 'dart:convert';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-/// Secure, key-partitioned token vault for the customer domain.
-/// The staff experience (Phase 12) will use a separate partition in this app.
+/// Secure token vault with separate customer and staff keys.
 class TokenStore {
-  TokenStore({FlutterSecureStorage? storage})
-      : _storage = storage ?? const FlutterSecureStorage();
+  TokenStore({FlutterSecureStorage? storage, this.staff = false})
+    : _storage = storage ?? const FlutterSecureStorage();
 
-  static const _accessTokenKey = 'customer.access_token';
-  static const _refreshTokenKey = 'customer.refresh_token';
-  static const _sessionKey = 'customer.session';
+  final bool staff;
+  String get _partition => staff ? 'staff' : 'customer';
+  String get _accessTokenKey => '$_partition.access_token';
+  String get _refreshTokenKey => '$_partition.refresh_token';
+  String get _sessionKey => '$_partition.session';
 
   final FlutterSecureStorage _storage;
 

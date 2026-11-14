@@ -11,9 +11,12 @@ public class InventoryService : IInventoryService
 {
     private readonly IApplicationDbContext _context;
 
-    public InventoryService(IApplicationDbContext context)
+    private readonly ICurrentTenantContext? _tenantContext;
+
+    public InventoryService(IApplicationDbContext context, ICurrentTenantContext? tenantContext = null)
     {
         _context = context;
+        _tenantContext = tenantContext;
     }
 
     public async Task<List<InventoryItemDto>> GetBranchStockAsync(
@@ -129,12 +132,8 @@ public class InventoryService : IInventoryService
             throw new KeyNotFoundException($"Inventory unit with ID '{inventoryItemId}' not found.");
         }
 
-        // Strict Allocation Mutex Check: Must be Available or Reserved
-        if (item.Status != InventoryStatus.Available && item.Status != InventoryStatus.Reserved)
-        {
-            throw new InvalidOperationException(
-                $"Vehicle chassis '{item.ChassisNumber}' cannot be allocated because its current status is '{item.Status}'.");
-        }
+        if (_tenantContext is { IsSuperAdmin: false } && item.BranchId != _tenantContext.BranchId)
+            throw new KeyNotFoundException("Inventory unit not found in your branch.");
 
         var booking = await _context.Bookings
             .FirstOrDefaultAsync(b => b.TenantId == tenantId && b.Id == bookingId, cancellationToken);
@@ -144,6 +143,22 @@ public class InventoryService : IInventoryService
             throw new KeyNotFoundException($"Booking with ID '{bookingId}' not found.");
         }
 
+        if (booking.Status == BookingStatus.Allocated && booking.AllocatedInventoryId == item.Id &&
+            item.Status == InventoryStatus.Allocated && booking.BranchId == item.BranchId)
+            return await GetInventoryDtoAsync(tenantId, item.Id, cancellationToken);
+
+        if (item.Status != InventoryStatus.Available && item.Status != InventoryStatus.Reserved)
+        {
+            throw new InvalidOperationException(
+                $"Vehicle chassis '{item.ChassisNumber}' cannot be allocated because its current status is '{item.Status}'.");
+        }
+
+        if (booking.Status != BookingStatus.Confirmed || booking.AllocatedInventoryId.HasValue)
+            throw new InvalidOperationException("Only an unallocated, confirmed booking can receive a chassis.");
+
+        if (booking.BranchId != item.BranchId || booking.VariantId != item.VariantId || booking.ColorId != item.ColorId)
+            throw new InvalidOperationException("The chassis must match the booking branch, variant and color.");
+
         var fromStatus = item.Status;
 
         // Atomically update state
@@ -152,6 +167,7 @@ public class InventoryService : IInventoryService
 
         booking.AllocatedInventoryId = item.Id;
         booking.Status = BookingStatus.Allocated;
+        booking.ConcurrencyVersion++;
 
         var movement = new InventoryMovement
         {
@@ -237,6 +253,11 @@ public class InventoryService : IInventoryService
         {
             throw new KeyNotFoundException($"Inventory unit with ID '{inventoryItemId}' not found.");
         }
+
+        if (targetStatus == InventoryStatus.Allocated ||
+            await _context.Bookings.AnyAsync(b => b.TenantId == tenantId && b.AllocatedInventoryId == item.Id &&
+                b.Status == BookingStatus.Allocated, cancellationToken))
+            throw new InvalidOperationException("Use the purchase workflow to change the status of allocated stock.");
 
         // Validate finite state machine transitions
         if (!IsValidTransition(item.Status, targetStatus))

@@ -1,6 +1,8 @@
 using System.Net;
 using System.Text.Json;
 using FluentValidation;
+using Microsoft.EntityFrameworkCore;
+using Npgsql;
 using MotoSaaS.Application.Common.Models;
 
 namespace MotoSaaS.Api.Middlewares;
@@ -26,6 +28,13 @@ public class GlobalExceptionHandlingMiddleware
         {
             _logger.LogWarning(valEx, "Validation error occurred during request processing.");
             await HandleValidationExceptionAsync(context, valEx);
+        }
+        catch (DbUpdateException ex) when (ex is DbUpdateConcurrencyException ||
+            ex.InnerException is PostgresException { SqlState: PostgresErrorCodes.UniqueViolation })
+        {
+            context.Response.StatusCode = StatusCodes.Status409Conflict;
+            await context.Response.WriteAsJsonAsync(ApiResponse<object>.Failure(
+                "The record changed or already exists. Refresh and retry.", 409));
         }
         catch (Exception ex)
         {

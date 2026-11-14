@@ -13,6 +13,7 @@ using MotoSaaS.Application.Features.Inventory.Interfaces;
 using MotoSaaS.Application.Features.Inventory.Services;
 using MotoSaaS.Application.Features.Manufacturer.Interfaces;
 using MotoSaaS.Application.Features.Manufacturer.Services;
+using MotoSaaS.Application.Features.Purchase;
 using MotoSaaS.Application.Features.Sales.Interfaces;
 using MotoSaaS.Application.Features.Sales.Services;
 using MotoSaaS.Application.Features.Service.Interfaces;
@@ -43,6 +44,7 @@ public static class DependencyInjection
         services.AddScoped<IBrandingService, BrandingService>();
         services.AddScoped<IVehicleCatalogService, VehicleCatalogService>();
         services.AddScoped<IInventoryService, InventoryService>();
+        services.AddScoped<PurchaseService>();
         services.AddScoped<IShowroom3DService, Showroom3DService>();
         services.AddScoped<ICustomerSalesService, CustomerSalesService>();
         services.AddScoped<IStaffSalesService, StaffSalesService>();

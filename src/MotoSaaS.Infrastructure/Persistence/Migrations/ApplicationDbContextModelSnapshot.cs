@@ -54,6 +54,9 @@ namespace MotoSaaS.Infrastructure.Persistence.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
+                    b.Property<bool>("IsDemo")
+                        .HasColumnType("boolean");
+
                     b.Property<Guid?>("JobCardId")
                         .HasColumnType("uuid");
 
@@ -135,6 +138,9 @@ namespace MotoSaaS.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<Guid?>("RequestId")
+                        .HasColumnType("uuid");
+
                     b.Property<int>("Status")
                         .HasColumnType("integer");
 
@@ -160,7 +166,8 @@ namespace MotoSaaS.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("InvoiceId");
 
-                    b.HasIndex("TenantId");
+                    b.HasIndex("TenantId", "BookingId", "RequestId")
+                        .IsUnique();
 
                     b.ToTable("Payments");
                 });
@@ -797,6 +804,7 @@ namespace MotoSaaS.Infrastructure.Persistence.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<int>("ConcurrencyVersion")
+                        .IsConcurrencyToken()
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedAt")
@@ -938,6 +946,10 @@ namespace MotoSaaS.Infrastructure.Persistence.Migrations
                     b.Property<Guid>("ColorId")
                         .HasColumnType("uuid");
 
+                    b.Property<int>("ConcurrencyVersion")
+                        .IsConcurrencyToken()
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -946,6 +958,30 @@ namespace MotoSaaS.Infrastructure.Persistence.Migrations
 
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uuid");
+
+                    b.Property<Guid?>("CustomerVehicleId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DeliveredAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("DeliveredBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("HandoverRecipient")
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("InspectedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("InspectionAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("InspectionNotes")
+                        .HasColumnType("text");
+
+                    b.Property<bool?>("InspectionPassed")
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
@@ -980,6 +1016,8 @@ namespace MotoSaaS.Infrastructure.Persistence.Migrations
                     b.HasIndex("ColorId");
 
                     b.HasIndex("CustomerId");
+
+                    b.HasIndex("CustomerVehicleId");
 
                     b.HasIndex("QuotationId");
 
@@ -1095,6 +1133,7 @@ namespace MotoSaaS.Infrastructure.Persistence.Migrations
                         .HasColumnType("integer");
 
                     b.Property<int>("Status")
+                        .IsConcurrencyToken()
                         .HasColumnType("integer");
 
                     b.Property<Guid>("TenantId")
@@ -1242,6 +1281,7 @@ namespace MotoSaaS.Infrastructure.Persistence.Migrations
                         .HasColumnType("numeric");
 
                     b.Property<int>("Status")
+                        .IsConcurrencyToken()
                         .HasColumnType("integer");
 
                     b.Property<Guid>("TenantId")
@@ -1428,8 +1468,17 @@ namespace MotoSaaS.Infrastructure.Persistence.Migrations
                     b.Property<decimal>("EstimatedCost")
                         .HasColumnType("numeric");
 
+                    b.Property<string>("FeedbackComment")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("FeedbackRating")
+                        .HasColumnType("integer");
+
                     b.Property<int>("FuelLevelPercent")
                         .HasColumnType("integer");
+
+                    b.Property<string>("InspectionChecklist")
+                        .HasColumnType("text");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
@@ -1448,6 +1497,7 @@ namespace MotoSaaS.Infrastructure.Persistence.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<int>("Status")
+                        .IsConcurrencyToken()
                         .HasColumnType("integer");
 
                     b.Property<Guid?>("TechnicianId")
@@ -1565,6 +1615,7 @@ namespace MotoSaaS.Infrastructure.Persistence.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Status")
+                        .IsConcurrencyToken()
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -2187,6 +2238,10 @@ namespace MotoSaaS.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("MotoSaaS.Domain.Service.CustomerVehicle", "CustomerVehicle")
+                        .WithMany()
+                        .HasForeignKey("CustomerVehicleId");
+
                     b.HasOne("MotoSaaS.Domain.Sales.Quotation", "Quotation")
                         .WithMany()
                         .HasForeignKey("QuotationId");
@@ -2210,6 +2265,8 @@ namespace MotoSaaS.Infrastructure.Persistence.Migrations
                     b.Navigation("Color");
 
                     b.Navigation("Customer");
+
+                    b.Navigation("CustomerVehicle");
 
                     b.Navigation("Quotation");
 

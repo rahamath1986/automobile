@@ -135,6 +135,17 @@ public class ApplicationDbContext : DbContext, IApplicationDbContext
         modelBuilder.Entity<Invoice>()
             .HasIndex(i => new { i.TenantId, i.InvoiceNumber }).IsUnique();
 
+        modelBuilder.Entity<InventoryItem>().Property(i => i.ConcurrencyVersion).IsConcurrencyToken();
+        modelBuilder.Entity<Quotation>().Property(q => q.Status).IsConcurrencyToken();
+        modelBuilder.Entity<Enquiry>().Property(e => e.Status).IsConcurrencyToken();
+        modelBuilder.Entity<Booking>().Property(b => b.ConcurrencyVersion).IsConcurrencyToken();
+
+        modelBuilder.Entity<Payment>()
+            .HasIndex(p => new { p.TenantId, p.BookingId, p.RequestId }).IsUnique();
+
+        modelBuilder.Entity<ServiceBooking>().Property(b => b.Status).IsConcurrencyToken();
+
+        modelBuilder.Entity<JobCard>().Property(j => j.Status).IsConcurrencyToken();
         modelBuilder.Entity<JobCard>()
             .HasIndex(j => new { j.TenantId, j.JobCardNumber }).IsUnique();
 
