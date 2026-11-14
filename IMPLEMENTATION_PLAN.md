@@ -106,8 +106,8 @@ flowchart TD
 ### Phase 13: Dealer Branch Management Portal
 - **Scope:** Next.js / TypeScript web application for branch-level day-to-day operations:
   - Sales pipelines, quotation generation, inventory lookup, test ride log, service bay management, job card status, cashier reconciliation, branch metrics.
-- **Deliverables:** Responsive Branch Management Portal.
-- **Status:** Pending.
+- **Deliverables:** Responsive Branch Management Portal (`web/branch_portal`).
+- **Status:** Completed 2026-11-14 — Next.js 14 App Router, TypeScript, Tailwind CSS, Lucide icons, comprehensive branch modules (Dashboard, Sales CRM, Quotation & EMI Studio, Chassis/VIN registry, Service Bays, Cashier collection), fully compiled and typechecked.
 
 ### Phase 14: Dealer Organization Admin Portal
 - **Scope:** Dealership organization administrative web portal:

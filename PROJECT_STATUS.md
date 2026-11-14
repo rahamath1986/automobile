@@ -47,7 +47,7 @@ Per the master execution rules, development is gated strictly by sequential phas
 | **Phase 10** | Purchase, Payments & Delivery | **Completed** | Quotation confirmation, idempotent payment collection, DEMO-INV invoice generation, PDI inspection, handover & customer vehicle creation; 11 unit tests |
 | **Phase 11** | Service Management & Workshop | **Completed** | Check-in, digital job cards, estimates, technician assignment, QC check, service invoicing, closure & feedback; 6 unit tests |
 | **Phase 12** | Dealer Staff Flutter Experience | **Completed** | Role-adaptive mobile workspace (Sales, Advisor, Tech, Cashier, Manager), profile navigation link, 35 Flutter unit tests pass |
-| **Phase 13** | Dealer Branch Management Portal | Pending | React/Next.js portal for branch day-to-day operations |
+| **Phase 13** | Dealer Branch Management Portal | **Completed** | Next.js 14 / TypeScript responsive web portal (`web/branch_portal`) covering Dashboard, Sales CRM, Quotation/EMI Studio, VIN/Chassis inventory, Service Workshop bays, and Cashier billing |
 | **Phase 14** | Dealer Org Admin Portal | Pending | Multi-branch oversight, staff permissions, inventory, branding, reports |
 | **Phase 15** | SaaS Super Admin Portal | Pending | Tenant onboarding, subscription management, platform metrics, audit |
 | **Phase 16** | Demo Data, Reports & Integrations | Pending | Unified seeder, consolidated reporting dashboard, integration adapters |
