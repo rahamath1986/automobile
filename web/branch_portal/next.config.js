@@ -2,6 +2,8 @@
 const nextConfig = {
   reactStrictMode: true,
   output: 'export',
+  basePath: '/automobile/branch',
+  trailingSlash: true,
   images: {
     unoptimized: true,
   },

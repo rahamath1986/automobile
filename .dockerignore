@@ -6,8 +6,9 @@
 **/obj
 **/TestResults
 mobile/
-web/
 **/node_modules/
+**/.next/
+**/out/
 docs/
 tests/
 *.md

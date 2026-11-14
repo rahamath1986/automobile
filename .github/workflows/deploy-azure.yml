@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - 'src/**'
+      - 'web/**'
       - 'Dockerfile'
       - '.dockerignore'
       - '.github/workflows/deploy-azure.yml'

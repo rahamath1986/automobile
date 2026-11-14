@@ -1,7 +1,7 @@
 import { DEMO_LEADS, DEMO_QUOTATIONS, DEMO_INVENTORY, DEMO_JOB_CARDS, DEMO_PAYMENTS } from './mock-data';
 import { Lead, Quotation, InventoryItem, JobCard, PaymentReceipt } from './types';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5053/api/v1';
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || (typeof window !== 'undefined' ? '/automobile/api/v1' : 'http://localhost:5053/api/v1');
 
 export class BranchApiClient {
   private dealerCode: string;

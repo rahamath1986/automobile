@@ -151,13 +151,23 @@ if (app.Environment.IsDevelopment() || true) // Enabled for Demo/Development
 }
 
 app.UseCors("AllowAll");
+
+// Serve static files from wwwroot (holds super-admin, org-admin, branch SPAs)
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
 app.UseRouting();
 
 // Redirect common docs paths to Swagger UI index.html
-app.MapGet("/api/docs", () => Results.Redirect("api/docs/index.html", permanent: false));
-app.MapGet("/docs", () => Results.Redirect("api/docs/index.html", permanent: false));
-app.MapGet("/swagger", () => Results.Redirect("api/docs/index.html", permanent: false));
-app.MapGet("/", () => Results.Redirect("api/docs/index.html", permanent: false));
+app.MapGet("/api/docs", () => Results.Redirect("/automobile/api/docs/index.html", permanent: false));
+app.MapGet("/docs", () => Results.Redirect("/automobile/api/docs/index.html", permanent: false));
+app.MapGet("/swagger", () => Results.Redirect("/automobile/api/docs/index.html", permanent: false));
+
+// Normalize portal base URLs with trailing slash
+app.MapGet("/super-admin", () => Results.Redirect("/automobile/super-admin/", permanent: false));
+app.MapGet("/org-admin", () => Results.Redirect("/automobile/org-admin/", permanent: false));
+app.MapGet("/branch", () => Results.Redirect("/automobile/branch/", permanent: false));
+app.MapGet("/", () => Results.Redirect("/automobile/org-admin/", permanent: false));
 
 app.UseAuthentication();
 
@@ -168,6 +178,11 @@ app.UseMiddleware<TenantResolutionMiddleware>();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// SPA fallbacks for HTML5 client-side routing
+app.MapFallbackToFile("/super-admin/{*path}", "super-admin/index.html");
+app.MapFallbackToFile("/org-admin/{*path}", "org-admin/index.html");
+app.MapFallbackToFile("/branch/{*path}", "branch/index.html");
 
 try
 {
