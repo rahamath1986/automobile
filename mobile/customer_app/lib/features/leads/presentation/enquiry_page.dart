@@ -199,6 +199,7 @@ class _EnquiryPageState extends ConsumerState<EnquiryPage> {
               const SizedBox(height: 10),
               if (branches.isNotEmpty)
                 DropdownButtonFormField<String>(
+                  isExpanded: true,
                   initialValue: effectiveBranchId,
                   decoration: const InputDecoration(
                     labelText: 'Dealership branch',

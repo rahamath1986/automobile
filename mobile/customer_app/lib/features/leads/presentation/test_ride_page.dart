@@ -211,6 +211,7 @@ class _TestRidePageState extends ConsumerState<TestRidePage> {
               const SizedBox(height: 10),
               if (branches.isNotEmpty)
                 DropdownButtonFormField<String>(
+                  isExpanded: true,
                   initialValue: effectiveBranchId,
                   decoration: const InputDecoration(
                     labelText: 'Dealership branch',
